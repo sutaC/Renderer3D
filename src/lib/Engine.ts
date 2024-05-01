@@ -2,6 +2,7 @@ type Point = [number, number, number];
 
 class Shape {
 	public readonly points: Point[];
+	public readonly edges: [number, number][] = [];
 
 	constructor(size: number) {
 		if (size < 0) {
@@ -78,6 +79,16 @@ export default class Engine {
 		this.ctx.closePath();
 	}
 
+	private drawLine(a: Point, b: Point) {
+		this.ctx.strokeStyle = '#FFFFFF';
+		this.ctx.lineWidth = 1;
+		this.ctx.beginPath();
+		this.ctx.moveTo(this.centerX + a[0], this.centerY + a[1]);
+		this.ctx.lineTo(this.centerX + b[0], this.centerY + b[1]);
+		this.ctx.stroke();
+		this.ctx.closePath();
+	}
+
 	private clear(): void {
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 	}
@@ -87,14 +98,31 @@ export default class Engine {
 
 		// Setup
 
-		const square = new Shape(4);
+		const square = new Shape(8);
 
 		const size = 50;
 
-		square.points[0] = [size, size, 0];
-		square.points[1] = [-size, size, 0];
-		square.points[2] = [size, -size, 0];
-		square.points[3] = [-size, -size, 0];
+		square.points[0] = [size, size, size];
+		square.points[1] = [-size, size, size];
+		square.points[2] = [size, -size, size];
+		square.points[3] = [-size, -size, size];
+		square.points[4] = [size, size, -size];
+		square.points[5] = [-size, size, -size];
+		square.points[6] = [size, -size, -size];
+		square.points[7] = [-size, -size, -size];
+
+		square.edges.push([0, 1]);
+		square.edges.push([0, 2]);
+		square.edges.push([0, 4]);
+		square.edges.push([1, 3]);
+		square.edges.push([1, 5]);
+		square.edges.push([2, 3]);
+		square.edges.push([2, 6]);
+		square.edges.push([3, 7]);
+		square.edges.push([4, 5]);
+		square.edges.push([4, 6]);
+		square.edges.push([5, 7]);
+		square.edges.push([6, 7]);
 
 		// Drawing
 
@@ -102,12 +130,19 @@ export default class Engine {
 		const rotationY = getRotationProjection(this.rotationAngle, 'y');
 		const rotationZ = getRotationProjection(this.rotationAngle, 'z');
 
+		const projected: Point[] = [];
+
 		for (let point of square.points) {
 			point = matrixMultiplyPoint(rotationX, point);
 			point = matrixMultiplyPoint(rotationY, point);
 			point = matrixMultiplyPoint(rotationZ, point);
 			point = matrixMultiplyPoint(projection, point);
 			this.drawPoint(point);
+			projected.push(point);
+		}
+
+		for (const edge of square.edges) {
+			this.drawLine(projected[edge[0]], projected[edge[1]]);
 		}
 
 		// Animation
