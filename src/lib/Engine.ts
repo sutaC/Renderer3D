@@ -12,14 +12,9 @@ class Shape {
 	}
 }
 
-const projection: Point[] = [
-	[1, 0, 0],
-	[0, 1, 0]
-];
-
 function matrixMultiplyPoint(matrix: Point[], point: Point): Point {
 	if (matrix.length > 3) {
-		throw new Error('Projection length cannot be longer than point size (3)');
+		throw new Error('Projection length cannot be longer than point 0.5 (3)');
 	}
 
 	const result: Point = [0, 0, 0];
@@ -51,6 +46,12 @@ function getRotationProjection(angle: number, axis: 'x' | 'y' | 'z' = 'z'): Poin
 				[Math.sin(angle), Math.cos(angle), 0],
 				[0, 0, 1]
 			];
+	}
+}
+
+function scalePoint(point: Point, multiplier: number) {
+	for (let i = 0; i < point.length; i++) {
+		point[i] *= multiplier;
 	}
 }
 
@@ -100,16 +101,14 @@ export default class Engine {
 
 		const square = new Shape(8);
 
-		const size = 50;
-
-		square.points[0] = [size, size, size];
-		square.points[1] = [-size, size, size];
-		square.points[2] = [size, -size, size];
-		square.points[3] = [-size, -size, size];
-		square.points[4] = [size, size, -size];
-		square.points[5] = [-size, size, -size];
-		square.points[6] = [size, -size, -size];
-		square.points[7] = [-size, -size, -size];
+		square.points[0] = [0.5, 0.5, 0.5];
+		square.points[1] = [-0.5, 0.5, 0.5];
+		square.points[2] = [0.5, -0.5, 0.5];
+		square.points[3] = [-0.5, -0.5, 0.5];
+		square.points[4] = [0.5, 0.5, -0.5];
+		square.points[5] = [-0.5, 0.5, -0.5];
+		square.points[6] = [0.5, -0.5, -0.5];
+		square.points[7] = [-0.5, -0.5, -0.5];
 
 		square.edges.push([0, 1]);
 		square.edges.push([0, 2]);
@@ -130,13 +129,25 @@ export default class Engine {
 		const rotationY = getRotationProjection(this.rotationAngle, 'y');
 		const rotationZ = getRotationProjection(this.rotationAngle, 'z');
 
+		const distance = 1.5;
+		const size = 150;
+
 		const projected: Point[] = [];
 
 		for (let point of square.points) {
 			point = matrixMultiplyPoint(rotationX, point);
 			point = matrixMultiplyPoint(rotationY, point);
 			point = matrixMultiplyPoint(rotationZ, point);
+
+			const z = 1 / (distance - point[2]);
+			const projection: Point[] = [
+				[z, 0, 0],
+				[0, z, 0]
+			];
 			point = matrixMultiplyPoint(projection, point);
+
+			scalePoint(point, size);
+
 			this.drawPoint(point);
 			projected.push(point);
 		}
