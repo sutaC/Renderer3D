@@ -16,15 +16,15 @@ const projection: Point[] = [
 	[0, 1, 0]
 ];
 
-function projectPoint(prj: Point[], point: Point): Point {
-	if (prj.length > 3) {
+function matrixMultiplyPoint(matrix: Point[], point: Point): Point {
+	if (matrix.length > 3) {
 		throw new Error('Projection length cannot be longer than point size (3)');
 	}
 
 	const result: Point = [0, 0, 0];
-	for (let i = 0; i < prj.length; i++) {
-		for (let j = 0; j < prj.length; j++) {
-			result[i] += prj[i][j] * point[j];
+	for (let i = 0; i < matrix.length; i++) {
+		for (let j = 0; j < matrix.length; j++) {
+			result[i] += matrix[i][j] * point[j];
 		}
 	}
 	return result;
@@ -102,12 +102,12 @@ export default class Engine {
 		const rotationY = getRotationProjection(this.rotationAngle, 'y');
 		const rotationZ = getRotationProjection(this.rotationAngle, 'z');
 
-		for (const v of square.points) {
-			let projected = projectPoint(projection, v);
-			projected = projectPoint(rotationX, projected);
-			projected = projectPoint(rotationY, projected);
-			projected = projectPoint(rotationZ, projected);
-			this.drawPoint(projected);
+		for (let point of square.points) {
+			point = matrixMultiplyPoint(rotationX, point);
+			point = matrixMultiplyPoint(rotationY, point);
+			point = matrixMultiplyPoint(rotationZ, point);
+			point = matrixMultiplyPoint(projection, point);
+			this.drawPoint(point);
 		}
 
 		// Animation
