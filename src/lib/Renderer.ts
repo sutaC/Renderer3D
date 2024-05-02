@@ -81,6 +81,8 @@ export default class Renderer {
 		const rotationY = getRotationProjection(shape.rotationY, 'y');
 		const rotationZ = getRotationProjection(shape.rotationZ, 'z');
 
+		const distance = shape.originZ / shape.size;
+
 		const projected: Point[] = [];
 
 		for (let point of shape.points) {
@@ -88,7 +90,7 @@ export default class Renderer {
 			point = matrixMultiplyPoint(rotationY, point);
 			point = matrixMultiplyPoint(rotationZ, point);
 
-			const z = 1 / (shape.distance - point[2]);
+			const z = 1 / (distance - point[2]);
 			const projection: Point[] = [
 				[z, 0, 0],
 				[0, z, 0]
@@ -96,6 +98,9 @@ export default class Renderer {
 			point = matrixMultiplyPoint(projection, point);
 
 			scalePoint(point, shape.size);
+
+			point[0] -= shape.originX;
+			point[1] -= shape.originY;
 
 			projected.push(point);
 			if (drawPoints) this.drawPoint(point);

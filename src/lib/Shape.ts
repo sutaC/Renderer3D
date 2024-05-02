@@ -17,9 +17,9 @@ export default class Shape {
 	public readonly points: Point[];
 	public readonly edges: Edge[];
 
-	// public originX: number = 0;
-	// public originY: number = 0;
-	public distance: number = 1.25;
+	public originX: number = 0;
+	public originY: number = 0;
+	public originZ: number = 150;
 
 	public rotationX: number = 0;
 	public rotationY: number = 0;
