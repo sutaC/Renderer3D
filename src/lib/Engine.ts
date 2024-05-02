@@ -11,8 +11,7 @@ export default class Engine {
 
 		// start
 
-		this.shp = Shape.createPrismSqB();
-		this.shp.size = 200;
+		this.shp = Shape.createShape('cube', 100);
 	}
 
 	public run(): void {
