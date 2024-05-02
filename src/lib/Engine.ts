@@ -1,5 +1,5 @@
 import Renderer from './Renderer';
-import Shape from './Shape';
+import Shape, { type ShapeNames } from './Shape';
 
 export default class Engine {
 	private readonly renderer: Renderer;
@@ -30,5 +30,17 @@ export default class Engine {
 		// recall
 
 		setTimeout(this.run.bind(this), 1000 / 60);
+	}
+
+	public changeShape(name: ShapeNames): void {
+		this.shp = Shape.createShape(name, this.shp.size);
+	}
+
+	public changeSize(size: number) {
+		if (size < 0) {
+			console.error('Size should be a positive number');
+			return;
+		}
+		this.shp.size = size;
 	}
 }

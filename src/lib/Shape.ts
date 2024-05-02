@@ -2,23 +2,23 @@ import cubeObj from './shapes/cube.json';
 import prismObj from './shapes/prism.json';
 import prismSqBObj from './shapes/prismSqB.json';
 
-export type Point = [x: number, y: number, z: number];
-type Edge = [aIdx: number, bIdx: number];
-
 interface ShapeObject {
 	name: string;
 	points: number[][];
 	edges: number[][];
 }
 
-type ShapeNames = 'cube' | 'prism' | 'prismSqB';
+export type Point = [x: number, y: number, z: number];
+export type Edge = [aIdx: number, bIdx: number];
+
+export type ShapeNames = 'cube' | 'prism' | 'prismSqB';
 
 export default class Shape {
 	public readonly points: Point[];
 	public readonly edges: Edge[];
 
-	public originX: number = 0;
-	public originY: number = 0;
+	// public originX: number = 0;
+	// public originY: number = 0;
 	public distance: number = 1.25;
 
 	public rotationX: number = 0;
