@@ -11,8 +11,8 @@ export default class Engine {
 
 		// start
 
-		this.shp = Shape.createCube();
-		this.shp.distance = 1.25;
+		this.shp = Shape.createPrism();
+		this.shp.size = 200;
 	}
 
 	public run(): void {

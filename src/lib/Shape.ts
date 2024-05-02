@@ -6,7 +6,7 @@ export default class Shape {
 
 	public originX: number = 0;
 	public originY: number = 0;
-	public distance: number = 1;
+	public distance: number = 1.25;
 
 	public rotationX: number = 0;
 	public rotationY: number = 0;
@@ -44,5 +44,29 @@ export default class Shape {
 		cube.size = size;
 
 		return cube;
+	}
+
+	public static createPrism(size: number = 100): Shape {
+		const prism = new Shape();
+
+		const w = 1;
+		const h = 0.866;
+
+		prism.points[0] = [-w / 2, -h / 3, h / 3]; // bottom
+		prism.points[1] = [w / 2, -h / 3, h / 3]; // bottom
+		prism.points[2] = [0, -h / 3, -((h * 2) / 3)]; // bottom
+		prism.points[3] = [0, (h * 2) / 3, 0]; // top
+
+		prism.edges.push([0, 1]);
+		prism.edges.push([1, 2]);
+		prism.edges.push([2, 0]);
+
+		prism.edges.push([0, 3]);
+		prism.edges.push([1, 3]);
+		prism.edges.push([2, 3]);
+
+		prism.size = size;
+
+		return prism;
 	}
 }
