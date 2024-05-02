@@ -11,7 +11,7 @@ export default class Engine {
 
 		// start
 
-		this.shp = Shape.createPrism();
+		this.shp = Shape.createPrism4b();
 		this.shp.size = 200;
 	}
 

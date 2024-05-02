@@ -17,56 +17,82 @@ export default class Shape {
 	// Shapes
 
 	public static createCube(size: number = 100): Shape {
-		const cube = new Shape();
+		const shp = new Shape();
 
-		cube.points[0] = [0.5, 0.5, 0.5];
-		cube.points[1] = [-0.5, 0.5, 0.5];
-		cube.points[2] = [0.5, -0.5, 0.5];
-		cube.points[3] = [-0.5, -0.5, 0.5];
-		cube.points[4] = [0.5, 0.5, -0.5];
-		cube.points[5] = [-0.5, 0.5, -0.5];
-		cube.points[6] = [0.5, -0.5, -0.5];
-		cube.points[7] = [-0.5, -0.5, -0.5];
+		shp.points[0] = [0.5, 0.5, 0.5];
+		shp.points[1] = [-0.5, 0.5, 0.5];
+		shp.points[2] = [0.5, -0.5, 0.5];
+		shp.points[3] = [-0.5, -0.5, 0.5];
+		shp.points[4] = [0.5, 0.5, -0.5];
+		shp.points[5] = [-0.5, 0.5, -0.5];
+		shp.points[6] = [0.5, -0.5, -0.5];
+		shp.points[7] = [-0.5, -0.5, -0.5];
 
-		cube.edges.push([0, 1]);
-		cube.edges.push([0, 2]);
-		cube.edges.push([0, 4]);
-		cube.edges.push([1, 3]);
-		cube.edges.push([1, 5]);
-		cube.edges.push([2, 3]);
-		cube.edges.push([2, 6]);
-		cube.edges.push([3, 7]);
-		cube.edges.push([4, 5]);
-		cube.edges.push([4, 6]);
-		cube.edges.push([5, 7]);
-		cube.edges.push([6, 7]);
+		shp.edges.push([0, 1]);
+		shp.edges.push([0, 2]);
+		shp.edges.push([0, 4]);
+		shp.edges.push([1, 3]);
+		shp.edges.push([1, 5]);
+		shp.edges.push([2, 3]);
+		shp.edges.push([2, 6]);
+		shp.edges.push([3, 7]);
+		shp.edges.push([4, 5]);
+		shp.edges.push([4, 6]);
+		shp.edges.push([5, 7]);
+		shp.edges.push([6, 7]);
 
-		cube.size = size;
+		shp.size = size;
 
-		return cube;
+		return shp;
 	}
 
 	public static createPrism(size: number = 100): Shape {
-		const prism = new Shape();
+		const shp = new Shape();
 
 		const w = 1;
 		const h = 0.866;
 
-		prism.points[0] = [-w / 2, -h / 3, h / 3]; // bottom
-		prism.points[1] = [w / 2, -h / 3, h / 3]; // bottom
-		prism.points[2] = [0, -h / 3, -((h * 2) / 3)]; // bottom
-		prism.points[3] = [0, (h * 2) / 3, 0]; // top
+		shp.points[0] = [-w / 2, -h / 3, h / 3]; // bottom
+		shp.points[1] = [w / 2, -h / 3, h / 3]; // bottom
+		shp.points[2] = [0, -h / 3, -((h * 2) / 3)]; // bottom
+		shp.points[3] = [0, (h * 2) / 3, 0]; // top
 
-		prism.edges.push([0, 1]);
-		prism.edges.push([1, 2]);
-		prism.edges.push([2, 0]);
+		shp.edges.push([0, 1]);
+		shp.edges.push([1, 2]);
+		shp.edges.push([2, 0]);
+		shp.edges.push([0, 3]);
+		shp.edges.push([1, 3]);
+		shp.edges.push([2, 3]);
 
-		prism.edges.push([0, 3]);
-		prism.edges.push([1, 3]);
-		prism.edges.push([2, 3]);
+		shp.size = size;
 
-		prism.size = size;
+		return shp;
+	}
 
-		return prism;
+	public static createPrismSqB(size: number = 100): Shape {
+		const shp = new Shape();
+
+		const w = 1;
+		const h = 0.866;
+
+		shp.points[0] = [-w / 2, -h / 3, w / 2]; // bottom
+		shp.points[1] = [-w / 2, -h / 3, -w / 2]; // bottom
+		shp.points[2] = [w / 2, -h / 3, -w / 2]; // bottom
+		shp.points[3] = [w / 2, -h / 3, w / 2]; // bottom
+		shp.points[4] = [0, (h * 2) / 3, 0]; // top
+
+		shp.edges.push([0, 1]);
+		shp.edges.push([1, 2]);
+		shp.edges.push([2, 3]);
+		shp.edges.push([3, 0]);
+
+		shp.edges.push([0, 4]);
+		shp.edges.push([1, 4]);
+		shp.edges.push([2, 4]);
+		shp.edges.push([3, 4]);
+
+		shp.size = size;
+
+		return shp;
 	}
 }
