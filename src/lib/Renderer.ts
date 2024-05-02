@@ -76,7 +76,7 @@ export default class Renderer {
 		this.ctx.closePath();
 	}
 
-	public drawShape(shape: Shape) {
+	public drawShape(shape: Shape, drawPoints: boolean = false) {
 		const rotationX = getRotationProjection(shape.rotationX, 'x');
 		const rotationY = getRotationProjection(shape.rotationY, 'y');
 		const rotationZ = getRotationProjection(shape.rotationZ, 'z');
@@ -97,8 +97,8 @@ export default class Renderer {
 
 			scalePoint(point, shape.size);
 
-			this.drawPoint(point);
 			projected.push(point);
+			if (drawPoints) this.drawPoint(point);
 		}
 
 		for (const edge of shape.edges) {
