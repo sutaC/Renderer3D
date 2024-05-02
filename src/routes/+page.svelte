@@ -13,6 +13,10 @@
 <canvas width="500" height="500"></canvas>
 
 <style>
+	:global(html) {
+		font-family: 'Courier New', Courier, monospace;
+	}
+
 	:global(body) {
 		display: flex;
 		justify-content: center;
@@ -21,6 +25,8 @@
 	}
 
 	canvas {
+		max-width: calc(100vw - 1rem);
+		aspect-ratio: 1;
 		background: black;
 	}
 </style>
