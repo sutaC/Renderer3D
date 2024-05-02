@@ -24,7 +24,7 @@
 
 <div class="field">
 	<label for="selectShape">Shape: </label>
-	<select name="shape" id="selecTshape" bind:value={selected}>
+	<select name="shape" id="selectShape" bind:value={selected}>
 		<option value="cube">Cube</option>
 		<option value="prism">Prism</option>
 		<option value="prismSqB">Prism / square base</option>
