@@ -1,4 +1,4 @@
-type Point = [number, number, number];
+type Point = [x: number, y: number, z: number];
 
 class Shape {
 	public readonly points: Point[];
