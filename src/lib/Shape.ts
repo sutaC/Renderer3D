@@ -5,17 +5,17 @@ import prismSqBObj from './shapes/prismSqB.json';
 interface ShapeObject {
 	name: string;
 	points: number[][];
-	edges: number[][];
+	triangles: number[][];
 }
 
 export type Point = [x: number, y: number, z: number];
-export type Edge = [aIdx: number, bIdx: number];
+export type Triangle = [aIdx: number, bIdx: number, cIdx: number];
 
 export type ShapeNames = 'cube' | 'prism' | 'prismSqB';
 
 export default class Shape {
 	public readonly points: Point[];
-	public readonly edges: Edge[];
+	public readonly triangles: Triangle[];
 
 	public originX: number = 0;
 	public originY: number = 0;
@@ -27,9 +27,9 @@ export default class Shape {
 
 	public size: number = 1;
 
-	constructor(points: Point[] = [], edges: Edge[] = []) {
+	constructor(points: Point[] = [], triangles: Triangle[] = []) {
 		this.points = points;
-		this.edges = edges;
+		this.triangles = triangles;
 	}
 
 	// Shapes
@@ -47,7 +47,7 @@ export default class Shape {
 				obj = prismSqBObj;
 				break;
 		}
-		const shp = new Shape(obj.points as Point[], obj.edges as Edge[]);
+		const shp = new Shape(obj.points as Point[], obj.triangles as Triangle[]);
 		shp.size = size;
 		if (origin) {
 			shp.size = origin.size;

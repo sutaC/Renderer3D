@@ -1,4 +1,4 @@
-import Shape, { type Point } from './Shape';
+import Shape, { type Point, type Triangle } from './Shape';
 
 function matrixMultiplyPoint(matrix: Point[], point: Point): Point {
 	if (matrix.length > 3) {
@@ -76,6 +76,12 @@ export default class Renderer {
 		this.ctx.closePath();
 	}
 
+	private drawTriangle(a: Point, b: Point, c: Point): void {
+		this.drawLine(a, b);
+		this.drawLine(a, c);
+		this.drawLine(b, c);
+	}
+
 	public drawShape(shape: Shape, drawPoints: boolean = false) {
 		const rotationX = getRotationProjection(shape.rotationX, 'x');
 		const rotationY = getRotationProjection(shape.rotationY, 'y');
@@ -106,8 +112,13 @@ export default class Renderer {
 			if (drawPoints) this.drawPoint(point);
 		}
 
-		for (const edge of shape.edges) {
-			this.drawLine(projected[edge[0]], projected[edge[1]]);
+		for (const triangle of shape.triangles) {
+			const trianglePoints = {
+				a: projected[triangle[0]],
+				b: projected[triangle[1]],
+				c: projected[triangle[2]]
+			};
+			this.drawTriangle(trianglePoints.a, trianglePoints.b, trianglePoints.c);
 		}
 	}
 
