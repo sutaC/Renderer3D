@@ -148,6 +148,7 @@ export default class Renderer {
 				normal[1] * (trianglePoints.a[1] - cameraPosition[1]) +
 				normal[2] * (trianglePoints.a[2] - cameraPosition[2]);
 			if (dotPoint > 0.0) continue;
+			// Ilumination
 			const dotPointLumination =
 				normal[0] * cameraPosition[0] +
 				normal[1] * cameraPosition[1] +
@@ -175,7 +176,7 @@ export default class Renderer {
 
 		// Drawing
 		for (const triangle of toDraw) {
-			const color = colors.get(triangle) || '#ffffff';
+			const color = colors.get(triangle) || 'red';
 			this.fillTriangle(
 				projected[triangle[0]],
 				projected[triangle[1]],

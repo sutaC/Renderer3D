@@ -20,7 +20,11 @@
 	$: engine?.shapeController.originZ(originZ);
 </script>
 
-<h1>3D renderer</h1>
+<svelte:head>
+	<title>Renderer 3D</title>
+</svelte:head>
+
+<h1>Renderer 3D</h1>
 
 <canvas width="500" height="500"></canvas>
 
@@ -40,7 +44,7 @@
 	</div>
 
 	<div class="field">
-		<label for="inputOriginZ">Origin Z: </label>
+		<label for="inputOriginZ">Distance: </label>
 		<input type="number" name="originZ" id="inputOriginZ" bind:value={originZ} />
 	</div>
 </div>
