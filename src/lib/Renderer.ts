@@ -90,8 +90,8 @@ export default class Renderer {
 		this.ctx.closePath();
 	}
 
-	private drawLine(a: Point, b: Point) {
-		this.ctx.strokeStyle = '#FFFFFF';
+	private drawLine(a: Point, b: Point, color: string = '#FFFFFF') {
+		this.ctx.strokeStyle = color;
 		this.ctx.lineWidth = 2;
 		this.ctx.beginPath();
 		this.ctx.moveTo(this.centerX + a[0], this.centerY + a[1]);
@@ -100,10 +100,10 @@ export default class Renderer {
 		this.ctx.closePath();
 	}
 
-	private drawTriangle(a: Point, b: Point, c: Point): void {
-		this.drawLine(a, b);
-		this.drawLine(a, c);
-		this.drawLine(b, c);
+	private drawTriangle(a: Point, b: Point, c: Point, color?: string): void {
+		this.drawLine(a, b, color);
+		this.drawLine(a, c, color);
+		this.drawLine(b, c, color);
 	}
 
 	private fillTriangle(a: Point, b: Point, c: Point, color: string = '#FFFFFF'): void {
@@ -116,7 +116,7 @@ export default class Renderer {
 		this.ctx.lineTo(this.centerX + c[0], this.centerY + c[1]);
 		this.ctx.fill();
 		this.ctx.closePath();
-		this.drawTriangle(a, b, c);
+		this.drawTriangle(a, b, c, color);
 	}
 
 	public drawShape(shape: Shape, drawPoints: boolean = false) {
@@ -135,6 +135,7 @@ export default class Renderer {
 		// Is to draw
 		const toDraw: Triangle[] = [];
 		const cameraPosition: Point = [0, 0, shape.originZ / shape.size];
+		const colors = new Map<Triangle, string>();
 		for (const triangle of shape.triangles) {
 			const trianglePoints = {
 				a: rotated[triangle[0]],
@@ -142,13 +143,18 @@ export default class Renderer {
 				c: rotated[triangle[2]]
 			};
 			const normal = calculateNormal(trianglePoints.a, trianglePoints.b, trianglePoints.c);
-
 			const dotPoint =
 				normal[0] * (trianglePoints.a[0] - cameraPosition[0]) +
 				normal[1] * (trianglePoints.a[1] - cameraPosition[1]) +
 				normal[2] * (trianglePoints.a[2] - cameraPosition[2]);
-
 			if (dotPoint > 0.0) continue;
+			const dotPointLumination =
+				normal[0] * cameraPosition[0] +
+				normal[1] * cameraPosition[1] +
+				normal[2] * cameraPosition[2];
+			const colorFactor = Math.floor(255 * (dotPointLumination / 2));
+			const color = `rgb(${colorFactor} ${colorFactor} ${colorFactor}	)`;
+			colors.set(triangle, color);
 			toDraw.push(triangle);
 		}
 
@@ -169,7 +175,13 @@ export default class Renderer {
 
 		// Drawing
 		for (const triangle of toDraw) {
-			this.fillTriangle(projected[triangle[0]], projected[triangle[1]], projected[triangle[2]]);
+			const color = colors.get(triangle) || '#ffffff';
+			this.fillTriangle(
+				projected[triangle[0]],
+				projected[triangle[1]],
+				projected[triangle[2]],
+				color
+			);
 		}
 	}
 
