@@ -121,11 +121,7 @@ export default class Renderer {
 
 		// Is to draw
 		const toDraw: Triangle[] = [];
-		const cameraPosition: Point = [
-			shape.originX / shape.size,
-			shape.originY / shape.size,
-			shape.originZ / shape.size
-		];
+		const cameraPosition: Point = [0, 0, shape.originZ / shape.size];
 		for (const triangle of shape.triangles) {
 			const trianglePoints = {
 				a: rotated[triangle[0]],
@@ -154,8 +150,6 @@ export default class Renderer {
 			];
 			point = matrixMultiplyPoint(projection, point);
 			scalePoint(point, shape.size);
-			point[0] -= shape.originX;
-			point[1] -= shape.originY;
 			projected.push(point);
 			if (drawPoints) this.drawPoint(point);
 		}

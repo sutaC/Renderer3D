@@ -5,8 +5,6 @@
 
 	let selected: string = 'cube';
 	let size: number = 100;
-	let originX: number = 0;
-	let originY: number = 0;
 	let originZ: number = 150;
 
 	let engine: Engine | undefined = undefined;
@@ -19,8 +17,6 @@
 
 	$: engine?.shapeController.type(selected as ShapeNames);
 	$: engine?.shapeController.size(size);
-	$: engine?.shapeController.originX(originX);
-	$: engine?.shapeController.originY(originY);
 	$: engine?.shapeController.originZ(originZ);
 </script>
 
@@ -41,16 +37,6 @@
 	<div class="field">
 		<label for="inputSize">Size: </label>
 		<input type="number" name="size" id="inputSize" bind:value={size} min="0" />
-	</div>
-
-	<div class="field">
-		<label for="inputOriginX">Origin X: </label>
-		<input type="number" name="originX" id="inputOriginX" bind:value={originX} />
-	</div>
-
-	<div class="field">
-		<label for="inputOriginY">Origin Y: </label>
-		<input type="number" name="originY" id="inputOriginY" bind:value={originY} />
 	</div>
 
 	<div class="field">

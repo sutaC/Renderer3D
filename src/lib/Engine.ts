@@ -43,12 +43,6 @@ export default class Engine {
 			}
 			this.shp.size = size;
 		},
-		originX: (pos: number): void => {
-			this.shp.originX = pos;
-		},
-		originY: (pos: number): void => {
-			this.shp.originY = pos;
-		},
 		originZ: (pos: number): void => {
 			this.shp.originZ = pos;
 		}

@@ -17,8 +17,6 @@ export default class Shape {
 	public readonly points: Point[];
 	public readonly triangles: Triangle[];
 
-	public originX: number = 0;
-	public originY: number = 0;
 	public originZ: number = 150;
 
 	public rotationX: number = 0;
@@ -51,8 +49,6 @@ export default class Shape {
 		shp.size = size;
 		if (origin) {
 			shp.size = origin.size;
-			shp.originX = origin.originX;
-			shp.originY = origin.originY;
 			shp.originZ = origin.originZ;
 			shp.rotationX = origin.rotationX;
 			shp.rotationY = origin.rotationY;
