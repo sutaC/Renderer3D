@@ -121,6 +121,11 @@ export default class Renderer {
 
 		// Is to draw
 		const toDraw: Triangle[] = [];
+		const cameraPosition: Point = [
+			shape.originX / shape.size,
+			shape.originY / shape.size,
+			shape.originZ / shape.size
+		];
 		for (const triangle of shape.triangles) {
 			const trianglePoints = {
 				a: rotated[triangle[0]],
@@ -128,7 +133,13 @@ export default class Renderer {
 				c: rotated[triangle[2]]
 			};
 			const normal = calculateNormal(trianglePoints.a, trianglePoints.b, trianglePoints.c);
-			if (normal[2] < 0.0) continue;
+
+			const dotPoint =
+				normal[0] * (trianglePoints.a[0] - cameraPosition[0]) +
+				normal[1] * (trianglePoints.a[1] - cameraPosition[1]) +
+				normal[2] * (trianglePoints.a[2] - cameraPosition[2]);
+
+			if (dotPoint > 0.0) continue;
 			toDraw.push(triangle);
 		}
 
