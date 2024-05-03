@@ -5,6 +5,9 @@
 
 	let selected: string = 'cube';
 	let size: number = 100;
+	let originX: number = 0;
+	let originY: number = 0;
+	let originZ: number = 150;
 
 	let engine: Engine | undefined = undefined;
 
@@ -14,26 +17,46 @@
 		engine.run();
 	});
 
-	$: engine?.changeShape(selected as ShapeNames);
-	$: engine?.changeSize(size);
+	$: engine?.shapeController.type(selected as ShapeNames);
+	$: engine?.shapeController.size(size);
+	$: engine?.shapeController.originX(originX);
+	$: engine?.shapeController.originY(originY);
+	$: engine?.shapeController.originZ(originZ);
 </script>
 
 <h1>3D renderer</h1>
 
 <canvas width="500" height="500"></canvas>
 
-<div class="field">
-	<label for="selectShape">Shape: </label>
-	<select name="shape" id="selectShape" bind:value={selected}>
-		<option value="cube">Cube</option>
-		<option value="prism">Prism</option>
-		<option value="prismSqB">Prism / square base</option>
-	</select>
-</div>
+<div class="controller">
+	<div class="field">
+		<label for="selectShape">Shape: </label>
+		<select name="shape" id="selectShape" bind:value={selected}>
+			<option value="cube">Cube</option>
+			<option value="prism">Prism</option>
+			<option value="prismSqB">Prism / square base</option>
+		</select>
+	</div>
 
-<div class="field">
-	<label for="inputSize">Size: </label>
-	<input type="number" name="size" id="inputSize" bind:value={size} min="0" />
+	<div class="field">
+		<label for="inputSize">Size: </label>
+		<input type="number" name="size" id="inputSize" bind:value={size} min="0" />
+	</div>
+
+	<div class="field">
+		<label for="inputOriginX">Origin X: </label>
+		<input type="number" name="originX" id="inputOriginX" bind:value={originX} />
+	</div>
+
+	<div class="field">
+		<label for="inputOriginY">Origin Y: </label>
+		<input type="number" name="originY" id="inputOriginY" bind:value={originY} />
+	</div>
+
+	<div class="field">
+		<label for="inputOriginZ">Origin Z: </label>
+		<input type="number" name="originZ" id="inputOriginZ" bind:value={originZ} />
+	</div>
 </div>
 
 <style>
@@ -56,6 +79,10 @@
 		max-width: calc(100vw - 1rem);
 		aspect-ratio: 1;
 		background: black;
+	}
+
+	.controller {
+		margin: 1rem 0;
 	}
 
 	.field {

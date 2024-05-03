@@ -32,15 +32,25 @@ export default class Engine {
 		setTimeout(this.run.bind(this), 1000 / 60);
 	}
 
-	public changeShape(name: ShapeNames): void {
-		this.shp = Shape.createShape(name, this.shp.size);
-	}
-
-	public changeSize(size: number) {
-		if (size < 0) {
-			console.error('Size should be a positive number');
-			return;
+	public readonly shapeController = {
+		type: (name: ShapeNames): void => {
+			this.shp = Shape.createShape(name, 0, this.shp);
+		},
+		size: (size: number): void => {
+			if (size < 0) {
+				console.error('Size should be a positive number');
+				return;
+			}
+			this.shp.size = size;
+		},
+		originX: (pos: number): void => {
+			this.shp.originX = pos;
+		},
+		originY: (pos: number): void => {
+			this.shp.originY = pos;
+		},
+		originZ: (pos: number): void => {
+			this.shp.originZ = pos;
 		}
-		this.shp.size = size;
-	}
+	};
 }

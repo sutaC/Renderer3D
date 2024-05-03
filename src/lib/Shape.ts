@@ -34,7 +34,7 @@ export default class Shape {
 
 	// Shapes
 
-	public static createShape(name: ShapeNames, size: number = 100) {
+	public static createShape(name: ShapeNames, size: number = 100, origin?: Shape) {
 		let obj: ShapeObject;
 		switch (name) {
 			case 'cube':
@@ -49,6 +49,15 @@ export default class Shape {
 		}
 		const shp = new Shape(obj.points as Point[], obj.edges as Edge[]);
 		shp.size = size;
+		if (origin) {
+			shp.size = origin.size;
+			shp.originX = origin.originX;
+			shp.originY = origin.originY;
+			shp.originZ = origin.originZ;
+			shp.rotationX = origin.rotationX;
+			shp.rotationY = origin.rotationY;
+			shp.rotationZ = origin.rotationZ;
+		}
 		return shp;
 	}
 }
