@@ -45,6 +45,30 @@ function scalePoint(point: Point, multiplier: number) {
 	}
 }
 
+function calculateNormal(a: Point, b: Point, c: Point): Point {
+	const normal: Point = [0, 0, 0],
+		lineA: Point = [0, 0, 0],
+		lineB: Point = [0, 0, 0];
+
+	lineA[0] = b[0] - a[0];
+	lineA[1] = b[1] - a[1];
+	lineA[2] = b[2] - a[2];
+
+	lineB[0] = c[0] - a[0];
+	lineB[1] = c[1] - a[1];
+	lineB[2] = c[2] - a[2];
+
+	normal[0] = lineA[1] * lineB[2] - lineA[2] * lineB[1];
+	normal[1] = lineA[2] * lineB[0] - lineA[0] * lineB[2];
+	normal[2] = lineA[0] * lineB[1] - lineA[1] * lineB[0];
+
+	const l = Math.sqrt(normal[0] ** 2 + normal[1] ** 2 + normal[2] ** 2);
+	normal[0] /= l;
+	normal[1] /= l;
+	normal[2] /= l;
+	return normal;
+}
+
 export default class Renderer {
 	private canvas: HTMLCanvasElement;
 	private ctx: CanvasRenderingContext2D;
@@ -83,42 +107,51 @@ export default class Renderer {
 	}
 
 	public drawShape(shape: Shape, drawPoints: boolean = false) {
+		// Rotating
+		const rotated: Point[] = [];
 		const rotationX = getRotationProjection(shape.rotationX, 'x');
 		const rotationY = getRotationProjection(shape.rotationY, 'y');
 		const rotationZ = getRotationProjection(shape.rotationZ, 'z');
-
-		const distance = shape.originZ / shape.size;
-
-		const projected: Point[] = [];
-
 		for (let point of shape.points) {
 			point = matrixMultiplyPoint(rotationX, point);
 			point = matrixMultiplyPoint(rotationY, point);
 			point = matrixMultiplyPoint(rotationZ, point);
+			rotated.push(point);
+		}
 
+		// Is to draw
+		const toDraw: Triangle[] = [];
+		for (const triangle of shape.triangles) {
+			const trianglePoints = {
+				a: rotated[triangle[0]],
+				b: rotated[triangle[1]],
+				c: rotated[triangle[2]]
+			};
+			const normal = calculateNormal(trianglePoints.a, trianglePoints.b, trianglePoints.c);
+			if (normal[2] < 0.0) continue;
+			toDraw.push(triangle);
+		}
+
+		// Projecting
+		const projected: Point[] = [];
+		const distance = shape.originZ / shape.size;
+		for (let point of rotated) {
 			const z = 1 / (distance - point[2]);
 			const projection: Point[] = [
 				[z, 0, 0],
 				[0, z, 0]
 			];
 			point = matrixMultiplyPoint(projection, point);
-
 			scalePoint(point, shape.size);
-
 			point[0] -= shape.originX;
 			point[1] -= shape.originY;
-
 			projected.push(point);
 			if (drawPoints) this.drawPoint(point);
 		}
 
-		for (const triangle of shape.triangles) {
-			const trianglePoints = {
-				a: projected[triangle[0]],
-				b: projected[triangle[1]],
-				c: projected[triangle[2]]
-			};
-			this.drawTriangle(trianglePoints.a, trianglePoints.b, trianglePoints.c);
+		// Drawing
+		for (const triangle of toDraw) {
+			this.drawTriangle(projected[triangle[0]], projected[triangle[1]], projected[triangle[2]]);
 		}
 	}
 
