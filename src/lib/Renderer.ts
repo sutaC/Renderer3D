@@ -92,7 +92,7 @@ export default class Renderer {
 
 	private drawLine(a: Point, b: Point) {
 		this.ctx.strokeStyle = '#FFFFFF';
-		this.ctx.lineWidth = 1;
+		this.ctx.lineWidth = 2;
 		this.ctx.beginPath();
 		this.ctx.moveTo(this.centerX + a[0], this.centerY + a[1]);
 		this.ctx.lineTo(this.centerX + b[0], this.centerY + b[1]);
@@ -104,6 +104,19 @@ export default class Renderer {
 		this.drawLine(a, b);
 		this.drawLine(a, c);
 		this.drawLine(b, c);
+	}
+
+	private fillTriangle(a: Point, b: Point, c: Point, color: string = '#FFFFFF'): void {
+		this.ctx.fillStyle = color;
+		this.ctx.beginPath();
+		this.ctx.moveTo(this.centerX + a[0], this.centerY + a[1]);
+		this.ctx.lineTo(this.centerX + b[0], this.centerY + b[1]);
+		this.ctx.lineTo(this.centerX + c[0], this.centerY + c[1]);
+		this.ctx.moveTo(this.centerX + b[0], this.centerY + b[1]);
+		this.ctx.lineTo(this.centerX + c[0], this.centerY + c[1]);
+		this.ctx.fill();
+		this.ctx.closePath();
+		this.drawTriangle(a, b, c);
 	}
 
 	public drawShape(shape: Shape, drawPoints: boolean = false) {
@@ -156,7 +169,7 @@ export default class Renderer {
 
 		// Drawing
 		for (const triangle of toDraw) {
-			this.drawTriangle(projected[triangle[0]], projected[triangle[1]], projected[triangle[2]]);
+			this.fillTriangle(projected[triangle[0]], projected[triangle[1]], projected[triangle[2]]);
 		}
 	}
 
