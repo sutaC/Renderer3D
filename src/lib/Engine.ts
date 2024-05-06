@@ -45,6 +45,9 @@ export default class Engine {
 		},
 		originZ: (pos: number): void => {
 			this.shp.originZ = pos;
+		},
+		color: (hex: string): void => {
+			this.shp.setColor(hex);
 		}
 	};
 }

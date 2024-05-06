@@ -8,6 +8,13 @@ interface ShapeObject {
 	triangles: number[][];
 }
 
+interface ColorObject {
+	hex: string;
+	r: number;
+	g: number;
+	b: number;
+}
+
 export type Point = [x: number, y: number, z: number];
 export type Triangle = [aIdx: number, bIdx: number, cIdx: number];
 
@@ -24,10 +31,29 @@ export default class Shape {
 	public rotationZ: number = 0;
 
 	public size: number = 1;
+	public colorObj: ColorObject = {
+		hex: '#FFFFFF',
+		r: 255,
+		g: 255,
+		b: 255
+	};
 
 	constructor(points: Point[] = [], triangles: Triangle[] = []) {
 		this.points = points;
 		this.triangles = triangles;
+	}
+
+	public setColor(hex: string): void {
+		if (hex.length !== 7) {
+			console.error('Not proper hex string was provided');
+			return;
+		}
+		this.colorObj = {
+			hex,
+			r: Number.parseInt(hex.substring(1, 3), 16),
+			g: Number.parseInt(hex.substring(3, 5), 16),
+			b: Number.parseInt(hex.substring(5, 7), 16)
+		};
 	}
 
 	// Shapes
@@ -53,6 +79,7 @@ export default class Shape {
 			shp.rotationX = origin.rotationX;
 			shp.rotationY = origin.rotationY;
 			shp.rotationZ = origin.rotationZ;
+			shp.colorObj = origin.colorObj;
 		}
 		return shp;
 	}

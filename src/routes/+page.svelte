@@ -6,6 +6,7 @@
 	let selected: string = 'cube';
 	let size: number = 100;
 	let originZ: number = 150;
+	let color: string = '#ffffff';
 
 	let engine: Engine | undefined = undefined;
 
@@ -18,6 +19,7 @@
 	$: engine?.shapeController.type(selected as ShapeNames);
 	$: engine?.shapeController.size(size);
 	$: engine?.shapeController.originZ(originZ);
+	$: engine?.shapeController.color(color);
 </script>
 
 <svelte:head>
@@ -46,6 +48,11 @@
 	<div class="field">
 		<label for="inputOriginZ">Distance: </label>
 		<input type="number" name="originZ" id="inputOriginZ" bind:value={originZ} />
+	</div>
+
+	<div class="field">
+		<label for="inputColor">Color: </label>
+		<input type="color" name="color" id="inputColor" bind:value={color} />
 	</div>
 </div>
 

@@ -149,12 +149,15 @@ export default class Renderer {
 				normal[2] * (trianglePoints.a[2] - cameraPosition[2]);
 			if (dotPoint > 0.0) continue;
 			// Ilumination
-			const dotPointLumination =
+			const luminationFactor =
 				normal[0] * cameraPosition[0] +
 				normal[1] * cameraPosition[1] +
 				normal[2] * cameraPosition[2];
-			const colorFactor = Math.floor(255 * (dotPointLumination / 2));
-			const color = `rgb(${colorFactor} ${colorFactor} ${colorFactor}	)`;
+
+			const r = Math.floor(shape.colorObj.r * luminationFactor);
+			const g = Math.floor(shape.colorObj.g * luminationFactor);
+			const b = Math.floor(shape.colorObj.b * luminationFactor);
+			const color = `rgb(${r} ${g} ${b})`;
 			colors.set(triangle, color);
 			toDraw.push(triangle);
 		}
