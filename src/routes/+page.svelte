@@ -20,6 +20,16 @@
 	$: engine?.shapeController.size(size);
 	$: engine?.shapeController.originZ(originZ);
 	$: engine?.shapeController.color(color);
+
+	const handleFile = async (event: Event) => {
+		const files = (event.target as HTMLInputElement).files;
+		if (files === null) {
+			console.error('No files was provided', files);
+			return;
+		}
+		const [file] = files;
+		engine?.shapeController.file(file);
+	};
 </script>
 
 <svelte:head>
@@ -53,6 +63,11 @@
 	<div class="field">
 		<label for="inputColor">Color: </label>
 		<input type="color" name="color" id="inputColor" bind:value={color} />
+	</div>
+
+	<div class="field">
+		<label for="inputObjFile">Obj file: </label>
+		<input type="file" name="objFile" id="inputObjFile" accept=".obj" on:change={handleFile} />
 	</div>
 </div>
 

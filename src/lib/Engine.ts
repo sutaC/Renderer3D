@@ -36,6 +36,11 @@ export default class Engine {
 		type: (name: ShapeNames): void => {
 			this.shp = Shape.createShape(name, 0, this.shp);
 		},
+		file: (file: File): void => {
+			(async () => {
+				this.shp = await Shape.createShapeFromObjFile(file, this.shp);
+			})();
+		},
 		size: (size: number): void => {
 			if (size < 0) {
 				console.error('Size should be a positive number');
