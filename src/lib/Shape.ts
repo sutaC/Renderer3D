@@ -24,7 +24,7 @@ export default class Shape {
 	public readonly points: Point[];
 	public readonly triangles: Triangle[];
 
-	public originZ: number = 150;
+	public originZ: number = 300;
 
 	public rotationX: number = 0;
 	public rotationY: number = 0;

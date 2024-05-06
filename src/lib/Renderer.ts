@@ -153,7 +153,7 @@ export default class Renderer {
 				(normal[0] * cameraPosition[0] +
 					normal[1] * cameraPosition[1] +
 					normal[2] * cameraPosition[2]) /
-				2;
+				3;
 
 			const r = Math.floor(shape.colorObj.r * luminationFactor);
 			const g = Math.floor(shape.colorObj.g * luminationFactor);

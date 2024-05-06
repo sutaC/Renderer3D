@@ -5,7 +5,7 @@
 
 	let selected: string = 'cube';
 	let size: number = 100;
-	let originZ: number = 150;
+	let originZ: number = 300;
 	let color: string = '#ffffff';
 
 	let engine: Engine | undefined = undefined;
@@ -21,14 +21,15 @@
 	$: engine?.shapeController.originZ(originZ);
 	$: engine?.shapeController.color(color);
 
-	const handleFile = async (event: Event) => {
-		const files = (event.target as HTMLInputElement).files;
-		if (files === null) {
-			console.error('No files was provided', files);
+	const handleAddFile = async (event: Event) => {
+		const target = event.target as HTMLInputElement;
+		const [file] = target.files as FileList;
+		if (!file) {
+			console.error('No files was provided', file);
 			return;
 		}
-		const [file] = files;
 		engine?.shapeController.file(file);
+		target.value = '';
 	};
 </script>
 
@@ -67,7 +68,13 @@
 
 	<div class="field">
 		<label for="inputObjFile">Obj file: </label>
-		<input type="file" name="objFile" id="inputObjFile" accept=".obj" on:change={handleFile} />
+		<input
+			type="file"
+			name="objFile"
+			id="inputObjFile"
+			accept=".obj"
+			on:input={(e) => handleAddFile(e)}
+		/>
 	</div>
 </div>
 

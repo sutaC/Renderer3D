@@ -39,6 +39,7 @@ export default class Engine {
 		file: (file: File): void => {
 			(async () => {
 				this.shp = await Shape.createShapeFromObjFile(file, this.shp);
+				console.log('Added file', this.shp);
 			})();
 		},
 		size: (size: number): void => {
