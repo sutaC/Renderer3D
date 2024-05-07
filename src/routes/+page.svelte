@@ -70,7 +70,7 @@
 
 	<div class="field">
 		<label for="inputShadow">Shadow factor: </label>
-		<input type="number" name="shadow" id="inputShadow" bind:value={shadow} />
+		<input type="number" name="shadow" id="inputShadow" min="1" bind:value={shadow} />
 	</div>
 
 	<div class="field">
