@@ -178,9 +178,10 @@ export default class Renderer {
 			if (drawPoints) this.drawPoint(point);
 		}
 
+		// Painters algorithm for perspective
 		toDraw.sort((a, b) => {
-			const zA = projected[a[0]][2] + projected[a[1]][2] + projected[a[2]][2] / 3;
-			const zB = projected[b[0]][2] + projected[b[1]][2] + projected[b[2]][2] / 3;
+			const zA = (projected[a[0]][2] + projected[a[1]][2] + projected[a[2]][2]) / 3;
+			const zB = (projected[b[0]][2] + projected[b[1]][2] + projected[b[2]][2]) / 3;
 			return zB - zA;
 		});
 
