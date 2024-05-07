@@ -76,6 +76,21 @@
 			on:input={(e) => handleAddFile(e)}
 		/>
 	</div>
+
+	<div class="field">
+		<p><b>Sample objects</b></p>
+		<ul>
+			<li>
+				<a href="/sample-objects/cube.obj">Cube</a>
+			</li>
+			<li>
+				<a href="/sample-objects/diamind.obj">Diamond</a>
+			</li>
+			<li>
+				<a href="/sample-objects/cup.obj">Cup</a>
+			</li>
+		</ul>
+	</div>
 </div>
 
 <style>
