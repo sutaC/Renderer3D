@@ -113,7 +113,10 @@ export default class Shape {
 					const type = line.substring(0, pivot);
 					const data = line.substring(pivot + 1, line.length);
 					if (type === 'v') {
-						const vertices = data.split(' ');
+						const vertices = data
+							.split(' ')
+							.filter((v) => v.length > 0)
+							.map((v) => (v.includes('\r') ? v.substring(0, v.indexOf('\r')) : v));
 						if (vertices.length !== 3) {
 							console.error(vertices);
 							return reject(`Not suported vertices was provided at line ${i}: "${data}"`);
