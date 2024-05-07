@@ -92,7 +92,7 @@ export default class Renderer {
 
 	private drawLine(a: Point, b: Point, color: string = '#FFFFFF') {
 		this.ctx.strokeStyle = color;
-		this.ctx.lineWidth = 2;
+		this.ctx.lineWidth = 1.5;
 		this.ctx.beginPath();
 		this.ctx.moveTo(this.centerX + a[0], this.centerY + a[1]);
 		this.ctx.lineTo(this.centerX + b[0], this.centerY + b[1]);
