@@ -7,6 +7,7 @@
 	let size: number = 100;
 	let originZ: number = 300;
 	let color: string = '#ffffff';
+	let shadow: number = 3;
 
 	let engine: Engine | undefined = undefined;
 
@@ -20,6 +21,7 @@
 	$: engine?.shapeController.size(size);
 	$: engine?.shapeController.originZ(originZ);
 	$: engine?.shapeController.color(color);
+	$: engine?.shapeController.shadow(shadow);
 
 	const handleAddFile = async (event: Event) => {
 		const target = event.target as HTMLInputElement;
@@ -64,6 +66,11 @@
 	<div class="field">
 		<label for="inputColor">Color: </label>
 		<input type="color" name="color" id="inputColor" bind:value={color} />
+	</div>
+
+	<div class="field">
+		<label for="inputShadow">Shadow factor: </label>
+		<input type="number" name="shadow" id="inputShadow" bind:value={shadow} />
 	</div>
 
 	<div class="field">

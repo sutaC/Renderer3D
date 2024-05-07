@@ -31,12 +31,14 @@ export default class Shape {
 	public rotationZ: number = 0;
 
 	public size: number = 1;
+
 	public colorObj: ColorObject = {
 		hex: '#FFFFFF',
 		r: 255,
 		g: 255,
 		b: 255
 	};
+	public shadow: number = 3;
 
 	constructor(points: Point[] = [], triangles: Triangle[] = []) {
 		this.points = points;
@@ -65,6 +67,7 @@ export default class Shape {
 		shape.rotationY = origin.rotationY;
 		shape.rotationZ = origin.rotationZ;
 		shape.colorObj = origin.colorObj;
+		shape.shadow = origin.shadow;
 	}
 
 	public static createShape(name: ShapeNames, size: number = 100, origin?: Shape) {
