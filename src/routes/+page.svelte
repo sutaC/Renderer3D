@@ -87,6 +87,9 @@
 				<a href="/sample-objects/diamind.obj">Diamond</a>
 			</li>
 			<li>
+				<a href="/sample-objects/cup.obj">Cup</a>
+			</li>
+			<li>
 				<a href="/sample-objects/teapot.obj">Teapot</a>
 			</li>
 		</ul>
