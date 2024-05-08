@@ -7,6 +7,9 @@
 	let size: number = 100;
 	let originZ: number = 300;
 	let color: string = '#ffffff';
+	let rotate: boolean = true;
+
+	let rotation: { x: number; y: number; z: number } = { x: 0, y: 0, z: 0 };
 
 	let engine: Engine | undefined = undefined;
 
@@ -14,12 +17,17 @@
 		const canvas = document.querySelector('canvas') as HTMLCanvasElement;
 		engine = new Engine(canvas);
 		engine.run();
+		engine.addListener(() => {
+			if (engine) rotation = engine.shapeController.getRotation();
+		});
 	});
 
-	$: engine?.shapeController.type(selected as ShapeNames);
-	$: engine?.shapeController.size(size);
-	$: engine?.shapeController.originZ(originZ);
-	$: engine?.shapeController.color(color);
+	$: if (engine) engine.shapeController.loadType(selected as ShapeNames);
+	$: if (engine) engine.shapeController.setSize(size);
+	$: if (engine) engine.shapeController.setOriginZ(originZ);
+	$: if (engine) engine.shapeController.setColor(color);
+	$: if (engine && !rotate) engine.shapeController.setRotation(rotation);
+	$: if (engine) engine.rotate = rotate;
 
 	const handleAddFile = async (event: Event) => {
 		const target = event.target as HTMLInputElement;
@@ -28,7 +36,7 @@
 			console.error('No files was provided', file);
 			return;
 		}
-		engine?.shapeController.file(file);
+		engine?.shapeController.loadFile(file);
 		target.value = '';
 	};
 </script>
@@ -64,6 +72,50 @@
 	<div class="field">
 		<label for="inputColor">Color: </label>
 		<input type="color" name="color" id="inputColor" bind:value={color} />
+	</div>
+
+	<div class="field">
+		<p>Rotation</p>
+		<ul>
+			<li>
+				<label for="inputRotationX">X: </label>
+				<input
+					type="number"
+					id="inputRotationX"
+					name="rotationX"
+					min="-360"
+					max="360"
+					bind:value={rotation.x}
+					disabled={rotate}
+				/>
+			</li>
+			<li>
+				<label for="inputRotationY">Y: </label>
+				<input
+					type="number"
+					id="inputRotationY"
+					name="rotationY"
+					min="-360"
+					max="360"
+					bind:value={rotation.y}
+					disabled={rotate}
+				/>
+			</li>
+			<li>
+				<label for="inputRotationZ">Z: </label>
+				<input
+					type="number"
+					id="inputRotationZ"
+					name="rotationZ"
+					min="-360"
+					max="360"
+					bind:value={rotation.z}
+					disabled={rotate}
+				/>
+			</li>
+		</ul>
+		<label for="inputRotate">Rotate: </label>
+		<input type="checkbox" name="rotate" id="inputRotate" bind:checked={rotate} />
 	</div>
 
 	<div class="field">
@@ -124,5 +176,7 @@
 
 	.field {
 		margin: 0.25rem 0;
+		padding: 0.25rem;
+		border: 1px solid #000;
 	}
 </style>

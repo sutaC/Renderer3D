@@ -122,9 +122,9 @@ export default class Renderer {
 	public drawShape(shape: Shape, drawPoints: boolean = false) {
 		// Rotating
 		const rotated: Point[] = [];
-		const rotationX = getRotationProjection(shape.rotationX, 'x');
-		const rotationY = getRotationProjection(shape.rotationY, 'y');
-		const rotationZ = getRotationProjection(shape.rotationZ, 'z');
+		const rotationX = getRotationProjection(shape.rotation.x, 'x');
+		const rotationY = getRotationProjection(shape.rotation.y, 'y');
+		const rotationZ = getRotationProjection(shape.rotation.z, 'z');
 		for (let point of shape.points) {
 			point = matrixMultiplyPoint(rotationX, point);
 			point = matrixMultiplyPoint(rotationY, point);

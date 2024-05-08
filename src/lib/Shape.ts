@@ -26,9 +26,7 @@ export default class Shape {
 
 	public originZ: number = 300;
 
-	public rotationX: number = 0;
-	public rotationY: number = 0;
-	public rotationZ: number = 0;
+	public rotation: { x: number; y: number; z: number } = { x: 0, y: 0, z: 0 };
 
 	public size: number = 1;
 
@@ -62,9 +60,7 @@ export default class Shape {
 	private static copyShapeParams(shape: Shape, origin: Shape): void {
 		shape.size = origin.size;
 		shape.originZ = origin.originZ;
-		shape.rotationX = origin.rotationX;
-		shape.rotationY = origin.rotationY;
-		shape.rotationZ = origin.rotationZ;
+		shape.rotation = origin.rotation;
 		shape.colorObj = origin.colorObj;
 	}
 

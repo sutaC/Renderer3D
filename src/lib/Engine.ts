@@ -5,6 +5,9 @@ export default class Engine {
 	private readonly renderer: Renderer;
 
 	private shp: Shape;
+	private listeners: Function[] = [];
+
+	public rotate: boolean = true;
 
 	constructor(canvas: HTMLCanvasElement) {
 		this.renderer = new Renderer(canvas);
@@ -19,13 +22,24 @@ export default class Engine {
 
 		// update
 
-		this.shp.rotationX += 1;
-		this.shp.rotationY += 1;
-		this.shp.rotationZ += 1;
+		if (this.rotate) {
+			this.shp.rotation.x += 1;
+			this.shp.rotation.y += 1;
+			this.shp.rotation.z += 1;
+			if (this.shp.rotation.x >= 360 || this.shp.rotation.x <= -360) this.shp.rotation.x %= 360;
+			if (this.shp.rotation.y >= 360 || this.shp.rotation.y <= -360) this.shp.rotation.y %= 360;
+			if (this.shp.rotation.z >= 360 || this.shp.rotation.z <= -360) this.shp.rotation.z %= 360;
+		}
 
 		// draw
 
 		this.renderer.drawShape(this.shp);
+
+		// listeners
+
+		for (const listener of this.listeners) {
+			listener();
+		}
 
 		// recall
 
@@ -33,26 +47,39 @@ export default class Engine {
 	}
 
 	public readonly shapeController = {
-		type: (name: ShapeNames): void => {
+		loadType: (name: ShapeNames): void => {
 			this.shp = Shape.createShape(name, 0, this.shp);
 		},
-		file: (file: File): void => {
+		loadFile: (file: File): void => {
 			(async () => {
 				this.shp = await Shape.createShapeFromObjFile(file, this.shp);
 			})();
 		},
-		size: (size: number): void => {
+		setSize: (size: number): void => {
 			if (size < 0) {
 				console.error('Size should be a positive number');
 				return;
 			}
 			this.shp.size = size;
 		},
-		originZ: (pos: number): void => {
+		setOriginZ: (pos: number): void => {
 			this.shp.originZ = pos;
 		},
-		color: (hex: string): void => {
+		setColor: (hex: string): void => {
 			this.shp.setColor(hex);
+		},
+		setRotation: (rotation: { x: number; y: number; z: number }): void => {
+			this.shp.rotation = rotation;
+			if (this.shp.rotation.x >= 360 || this.shp.rotation.x <= -360) this.shp.rotation.x %= 360;
+			if (this.shp.rotation.y >= 360 || this.shp.rotation.y <= -360) this.shp.rotation.y %= 360;
+			if (this.shp.rotation.z >= 360 || this.shp.rotation.z <= -360) this.shp.rotation.z %= 360;
+		},
+		getRotation: (): { x: number; y: number; z: number } => {
+			return this.shp.rotation;
 		}
 	};
+
+	public addListener(fn: Function): void {
+		this.listeners.push(fn);
+	}
 }
