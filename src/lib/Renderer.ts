@@ -143,7 +143,7 @@ export default class Renderer {
 
 		// Is to draw
 		const toDraw: Triangle[] = [];
-		const cameraPosition: Point = [0, 0, -1];
+		const cameraPosition: Point = [0, 0, 0];
 		const colors = new Map<Triangle, string>();
 		for (const triangle of shape.triangles) {
 			const trianglePoints = {
