@@ -24,10 +24,8 @@ export default class Shape {
 	public readonly points: Point[];
 	public readonly triangles: Triangle[];
 
-	public originZ: number = 300;
-
+	public origin: { x: number; y: number; z: number } = { x: 0, y: 0, z: 300 };
 	public rotation: { x: number; y: number; z: number } = { x: 0, y: 0, z: 0 };
-
 	public size: number = 1;
 
 	public colorObj: ColorObject = {
@@ -59,7 +57,7 @@ export default class Shape {
 
 	private static copyShapeParams(shape: Shape, origin: Shape): void {
 		shape.size = origin.size;
-		shape.originZ = origin.originZ;
+		shape.origin = origin.origin;
 		shape.rotation = origin.rotation;
 		shape.colorObj = origin.colorObj;
 	}

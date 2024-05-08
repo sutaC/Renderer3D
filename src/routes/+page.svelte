@@ -5,12 +5,12 @@
 
 	let selected: string = 'cube';
 	let size: number = 100;
-	let originZ: number = 300;
 	let color: string = '#ffffff';
 	let rotate: boolean = true;
 
 	let customObj = false;
 	let rotation: { x: number; y: number; z: number } = { x: 0, y: 0, z: 0 };
+	let position: { x: number; y: number; z: number } = { x: 0, y: 0, z: 300 };
 
 	let engine: Engine | undefined = undefined;
 
@@ -25,9 +25,9 @@
 
 	$: if (engine && !customObj) engine.shapeController.loadType(selected as ShapeNames);
 	$: if (engine) engine.shapeController.setSize(size);
-	$: if (engine) engine.shapeController.setOriginZ(originZ);
 	$: if (engine) engine.shapeController.setColor(color);
 	$: if (engine && !rotate) engine.shapeController.setRotation(rotation);
+	$: if (engine) engine.shapeController.setOrigin(position);
 	$: if (engine) engine.rotate = rotate;
 
 	const handleAddFile = async (event: Event) => {
@@ -41,7 +41,38 @@
 		target.value = '';
 		customObj = true;
 	};
+
+	const handleKeyboard = (event: KeyboardEvent): void => {
+		if (!engine) return;
+		const { key } = event;
+		switch (key) {
+			case 'w':
+				position.z -= 1;
+				break;
+			case 's':
+				position.z += 1;
+				break;
+			case 'a':
+				position.x += 1;
+				break;
+			case 'd':
+				position.x -= 1;
+				break;
+			case 'q':
+				position.y += 1;
+				break;
+			case 'e':
+				position.y -= 1;
+				break;
+
+			default:
+				return;
+		}
+		event.preventDefault();
+	};
 </script>
+
+<svelte:window on:keypress={handleKeyboard} />
 
 <svelte:head>
 	<title>Renderer 3D</title>
@@ -72,8 +103,21 @@
 	</div>
 
 	<div class="field">
-		<label for="inputOriginZ">Distance: </label>
-		<input type="number" name="originZ" id="inputOriginZ" bind:value={originZ} />
+		<p>Position</p>
+		<ul>
+			<li>
+				<label for="inputPositionX">X: </label>
+				<input type="number" id="inputPositionX" name="positionX" bind:value={position.x} />
+			</li>
+			<li>
+				<label for="inputPositionY">Y: </label>
+				<input type="number" id="inputPositionY" name="positionY" bind:value={position.y} />
+			</li>
+			<li>
+				<label for="inputPositionZ">Z: </label>
+				<input type="number" id="inputPositionZ" name="positionZ" bind:value={position.z} />
+			</li>
+		</ul>
 	</div>
 
 	<div class="field">

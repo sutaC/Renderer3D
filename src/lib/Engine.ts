@@ -62,8 +62,8 @@ export default class Engine {
 			}
 			this.shp.size = size;
 		},
-		setOriginZ: (pos: number): void => {
-			this.shp.originZ = pos;
+		setOrigin: (origin: { x: number; y: number; z: number }): void => {
+			this.shp.origin = origin;
 		},
 		setColor: (hex: string): void => {
 			this.shp.setColor(hex);
@@ -73,6 +73,9 @@ export default class Engine {
 			if (this.shp.rotation.x >= 360 || this.shp.rotation.x <= -360) this.shp.rotation.x %= 360;
 			if (this.shp.rotation.y >= 360 || this.shp.rotation.y <= -360) this.shp.rotation.y %= 360;
 			if (this.shp.rotation.z >= 360 || this.shp.rotation.z <= -360) this.shp.rotation.z %= 360;
+		},
+		getOrigin: (): { x: number; y: number; z: number } => {
+			return this.shp.origin;
 		},
 		getRotation: (): { x: number; y: number; z: number } => {
 			return this.shp.rotation;

@@ -120,27 +120,36 @@ export default class Renderer {
 	}
 
 	public drawShape(shape: Shape, drawPoints: boolean = false) {
-		// Rotating
-		const rotated: Point[] = [];
+		// Transforming
+		const transformed: Point[] = [];
 		const rotationX = getRotationProjection(shape.rotation.x, 'x');
 		const rotationY = getRotationProjection(shape.rotation.y, 'y');
 		const rotationZ = getRotationProjection(shape.rotation.z, 'z');
+		const translateX = shape.origin.x / shape.size;
+		const translateY = shape.origin.y / shape.size;
+		const translateZ = shape.origin.z / shape.size;
 		for (let point of shape.points) {
+			// Rotating
 			point = matrixMultiplyPoint(rotationX, point);
 			point = matrixMultiplyPoint(rotationY, point);
 			point = matrixMultiplyPoint(rotationZ, point);
-			rotated.push(point);
+			// Translating
+			point[0] += translateX;
+			point[1] += translateY;
+			point[2] += translateZ;
+			// Transformed elements
+			transformed.push(point);
 		}
 
 		// Is to draw
 		const toDraw: Triangle[] = [];
-		const cameraPosition: Point = [0, 0, shape.originZ / shape.size];
+		const cameraPosition: Point = [0, 0, -1];
 		const colors = new Map<Triangle, string>();
 		for (const triangle of shape.triangles) {
 			const trianglePoints = {
-				a: rotated[triangle[0]],
-				b: rotated[triangle[1]],
-				c: rotated[triangle[2]]
+				a: transformed[triangle[0]],
+				b: transformed[triangle[1]],
+				c: transformed[triangle[2]]
 			};
 			const normal = calculateNormal(trianglePoints.a, trianglePoints.b, trianglePoints.c);
 			const dotPoint =
@@ -149,7 +158,7 @@ export default class Renderer {
 				normal[2] * (trianglePoints.a[2] - cameraPosition[2]);
 			if (dotPoint > 0.0) continue;
 			// Ilumination
-			const lightDirection: Point = [0, 0, 1];
+			const lightDirection: Point = [0, 0, -1];
 			const luminationFactor =
 				normal[0] * lightDirection[0] +
 				normal[1] * lightDirection[1] +
@@ -164,9 +173,8 @@ export default class Renderer {
 
 		// Projecting
 		const projected: Point[] = [];
-		const distance = shape.originZ / shape.size;
-		for (let point of rotated) {
-			const z = 1 / (distance - point[2]);
+		for (let point of transformed) {
+			const z = 1 / point[2];
 			const projection: Point[] = [
 				[z, 0, 0],
 				[0, z, 0],
@@ -182,7 +190,7 @@ export default class Renderer {
 		toDraw.sort((a, b) => {
 			const zA = (projected[a[0]][2] + projected[a[1]][2] + projected[a[2]][2]) / 3;
 			const zB = (projected[b[0]][2] + projected[b[1]][2] + projected[b[2]][2]) / 3;
-			return zA - zB;
+			return zB - zA;
 		});
 
 		// Drawing
