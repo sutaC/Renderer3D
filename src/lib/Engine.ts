@@ -53,9 +53,6 @@ export default class Engine {
 		},
 		color: (hex: string): void => {
 			this.shp.setColor(hex);
-		},
-		shadow: (shadow: number): void => {
-			this.shp.shadow = shadow;
 		}
 	};
 }
