@@ -23,7 +23,13 @@
 		});
 	});
 
-	$: if (engine && !customObj) engine.shapeController.loadType(selected as ShapeNames);
+	$: if (engine && !customObj) {
+		if (selected === 'custom') {
+			// Pass
+		} else {
+			engine.shapeController.loadType(selected as ShapeNames);
+		}
+	}
 	$: if (engine) engine.shapeController.setSize(size);
 	$: if (engine) engine.shapeController.setColor(color);
 	$: if (engine && !rotate) engine.shapeController.setRotation(rotation);
@@ -94,7 +100,37 @@
 			<option value="cube">Cube</option>
 			<option value="prism">Prism</option>
 			<option value="prismSqB">Prism / square base</option>
+			<option value="custom">Custom</option>
 		</select>
+
+		{#if selected === 'custom'}
+			<p><b>Custom object</b></p>
+
+			<label for="inputObjFile">Obj file: </label>
+			<input
+				type="file"
+				name="objFile"
+				id="inputObjFile"
+				accept=".obj"
+				on:input={(e) => handleAddFile(e)}
+			/>
+
+			<p><b>Sample objects</b></p>
+			<ul>
+				<li>
+					<a href="/sample-objects/cube.obj">Cube</a>
+				</li>
+				<li>
+					<a href="/sample-objects/diamind.obj">Diamond</a>
+				</li>
+				<li>
+					<a href="/sample-objects/cup.obj">Cup</a>
+				</li>
+				<li>
+					<a href="/sample-objects/teapot.obj">Teapot</a>
+				</li>
+			</ul>
+		{/if}
 	</div>
 
 	<div class="field">
@@ -167,35 +203,6 @@
 		</ul>
 		<label for="inputRotate">Rotate: </label>
 		<input type="checkbox" name="rotate" id="inputRotate" bind:checked={rotate} />
-	</div>
-
-	<div class="field">
-		<label for="inputObjFile">Obj file: </label>
-		<input
-			type="file"
-			name="objFile"
-			id="inputObjFile"
-			accept=".obj"
-			on:input={(e) => handleAddFile(e)}
-		/>
-	</div>
-
-	<div class="field">
-		<p><b>Sample objects</b></p>
-		<ul>
-			<li>
-				<a href="/sample-objects/cube.obj">Cube</a>
-			</li>
-			<li>
-				<a href="/sample-objects/diamind.obj">Diamond</a>
-			</li>
-			<li>
-				<a href="/sample-objects/cup.obj">Cup</a>
-			</li>
-			<li>
-				<a href="/sample-objects/teapot.obj">Teapot</a>
-			</li>
-		</ul>
 	</div>
 </div>
 
