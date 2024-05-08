@@ -169,7 +169,8 @@ export default class Renderer {
 			const z = 1 / (distance - point[2]);
 			const projection: Point[] = [
 				[z, 0, 0],
-				[0, z, 0]
+				[0, z, 0],
+				[0, 0, 1]
 			];
 			point = matrixMultiplyPoint(projection, point);
 			scalePoint(point, shape.size);
@@ -181,7 +182,7 @@ export default class Renderer {
 		toDraw.sort((a, b) => {
 			const zA = (projected[a[0]][2] + projected[a[1]][2] + projected[a[2]][2]) / 3;
 			const zB = (projected[b[0]][2] + projected[b[1]][2] + projected[b[2]][2]) / 3;
-			return zB - zA;
+			return zA - zB;
 		});
 
 		// Drawing
