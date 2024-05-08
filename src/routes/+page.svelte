@@ -9,6 +9,7 @@
 	let color: string = '#ffffff';
 	let rotate: boolean = true;
 
+	let customObj = false;
 	let rotation: { x: number; y: number; z: number } = { x: 0, y: 0, z: 0 };
 
 	let engine: Engine | undefined = undefined;
@@ -22,7 +23,7 @@
 		});
 	});
 
-	$: if (engine) engine.shapeController.loadType(selected as ShapeNames);
+	$: if (engine && !customObj) engine.shapeController.loadType(selected as ShapeNames);
 	$: if (engine) engine.shapeController.setSize(size);
 	$: if (engine) engine.shapeController.setOriginZ(originZ);
 	$: if (engine) engine.shapeController.setColor(color);
@@ -38,6 +39,7 @@
 		}
 		engine?.shapeController.loadFile(file);
 		target.value = '';
+		customObj = true;
 	};
 </script>
 
@@ -52,7 +54,12 @@
 <div class="controller">
 	<div class="field">
 		<label for="selectShape">Shape: </label>
-		<select name="shape" id="selectShape" bind:value={selected}>
+		<select
+			name="shape"
+			id="selectShape"
+			bind:value={selected}
+			on:input={() => (customObj = false)}
+		>
 			<option value="cube">Cube</option>
 			<option value="prism">Prism</option>
 			<option value="prismSqB">Prism / square base</option>
