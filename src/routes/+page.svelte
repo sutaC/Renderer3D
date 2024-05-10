@@ -47,47 +47,9 @@
 		target.value = '';
 		customObj = true;
 	};
-
-	const handleKeyboard = (event: KeyboardEvent): void => {
-		if (!engine) return;
-		event.preventDefault();
-		const { key } = event;
-		const move = 0.1;
-
-		switch (key) {
-			case 's':
-				engine.moveBackward();
-				break;
-			case 'w':
-				engine.moveForward();
-				break;
-			case 'a':
-				engine.yaw -= 1;
-				break;
-			case 'd':
-				engine.yaw += 1;
-				break;
-			case 'j':
-				engine.cameraPosition[0] -= move;
-				break;
-			case 'l':
-				engine.cameraPosition[0] += move;
-				break;
-			case 'i':
-				engine.cameraPosition[1] += move;
-				break;
-			case 'k':
-				engine.cameraPosition[1] -= move;
-				break;
-
-			default:
-				return;
-		}
-		// event.preventDefault();
-	};
 </script>
 
-<svelte:window on:keypress={handleKeyboard} />
+<svelte:window />
 
 <svelte:head>
 	<title>Renderer 3D</title>

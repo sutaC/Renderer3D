@@ -1,11 +1,15 @@
+import Input from './Input';
 import Renderer, { type Camera } from './Renderer';
 import Shape, { type ShapeNames } from './Shape';
 import type { Vector } from './Vector';
 import * as vec from './Vector';
 
 export default class Engine {
+	// Modules
 	private readonly renderer: Renderer;
+	private readonly input: Input;
 
+	// Properties
 	private shp: Shape;
 	private listeners: Function[] = [];
 
@@ -19,17 +23,44 @@ export default class Engine {
 
 	constructor(canvas: HTMLCanvasElement) {
 		this.renderer = new Renderer(canvas, this.camera);
+		this.input = new Input();
 
 		// start
 
 		this.shp = Shape.createShape('cube', 100);
 	}
 
-	public run(): void {
-		this.renderer.clear();
+	// # abstract
+	private update() {
+		// Input handling
+		const move = 0.1;
 
-		// update
+		if (this.input.isKeyHeld('s')) {
+			this.moveBackward();
+		}
+		if (this.input.isKeyHeld('w')) {
+			this.moveForward();
+		}
+		if (this.input.isKeyHeld('a')) {
+			this.camera.yaw -= 1;
+		}
+		if (this.input.isKeyHeld('d')) {
+			this.camera.yaw += 1;
+		}
+		if (this.input.isKeyHeld('j')) {
+			this.camera.position[0] -= move;
+		}
+		if (this.input.isKeyHeld('l')) {
+			this.camera.position[0] += move;
+		}
+		if (this.input.isKeyHeld('i')) {
+			this.camera.position[1] += move;
+		}
+		if (this.input.isKeyHeld('k')) {
+			this.camera.position[1] -= move;
+		}
 
+		// Rotation
 		if (this.rotate) {
 			this.shp.rotation.x += 1;
 			this.shp.rotation.y += 1;
@@ -38,16 +69,23 @@ export default class Engine {
 			if (this.shp.rotation.y >= 360 || this.shp.rotation.y <= -360) this.shp.rotation.y %= 360;
 			if (this.shp.rotation.z >= 360 || this.shp.rotation.z <= -360) this.shp.rotation.z %= 360;
 		}
+	}
 
-		// draw
+	public run(): void {
+		// update
 
-		this.renderer.drawShape(this.shp);
+		this.update();
 
 		// listeners
 
 		for (const listener of this.listeners) {
 			listener();
 		}
+
+		// draw
+
+		this.renderer.clear();
+		this.renderer.drawShape(this.shp);
 
 		// recall
 
@@ -94,28 +132,14 @@ export default class Engine {
 		this.listeners.push(fn);
 	}
 
-	// Getters / Setters
+	// Actions
 
-	public get cameraPosition() {
-		return this.camera.position;
-	}
-
-	public get yaw() {
-		return this.camera.yaw;
-	}
-
-	public set yaw(yaw: number) {
-		this.camera.yaw = yaw;
-	}
-
-	// Move
-
-	public moveForward(): void {
+	private moveForward(): void {
 		const move: Vector = vec.vectorMultiply(this.camera.lookDirection, 0.1);
 		this.camera.position = vec.vectorAdd(this.camera.position, move);
 	}
 
-	public moveBackward(): void {
+	private moveBackward(): void {
 		const move: Vector = vec.vectorMultiply(this.camera.lookDirection, 0.1);
 		this.camera.position = vec.vectorSubtract(this.camera.position, move);
 	}
