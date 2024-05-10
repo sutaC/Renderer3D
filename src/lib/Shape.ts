@@ -1,6 +1,7 @@
 import cubeObj from './shapes/cube.json';
 import prismObj from './shapes/prism.json';
 import prismSqBObj from './shapes/prismSqB.json';
+import { type Vector } from './Vector';
 
 interface ShapeObject {
 	name: string;
@@ -15,13 +16,12 @@ interface ColorObject {
 	b: number;
 }
 
-export type Point = [x: number, y: number, z: number];
 export type Triangle = [aIdx: number, bIdx: number, cIdx: number];
 
 export type ShapeNames = 'cube' | 'prism' | 'prismSqB';
 
 export default class Shape {
-	public readonly points: Point[];
+	public readonly points: Vector[];
 	public readonly triangles: Triangle[];
 
 	public origin: { x: number; y: number; z: number } = { x: 0, y: 0, z: 300 };
@@ -35,7 +35,7 @@ export default class Shape {
 		b: 255
 	};
 
-	constructor(points: Point[] = [], triangles: Triangle[] = []) {
+	constructor(points: Vector[] = [], triangles: Triangle[] = []) {
 		this.points = points;
 		this.triangles = triangles;
 	}
@@ -75,7 +75,7 @@ export default class Shape {
 				obj = prismSqBObj;
 				break;
 		}
-		const shp = new Shape(obj.points as Point[], obj.triangles as Triangle[]);
+		const shp = new Shape(obj.points as Vector[], obj.triangles as Triangle[]);
 		shp.size = size;
 		if (origin) {
 			this.copyShapeParams(shp, origin);
@@ -119,7 +119,7 @@ export default class Shape {
 						const x = Number(vertices[0]);
 						const y = Number(vertices[1]);
 						const z = Number(vertices[2]);
-						const point: Point = [x, y, z];
+						const point: Vector = [x, y, z];
 						shape.points.push(point);
 					} else if (type === 'f') {
 						const faces = data.split(' ');

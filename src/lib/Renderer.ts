@@ -1,73 +1,6 @@
-import Shape, { type Point, type Triangle } from './Shape';
-
-function matrixMultiplyPoint(matrix: Point[], point: Point): Point {
-	if (matrix.length > 3) {
-		throw new Error('Projection length cannot be longer than point 0.5 (3)');
-	}
-
-	const result: Point = [0, 0, 0];
-	for (let i = 0; i < matrix.length; i++) {
-		for (let j = 0; j < matrix.length; j++) {
-			result[i] += matrix[i][j] * point[j];
-		}
-	}
-	return result;
-}
-
-function getRotationProjection(angle: number, axis: 'x' | 'y' | 'z' = 'z'): Point[] {
-	const radians = angle * (Math.PI / 180);
-
-	switch (axis) {
-		case 'x':
-			return [
-				[1, 0, 0],
-				[0, Math.cos(radians), -Math.sin(radians)],
-				[0, Math.sin(radians), Math.cos(radians)]
-			];
-		case 'y':
-			return [
-				[Math.cos(radians), 0, -Math.sin(radians)],
-				[0, 1, 0],
-				[Math.sin(radians), 0, Math.cos(radians)]
-			];
-		case 'z':
-			return [
-				[Math.cos(radians), -Math.sin(radians), 0],
-				[Math.sin(radians), Math.cos(radians), 0],
-				[0, 0, 1]
-			];
-	}
-}
-
-function scalePoint(point: Point, multiplier: number) {
-	for (let i = 0; i < point.length; i++) {
-		point[i] *= multiplier;
-	}
-}
-
-function calculateNormal(a: Point, b: Point, c: Point): Point {
-	const normal: Point = [0, 0, 0],
-		lineA: Point = [0, 0, 0],
-		lineB: Point = [0, 0, 0];
-
-	lineA[0] = b[0] - a[0];
-	lineA[1] = b[1] - a[1];
-	lineA[2] = b[2] - a[2];
-
-	lineB[0] = c[0] - a[0];
-	lineB[1] = c[1] - a[1];
-	lineB[2] = c[2] - a[2];
-
-	normal[0] = lineA[1] * lineB[2] - lineA[2] * lineB[1];
-	normal[1] = lineA[2] * lineB[0] - lineA[0] * lineB[2];
-	normal[2] = lineA[0] * lineB[1] - lineA[1] * lineB[0];
-
-	const l = Math.sqrt(normal[0] ** 2 + normal[1] ** 2 + normal[2] ** 2);
-	normal[0] /= l;
-	normal[1] /= l;
-	normal[2] /= l;
-	return normal;
-}
+import Shape, { type Triangle } from './Shape';
+import { type Vector } from './Vector';
+import * as vec from './Vector';
 
 export default class Renderer {
 	private canvas: HTMLCanvasElement;
@@ -82,7 +15,7 @@ export default class Renderer {
 		this.centerY = this.canvas.height / 2;
 	}
 
-	private drawPoint(point: Point): void {
+	private drawPoint(point: Vector): void {
 		this.ctx.fillStyle = '#FFFFFF';
 		this.ctx.beginPath();
 		this.ctx.arc(this.centerX + point[0], this.centerY + point[1], 3, 0, Math.PI * 2);
@@ -90,7 +23,7 @@ export default class Renderer {
 		this.ctx.closePath();
 	}
 
-	private drawLine(a: Point, b: Point, color: string = '#FFFFFF') {
+	private drawLine(a: Vector, b: Vector, color: string = '#FFFFFF') {
 		this.ctx.strokeStyle = color;
 		this.ctx.lineWidth = 1.5;
 		this.ctx.beginPath();
@@ -100,13 +33,13 @@ export default class Renderer {
 		this.ctx.closePath();
 	}
 
-	private drawTriangle(a: Point, b: Point, c: Point, color?: string): void {
+	private drawTriangle(a: Vector, b: Vector, c: Vector, color?: string): void {
 		this.drawLine(a, b, color);
 		this.drawLine(a, c, color);
 		this.drawLine(b, c, color);
 	}
 
-	private fillTriangle(a: Point, b: Point, c: Point, color: string = '#FFFFFF'): void {
+	private fillTriangle(a: Vector, b: Vector, c: Vector, color: string = '#FFFFFF'): void {
 		this.ctx.fillStyle = color;
 		this.ctx.beginPath();
 		this.ctx.moveTo(this.centerX + a[0], this.centerY + a[1]);
@@ -121,18 +54,16 @@ export default class Renderer {
 
 	public drawShape(shape: Shape, drawPoints: boolean = false) {
 		// Transforming
-		const transformed: Point[] = [];
-		const rotationX = getRotationProjection(shape.rotation.x, 'x');
-		const rotationY = getRotationProjection(shape.rotation.y, 'y');
-		const rotationZ = getRotationProjection(shape.rotation.z, 'z');
+		const transformed: Vector[] = [];
+
 		const translateX = shape.origin.x / shape.size;
 		const translateY = shape.origin.y / shape.size;
 		const translateZ = shape.origin.z / shape.size;
 		for (let point of shape.points) {
 			// Rotating
-			point = matrixMultiplyPoint(rotationX, point);
-			point = matrixMultiplyPoint(rotationY, point);
-			point = matrixMultiplyPoint(rotationZ, point);
+			point = vec.vectorRotate(point, shape.rotation.x, 'x');
+			point = vec.vectorRotate(point, shape.rotation.y, 'y');
+			point = vec.vectorRotate(point, shape.rotation.z, 'z');
 			// Translating
 			point[0] += translateX;
 			point[1] += translateY;
@@ -143,7 +74,7 @@ export default class Renderer {
 
 		// Is to draw
 		const toDraw: Triangle[] = [];
-		const cameraPosition: Point = [0, 0, 0];
+		const cameraPosition: Vector = [0, 0, 0];
 		const colors = new Map<Triangle, string>();
 		for (const triangle of shape.triangles) {
 			const trianglePoints = {
@@ -151,14 +82,14 @@ export default class Renderer {
 				b: transformed[triangle[1]],
 				c: transformed[triangle[2]]
 			};
-			const normal = calculateNormal(trianglePoints.a, trianglePoints.b, trianglePoints.c);
+			const normal = vec.calculateNormal(trianglePoints.a, trianglePoints.b, trianglePoints.c);
 			const dotPoint =
 				normal[0] * (trianglePoints.a[0] - cameraPosition[0]) +
 				normal[1] * (trianglePoints.a[1] - cameraPosition[1]) +
 				normal[2] * (trianglePoints.a[2] - cameraPosition[2]);
 			if (dotPoint > 0.0) continue;
 			// Ilumination
-			const lightDirection: Point = [0, 0, -1];
+			const lightDirection: Vector = [0, 0, -1];
 			const luminationFactor =
 				normal[0] * lightDirection[0] +
 				normal[1] * lightDirection[1] +
@@ -172,16 +103,10 @@ export default class Renderer {
 		}
 
 		// Projecting
-		const projected: Point[] = [];
+		const projected: Vector[] = [];
 		for (let point of transformed) {
-			const z = 1 / point[2];
-			const projection: Point[] = [
-				[z, 0, 0],
-				[0, z, 0],
-				[0, 0, 1]
-			];
-			point = matrixMultiplyPoint(projection, point);
-			scalePoint(point, shape.size);
+			point = vec.vectorProject2d(point);
+			point = vec.vectorScale(point, shape.size);
 			projected.push(point);
 			if (drawPoints) this.drawPoint(point);
 		}
