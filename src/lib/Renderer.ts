@@ -8,12 +8,28 @@ export default class Renderer {
 	private readonly centerX: number;
 	private readonly centerY: number;
 
+	public cameraPosition: Vector = [0, 0, 0];
+
 	constructor(canvas: HTMLCanvasElement) {
 		this.canvas = canvas;
 		this.ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 		this.centerX = this.canvas.width / 2;
 		this.centerY = this.canvas.height / 2;
 	}
+
+	// Calculations
+
+	private calculateColor(normal: Vector, shape: Shape): string {
+		const lightDirection: Vector = [0, 0, -1];
+		const luminationFactor =
+			normal[0] * lightDirection[0] + normal[1] * lightDirection[1] + normal[2] * lightDirection[2];
+		const r = Math.floor(shape.colorObj.r * luminationFactor);
+		const g = Math.floor(shape.colorObj.g * luminationFactor);
+		const b = Math.floor(shape.colorObj.b * luminationFactor);
+		return `rgb(${r} ${g} ${b})`;
+	}
+
+	// Drawing
 
 	private drawPoint(point: Vector): void {
 		this.ctx.fillStyle = '#FFFFFF';
@@ -52,7 +68,7 @@ export default class Renderer {
 		this.drawTriangle(a, b, c, color);
 	}
 
-	public drawShape(shape: Shape, drawPoints: boolean = false) {
+	public drawShape(shape: Shape) {
 		// Transforming
 		const transformed: Vector[] = [];
 
@@ -72,34 +88,24 @@ export default class Renderer {
 			transformed.push(point);
 		}
 
-		// Is to draw
-		const toDraw: Triangle[] = [];
-		const cameraPosition: Vector = [0, 0, 0];
-		const colors = new Map<Triangle, string>();
+		// Selecting triangles
+		const visibleTriangles: Triangle[] = [];
+		const triangleColors = new Map<Triangle, string>();
 		for (const triangle of shape.triangles) {
-			const trianglePoints = {
-				a: transformed[triangle[0]],
-				b: transformed[triangle[1]],
-				c: transformed[triangle[2]]
-			};
-			const normal = vec.calculateNormal(trianglePoints.a, trianglePoints.b, trianglePoints.c);
-			const dotPoint =
-				normal[0] * (trianglePoints.a[0] - cameraPosition[0]) +
-				normal[1] * (trianglePoints.a[1] - cameraPosition[1]) +
-				normal[2] * (trianglePoints.a[2] - cameraPosition[2]);
+			const normal = vec.calculateNormal(
+				transformed[triangle[0]],
+				transformed[triangle[1]],
+				transformed[triangle[2]]
+			);
+			const dotPoint = vec.calculateDotPoint(
+				vec.vectorSubtract(transformed[triangle[0]], this.cameraPosition),
+				normal
+			);
 			if (dotPoint > 0.0) continue;
 			// Ilumination
-			const lightDirection: Vector = [0, 0, -1];
-			const luminationFactor =
-				normal[0] * lightDirection[0] +
-				normal[1] * lightDirection[1] +
-				normal[2] * lightDirection[2];
-			const r = Math.floor(shape.colorObj.r * luminationFactor);
-			const g = Math.floor(shape.colorObj.g * luminationFactor);
-			const b = Math.floor(shape.colorObj.b * luminationFactor);
-			const color = `rgb(${r} ${g} ${b})`;
-			colors.set(triangle, color);
-			toDraw.push(triangle);
+			const color = this.calculateColor(normal, shape);
+			triangleColors.set(triangle, color);
+			visibleTriangles.push(triangle);
 		}
 
 		// Projecting
@@ -108,19 +114,18 @@ export default class Renderer {
 			point = vec.vectorProject2d(point);
 			point = vec.vectorScale(point, shape.size);
 			projected.push(point);
-			if (drawPoints) this.drawPoint(point);
 		}
 
 		// Painters algorithm for perspective
-		toDraw.sort((a, b) => {
-			const zA = (projected[a[0]][2] + projected[a[1]][2] + projected[a[2]][2]) / 3;
-			const zB = (projected[b[0]][2] + projected[b[1]][2] + projected[b[2]][2]) / 3;
+		visibleTriangles.sort((a, b) => {
+			const zA = projected[a[0]][2] + projected[a[1]][2] + projected[a[2]][2];
+			const zB = projected[b[0]][2] + projected[b[1]][2] + projected[b[2]][2];
 			return zB - zA;
 		});
 
 		// Drawing
-		for (const triangle of toDraw) {
-			const color = colors.get(triangle) || 'red';
+		for (const triangle of visibleTriangles) {
+			const color = triangleColors.get(triangle) || 'red';
 			this.fillTriangle(
 				projected[triangle[0]],
 				projected[triangle[1]],

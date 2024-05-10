@@ -49,6 +49,10 @@ export function calculateNormal(a: Vector, b: Vector, c: Vector): Vector {
 	return vectorNormalise(normal);
 }
 
+export function calculateDotPoint(vector: Vector, normal: Vector) {
+	return normal[0] * vector[0] + normal[1] * vector[1] + normal[2] * vector[2];
+}
+
 // Translations
 
 export function vectorRotate(vector: Vector, angle: number, axis: 'x' | 'y' | 'z'): Vector {
