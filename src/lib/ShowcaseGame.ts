@@ -70,6 +70,9 @@ export default class ShowcaseGame extends Engine {
 		for (const listener of this.updateListeners) {
 			listener();
 		}
+
+		// Shape reload
+		this.shapes[0] = this.shp;
 	}
 
 	// Exposed controll
