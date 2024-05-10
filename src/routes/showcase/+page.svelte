@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { ShapeNames } from '$lib/Engine/Shape';
 	import Showcase from '$lib/Showcase';
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 
 	let selected: string = 'cube';
 	let size: number = 100;
@@ -12,15 +12,21 @@
 	let rotation: { x: number; y: number; z: number } = { x: 0, y: 0, z: 0 };
 	let position: { x: number; y: number; z: number } = { x: 0, y: 0, z: 300 };
 
-	let game: Showcase | undefined = undefined;
+	let showcase: Showcase | undefined = undefined;
 
 	onMount(() => {
 		const canvas = document.querySelector('canvas') as HTMLCanvasElement;
-		game = new Showcase(canvas);
-		game.run();
-		game.addUpdateListener(() => {
-			if (game) {
-				rotation = game.shapeController.getRotation();
+		showcase = new Showcase(canvas);
+		showcase.onready = (shcs) => {
+			shcs.run();
+			console.log('Showcase is running!');
+		};
+		showcase.onfail = (error) => {
+			console.error('Error ocurred while starting showcase: ', error);
+		};
+		showcase.addUpdateListener(() => {
+			if (showcase) {
+				rotation = showcase.shapeController.getRotation();
 				rotation.x = Math.round(rotation.x);
 				rotation.y = Math.round(rotation.y);
 				rotation.z = Math.round(rotation.z);
@@ -28,16 +34,25 @@
 		});
 	});
 
-	$: if (game && !customObj) {
+	onDestroy(() => {
+		if (showcase) {
+			// Engine running
+			if (showcase.getState() === 3) {
+				showcase.stop();
+			}
+		}
+	});
+
+	$: if (showcase && !customObj) {
 		if (selected !== 'custom') {
-			game.shapeController.loadType(selected as ShapeNames);
+			showcase.shapeController.loadType(selected as ShapeNames);
 		}
 	}
-	$: if (game) game.shapeController.setSize(size);
-	$: if (game) game.shapeController.setColor(color);
-	$: if (game && !rotate) game.shapeController.setRotation(rotation);
-	$: if (game) game.shapeController.setOrigin(position);
-	$: if (game) game.rotate = rotate;
+	$: if (showcase) showcase.shapeController.setSize(size);
+	$: if (showcase) showcase.shapeController.setColor(color);
+	$: if (showcase && !rotate) showcase.shapeController.setRotation(rotation);
+	$: if (showcase) showcase.shapeController.setOrigin(position);
+	$: if (showcase) showcase.rotate = rotate;
 
 	const handleAddFile = async (event: Event) => {
 		const target = event.target as HTMLInputElement;
@@ -46,7 +61,7 @@
 			console.error('No files was provided', file);
 			return;
 		}
-		game?.shapeController.loadFile(file);
+		showcase?.shapeController.loadFile(file);
 		target.value = '';
 		customObj = true;
 	};

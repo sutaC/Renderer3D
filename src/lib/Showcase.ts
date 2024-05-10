@@ -4,14 +4,16 @@ import Shape, { type ShapeNames } from './Engine/Shape';
 export default class Showcase extends Engine {
 	// Private
 	private updateListeners: Function[] = [];
-	private shp: Shape;
+	private shp: Shape = new Shape();
 
 	// Public
 	public rotate: boolean = true;
 
 	constructor(canvas: HTMLCanvasElement) {
 		super(canvas);
-		// Start
+	}
+
+	protected async start(): Promise<void> {
 		this.shp = Shape.createShape('cube', 100);
 		this.shapes.push(this.shp);
 	}

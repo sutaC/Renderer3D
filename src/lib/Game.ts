@@ -1,9 +1,15 @@
 import Engine from './Engine/Engine';
 import * as vec from '$lib/Engine/Vector';
+import Shape from './Engine/Shape';
 
 export default class Game extends Engine {
 	constructor(canvas: HTMLCanvasElement) {
 		super(canvas);
+	}
+
+	protected async start(): Promise<void> {
+		const shp = await Shape.loadShape('/sample-objects/diamond.obj');
+		this.shapes.push(shp);
 	}
 
 	protected update(deltaTime: number): void {
@@ -42,7 +48,5 @@ export default class Game extends Engine {
 			// Move down
 			this.camera.position[1] -= move;
 		}
-
-		// TODO
 	}
 }

@@ -1,11 +1,28 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import Game from '$lib/Game';
+
+	let game: Game | undefined = undefined;
 
 	onMount(() => {
 		const canvas = document.querySelector('canvas') as HTMLCanvasElement;
-		const game = new Game(canvas);
-		game.run();
+		game = new Game(canvas);
+		game.onready = (gm) => {
+			gm.run();
+			console.log('Game is running!');
+		};
+		game.onfail = (error) => {
+			console.error('Error ocurred while starting game: ', error);
+		};
+	});
+
+	onDestroy(() => {
+		if (game) {
+			// Engine running
+			if (game.getState() === 3) {
+				game.stop();
+			}
+		}
 	});
 </script>
 
