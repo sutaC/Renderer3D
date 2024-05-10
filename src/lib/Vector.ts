@@ -26,12 +26,12 @@ export function vectorNormalise(vector: Vector): Vector {
 // Calculations
 
 export function vectorMatrixMultiply(matrix: Vector[], vector: Vector): Vector {
-	if (matrix.length > 3) {
-		throw new Error('Projection length cannot be longer than vector size (3)');
+	if (matrix.length !== vector.length) {
+		throw new Error('Matrix length must be be the same size as vector length');
 	}
 	const result: Vector = [0, 0, 0];
-	for (let i = 0; i < matrix.length; i++) {
-		for (let j = 0; j < matrix.length; j++) {
+	for (let i = 0; i < vector.length; i++) {
+		for (let j = 0; j < vector.length; j++) {
 			result[i] += matrix[i][j] * vector[j];
 		}
 	}
