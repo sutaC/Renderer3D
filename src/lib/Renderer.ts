@@ -34,7 +34,7 @@ export default class Renderer {
 	private drawPoint(point: Vector): void {
 		this.ctx.fillStyle = '#FFFFFF';
 		this.ctx.beginPath();
-		this.ctx.arc(this.centerX + point[0], this.centerY + point[1], 3, 0, Math.PI * 2);
+		this.ctx.arc(this.centerX + point[0], this.centerY - point[1], 3, 0, Math.PI * 2);
 		this.ctx.fill();
 		this.ctx.closePath();
 	}
@@ -43,8 +43,8 @@ export default class Renderer {
 		this.ctx.strokeStyle = color;
 		this.ctx.lineWidth = 1.5;
 		this.ctx.beginPath();
-		this.ctx.moveTo(this.centerX + a[0], this.centerY + a[1]);
-		this.ctx.lineTo(this.centerX + b[0], this.centerY + b[1]);
+		this.ctx.moveTo(this.centerX + a[0], this.centerY - a[1]);
+		this.ctx.lineTo(this.centerX + b[0], this.centerY - b[1]);
 		this.ctx.stroke();
 		this.ctx.closePath();
 	}
@@ -58,11 +58,11 @@ export default class Renderer {
 	private fillTriangle(a: Vector, b: Vector, c: Vector, color: string = '#FFFFFF'): void {
 		this.ctx.fillStyle = color;
 		this.ctx.beginPath();
-		this.ctx.moveTo(this.centerX + a[0], this.centerY + a[1]);
-		this.ctx.lineTo(this.centerX + b[0], this.centerY + b[1]);
-		this.ctx.lineTo(this.centerX + c[0], this.centerY + c[1]);
-		this.ctx.moveTo(this.centerX + b[0], this.centerY + b[1]);
-		this.ctx.lineTo(this.centerX + c[0], this.centerY + c[1]);
+		this.ctx.moveTo(this.centerX + a[0], this.centerY - a[1]);
+		this.ctx.lineTo(this.centerX + b[0], this.centerY - b[1]);
+		this.ctx.lineTo(this.centerX + c[0], this.centerY - c[1]);
+		this.ctx.moveTo(this.centerX + b[0], this.centerY - b[1]);
+		this.ctx.lineTo(this.centerX + c[0], this.centerY - c[1]);
 		this.ctx.fill();
 		this.ctx.closePath();
 		this.drawTriangle(a, b, c, color);
