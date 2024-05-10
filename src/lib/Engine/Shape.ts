@@ -83,7 +83,7 @@ export default class Shape {
 		return shp;
 	}
 
-	public static parseShape(text: string): Shape {
+	public static parseToShape(text: string): Shape {
 		const shape = new Shape();
 		const read = text.split('\n');
 		for (let i = 0; i < read.length; i++) {
@@ -141,7 +141,7 @@ export default class Shape {
 					return reject('Error ocurred while reading file');
 				}
 				try {
-					const shape: Shape = this.parseShape(result as string);
+					const shape: Shape = this.parseToShape(result as string);
 					if (origin) {
 						this.copyShapeParams(shape, origin);
 					}
@@ -152,5 +152,11 @@ export default class Shape {
 			});
 			fileReader.readAsText(file);
 		});
+	}
+
+	public static async loadShape(url: string): Promise<Shape> {
+		const result = await fetch(url);
+		const data = await result.text();
+		return this.parseToShape(data);
 	}
 }
