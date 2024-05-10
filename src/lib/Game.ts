@@ -8,7 +8,9 @@ export default class Game extends Engine {
 	}
 
 	protected async start(): Promise<void> {
-		const shp = await Shape.loadShape('/sample-objects/diamond.obj');
+		const shp = await Shape.loadShape('/sample-objects/teapot.obj');
+		shp.setColor('#FFFF00');
+		shp.origin.z = 2000;
 		this.shapes.push(shp);
 	}
 

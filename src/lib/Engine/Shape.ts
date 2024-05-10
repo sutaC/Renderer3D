@@ -154,12 +154,14 @@ export default class Shape {
 		});
 	}
 
-	public static async loadShape(url: string): Promise<Shape> {
+	public static async loadShape(url: string, size: number = 100): Promise<Shape> {
 		const result = await fetch(url);
 		if (!result.ok) {
 			throw new Error("Couldn't fetch file from given url");
 		}
 		const data = await result.text();
-		return this.parseToShape(data);
+		const shape = this.parseToShape(data);
+		shape.size = size;
+		return shape;
 	}
 }
