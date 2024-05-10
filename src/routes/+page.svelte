@@ -54,8 +54,6 @@
 	};
 </script>
 
-<svelte:window />
-
 <svelte:head>
 	<title>Renderer 3D</title>
 </svelte:head>
