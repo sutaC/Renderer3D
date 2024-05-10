@@ -56,18 +56,18 @@ export default class Renderer {
 		// Transforming
 		const transformed: Vector[] = [];
 
-		const translateX = shape.origin.x / shape.size;
-		const translateY = shape.origin.y / shape.size;
-		const translateZ = shape.origin.z / shape.size;
+		const translationVec: Vector = [
+			shape.origin.x / shape.size,
+			shape.origin.y / shape.size,
+			shape.origin.z / shape.size
+		];
 		for (let point of shape.points) {
 			// Rotating
 			point = vec.vectorRotate(point, shape.rotation.x, 'x');
 			point = vec.vectorRotate(point, shape.rotation.y, 'y');
 			point = vec.vectorRotate(point, shape.rotation.z, 'z');
 			// Translating
-			point[0] += translateX;
-			point[1] += translateY;
-			point[2] += translateZ;
+			point = vec.vectorAdd(point, translationVec);
 			// Transformed elements
 			transformed.push(point);
 		}
