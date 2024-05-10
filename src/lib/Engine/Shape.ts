@@ -83,6 +83,48 @@ export default class Shape {
 		return shp;
 	}
 
+	public static parseShape(text: string): Shape {
+		const shape = new Shape();
+		const read = text.split('\n');
+		for (let i = 0; i < read.length; i++) {
+			const line = read[i];
+
+			if (line.length === 0) continue;
+			const pivot = line.indexOf(' ');
+			const type = line.substring(0, pivot);
+			const data = line.substring(pivot + 1, line.length);
+			if (type === 'v') {
+				const vertices = data
+					.split(' ')
+					.filter((v) => v.length > 0)
+					.map((v) => (v.includes('\r') ? v.substring(0, v.indexOf('\r')) : v));
+				if (vertices.length !== 3) {
+					console.error(vertices);
+					throw new Error(`Not suported vertices was provided at line ${i}: "${data}"`);
+				}
+				const x = Number(vertices[0]);
+				const y = Number(vertices[1]);
+				const z = Number(vertices[2]);
+				const point: Vector = [x, y, z];
+				shape.points.push(point);
+			} else if (type === 'f') {
+				const faces = data.split(' ');
+				if (faces.length !== 3) {
+					console.error(faces);
+					throw new Error(
+						`Not suported face was provided at line ${i}, engine only supports faces of 3 vertices and got provided with ${faces.length}`
+					);
+				}
+				const v1 = Number(faces[0].split('/')[0]) - 1;
+				const v2 = Number(faces[1].split('/')[0]) - 1;
+				const v3 = Number(faces[2].split('/')[0]) - 1;
+				const triangle: Triangle = [v1, v2, v3];
+				shape.triangles.push(triangle);
+			}
+		}
+		return shape;
+	}
+
 	public static createShapeFromObjFile(file: File, origin?: Shape): Promise<Shape> {
 		const extension = file.name.substring(file.name.lastIndexOf('.'));
 		if (extension !== '.obj') {
@@ -98,48 +140,15 @@ export default class Shape {
 					console.error(event);
 					return reject('Error ocurred while reading file');
 				}
-				const shape = new Shape();
-				const read = result.split('\n');
-				for (let i = 0; i < read.length; i++) {
-					const line = read[i];
-
-					if (line.length === 0) continue;
-					const pivot = line.indexOf(' ');
-					const type = line.substring(0, pivot);
-					const data = line.substring(pivot + 1, line.length);
-					if (type === 'v') {
-						const vertices = data
-							.split(' ')
-							.filter((v) => v.length > 0)
-							.map((v) => (v.includes('\r') ? v.substring(0, v.indexOf('\r')) : v));
-						if (vertices.length !== 3) {
-							console.error(vertices);
-							return reject(`Not suported vertices was provided at line ${i}: "${data}"`);
-						}
-						const x = Number(vertices[0]);
-						const y = Number(vertices[1]);
-						const z = Number(vertices[2]);
-						const point: Vector = [x, y, z];
-						shape.points.push(point);
-					} else if (type === 'f') {
-						const faces = data.split(' ');
-						if (faces.length !== 3) {
-							console.error(faces);
-							return reject(
-								`Not suported face was provided at line ${i}, engine only supports faces of 3 vertices and got provided with ${faces.length}`
-							);
-						}
-						const v1 = Number(faces[0].split('/')[0]) - 1;
-						const v2 = Number(faces[1].split('/')[0]) - 1;
-						const v3 = Number(faces[2].split('/')[0]) - 1;
-						const triangle: Triangle = [v1, v2, v3];
-						shape.triangles.push(triangle);
+				try {
+					const shape: Shape = this.parseShape(result as string);
+					if (origin) {
+						this.copyShapeParams(shape, origin);
 					}
+					return resolve(shape);
+				} catch (error) {
+					return reject(`Error ocurred while shape parsing: ${error}`);
 				}
-				if (origin) {
-					this.copyShapeParams(shape, origin);
-				}
-				return resolve(shape);
 			});
 			fileReader.readAsText(file);
 		});
