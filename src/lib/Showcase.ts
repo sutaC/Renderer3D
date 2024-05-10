@@ -1,9 +1,7 @@
 import Engine from './Engine/Engine';
 import Shape, { type ShapeNames } from './Engine/Shape';
-import { type Vector } from './Engine/Vector';
-import * as vec from './Engine/Vector';
 
-export default class ShowcaseGame extends Engine {
+export default class Showcase extends Engine {
 	// Private
 	private updateListeners: Function[] = [];
 	private shp: Shape;
@@ -19,42 +17,6 @@ export default class ShowcaseGame extends Engine {
 	}
 
 	protected update(deltaTime: number): void {
-		// Input handling
-		const move = 8 * deltaTime;
-		const moveVector: Vector = vec.vectorMultiply(this.camera.lookDirection, 8 * deltaTime);
-		if (this.input.isKeyHeld('w')) {
-			// Move forward
-			this.camera.position = vec.vectorAdd(this.camera.position, moveVector);
-		}
-		if (this.input.isKeyHeld('s')) {
-			// Move backward
-			this.camera.position = vec.vectorSubtract(this.camera.position, moveVector);
-		}
-		if (this.input.isKeyHeld('q')) {
-			// Look left
-			this.camera.yaw -= 1;
-		}
-		if (this.input.isKeyHeld('e')) {
-			// Look right
-			this.camera.yaw += 1;
-		}
-		if (this.input.isKeyHeld('a')) {
-			// Move left
-			this.camera.position[0] -= move;
-		}
-		if (this.input.isKeyHeld('d')) {
-			// Move right
-			this.camera.position[0] += move;
-		}
-		if (this.input.isKeyHeld('Shift')) {
-			// Move up
-			this.camera.position[1] += move;
-		}
-		if (this.input.isKeyHeld('Control')) {
-			// Move down
-			this.camera.position[1] -= move;
-		}
-
 		// Rotation
 		if (this.rotate) {
 			const rotation = 60 * deltaTime;
