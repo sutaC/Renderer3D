@@ -1,5 +1,7 @@
-import Renderer from './Renderer';
+import Renderer, { type Camera } from './Renderer';
 import Shape, { type ShapeNames } from './Shape';
+import type { Vector } from './Vector';
+import * as vec from './Vector';
 
 export default class Engine {
 	private readonly renderer: Renderer;
@@ -9,8 +11,14 @@ export default class Engine {
 
 	public rotate: boolean = true;
 
+	public camera: Camera = {
+		position: [0, 0, 0],
+		lookDirection: [0, 0, 1],
+		yaw: 0
+	};
+
 	constructor(canvas: HTMLCanvasElement) {
-		this.renderer = new Renderer(canvas);
+		this.renderer = new Renderer(canvas, this.camera);
 
 		// start
 
@@ -89,24 +97,26 @@ export default class Engine {
 	// Getters / Setters
 
 	public get cameraPosition() {
-		return this.renderer.vCamera;
+		return this.camera.position;
 	}
 
 	public get yaw() {
-		return this.renderer.yaw;
+		return this.camera.yaw;
 	}
 
 	public set yaw(yaw: number) {
-		this.renderer.yaw = yaw;
+		this.camera.yaw = yaw;
 	}
 
 	// Move
 
-	public moveForward() {
-		this.renderer.moveForward();
+	public moveForward(): void {
+		const move: Vector = vec.vectorMultiply(this.camera.lookDirection, 0.1);
+		this.camera.position = vec.vectorAdd(this.camera.position, move);
 	}
 
-	public moveBackward() {
-		this.renderer.moveBackward();
+	public moveBackward(): void {
+		const move: Vector = vec.vectorMultiply(this.camera.lookDirection, 0.1);
+		this.camera.position = vec.vectorSubtract(this.camera.position, move);
 	}
 }

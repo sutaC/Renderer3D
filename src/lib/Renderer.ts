@@ -2,17 +2,21 @@ import Shape, { type Triangle } from './Shape';
 import { type Vector } from './Vector';
 import * as vec from './Vector';
 
+export interface Camera {
+	position: Vector;
+	lookDirection: Vector;
+	yaw: number;
+}
+
 export default class Renderer {
-	private canvas: HTMLCanvasElement;
-	private ctx: CanvasRenderingContext2D;
+	private readonly canvas: HTMLCanvasElement;
+	private readonly ctx: CanvasRenderingContext2D;
 	private readonly centerX: number;
 	private readonly centerY: number;
+	private readonly camera: Camera;
 
-	public vCamera: Vector = [0, 0, 0];
-	public vLookDirection: Vector = [0, 0, 1];
-	public yaw: number = 0;
-
-	constructor(canvas: HTMLCanvasElement) {
+	constructor(canvas: HTMLCanvasElement, camera: Camera) {
+		this.camera = camera;
 		this.canvas = canvas;
 		this.ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 		this.centerX = this.canvas.width / 2;
@@ -70,30 +74,19 @@ export default class Renderer {
 		this.drawTriangle(a, b, c, color);
 	}
 
-	// TMP
-
-	public moveForward(): void {
-		const vMove = vec.vectorMultiply(this.vLookDirection, 0.1);
-		this.vCamera = vec.vectorAdd(this.vCamera, vMove);
-	}
-
-	public moveBackward(): void {
-		const vMove = vec.vectorMultiply(this.vLookDirection, 0.1);
-		this.vCamera = vec.vectorSubtract(this.vCamera, vMove);
-	}
-
-	// /TMP
-
 	public drawShape(shape: Shape) {
 		// View
 		const vUp: Vector = [0, 1, 0];
 		let vTarget: Vector = [0, 0, 1];
-		this.vLookDirection = vec.vectorRotate(vTarget, this.yaw, 'y');
-		vTarget = vec.vectorAdd(this.vCamera, this.vLookDirection);
+		this.camera.lookDirection = vec.vectorRotate(vTarget, this.camera.yaw, 'y');
+		vTarget = vec.vectorAdd(this.camera.position, this.camera.lookDirection);
 
-		const matCamera: Vector[] = vec.matrixPointAt(this.vCamera, vTarget, vUp);
+		const matCamera: Vector[] = vec.matrixPointAt(this.camera.position, vTarget, vUp);
 		const matViewRotation: Vector[] = vec.matrixInverseRotation(matCamera);
-		const matViewTranslation: Vector = vec.matrixInverseTranslation(this.vCamera, matCamera);
+		const matViewTranslation: Vector = vec.matrixInverseTranslation(
+			this.camera.position,
+			matCamera
+		);
 
 		// Pipeline stages
 		const pointsTransformed: Vector[] = [];
@@ -127,7 +120,7 @@ export default class Renderer {
 				pointsTransformed[triangle[2]]
 			);
 			const dotProduct = vec.vectorDotProduct(
-				vec.vectorSubtract(pointsTransformed[triangle[0]], this.vCamera),
+				vec.vectorSubtract(pointsTransformed[triangle[0]], this.camera.position),
 				normal
 			);
 			if (dotProduct > 0.0) continue;
