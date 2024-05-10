@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Engine from '$lib/Engine/Engine';
 	import type { ShapeNames } from '$lib/Engine/Shape';
+	import ShowcaseGame from '$lib/ShowcaseGame';
 	import { onMount } from 'svelte';
 
 	let selected: string = 'cube';
@@ -12,29 +12,34 @@
 	let rotation: { x: number; y: number; z: number } = { x: 0, y: 0, z: 0 };
 	let position: { x: number; y: number; z: number } = { x: 0, y: 0, z: 300 };
 
-	let engine: Engine | undefined = undefined;
+	let game: ShowcaseGame | undefined = undefined;
 
 	onMount(() => {
 		const canvas = document.querySelector('canvas') as HTMLCanvasElement;
-		engine = new Engine(canvas);
-		engine.run();
-		engine.addListener(() => {
-			if (engine) rotation = engine.shapeController.getRotation();
+		game = new ShowcaseGame(canvas);
+		game.run();
+		game.addUpdateListener(() => {
+			if (game) {
+				rotation = game.shapeController.getRotation();
+				rotation.x = Math.round(rotation.x);
+				rotation.y = Math.round(rotation.y);
+				rotation.z = Math.round(rotation.z);
+			}
 		});
 	});
 
-	$: if (engine && !customObj) {
+	$: if (game && !customObj) {
 		if (selected === 'custom') {
 			// Pass
 		} else {
-			engine.shapeController.loadType(selected as ShapeNames);
+			game.shapeController.loadType(selected as ShapeNames);
 		}
 	}
-	$: if (engine) engine.shapeController.setSize(size);
-	$: if (engine) engine.shapeController.setColor(color);
-	$: if (engine && !rotate) engine.shapeController.setRotation(rotation);
-	$: if (engine) engine.shapeController.setOrigin(position);
-	$: if (engine) engine.rotate = rotate;
+	$: if (game) game.shapeController.setSize(size);
+	$: if (game) game.shapeController.setColor(color);
+	$: if (game && !rotate) game.shapeController.setRotation(rotation);
+	$: if (game) game.shapeController.setOrigin(position);
+	$: if (game) game.rotate = rotate;
 
 	const handleAddFile = async (event: Event) => {
 		const target = event.target as HTMLInputElement;
@@ -43,7 +48,7 @@
 			console.error('No files was provided', file);
 			return;
 		}
-		engine?.shapeController.loadFile(file);
+		game?.shapeController.loadFile(file);
 		target.value = '';
 		customObj = true;
 	};

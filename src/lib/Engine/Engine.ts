@@ -1,21 +1,20 @@
 import Input from './Input';
 import Renderer, { type Camera } from './Renderer';
-import Shape, { type ShapeNames } from './Shape';
-import type { Vector } from './Vector';
-import * as vec from './Vector';
+import Shape from './Shape';
 
-export default class Engine {
+export default abstract class Engine {
 	// Modules
-	private readonly renderer: Renderer;
-	private readonly input: Input;
+	protected readonly renderer: Renderer;
+	protected readonly input: Input;
 
-	// Properties
-	private shp: Shape;
-	private listeners: Function[] = [];
+	// Private
+	private readonly timeTresholdInMs: number = 60 / 1000;
+	private previousTime: number = 0;
+	private isRunning: boolean = false;
 
-	public rotate: boolean = true;
-
-	public camera: Camera = {
+	// Protected
+	protected shapes: Shape[] = [];
+	protected camera: Camera = {
 		position: [0, 0, 0],
 		lookDirection: [0, 0, 1],
 		yaw: 0
@@ -24,123 +23,40 @@ export default class Engine {
 	constructor(canvas: HTMLCanvasElement) {
 		this.renderer = new Renderer(canvas, this.camera);
 		this.input = new Input();
-
-		// start
-
-		this.shp = Shape.createShape('cube', 100);
 	}
 
-	// # abstract
-	private update() {
-		// Input handling
-		const move = 0.1;
+	// Abstract methods
+	protected abstract update(deltaTime: number): void;
 
-		if (this.input.isKeyHeld('s')) {
-			this.moveBackward();
+	// Private methods
+	private gameLoop(currentTime: number): void {
+		// Time elapsed
+		const deltaTimeInMs = currentTime - this.previousTime;
+		if (deltaTimeInMs < this.timeTresholdInMs) {
+			requestAnimationFrame(this.gameLoop.bind(this));
+			return;
 		}
-		if (this.input.isKeyHeld('w')) {
-			this.moveForward();
-		}
-		if (this.input.isKeyHeld('a')) {
-			this.camera.yaw -= 1;
-		}
-		if (this.input.isKeyHeld('d')) {
-			this.camera.yaw += 1;
-		}
-		if (this.input.isKeyHeld('j')) {
-			this.camera.position[0] -= move;
-		}
-		if (this.input.isKeyHeld('l')) {
-			this.camera.position[0] += move;
-		}
-		if (this.input.isKeyHeld('i')) {
-			this.camera.position[1] += move;
-		}
-		if (this.input.isKeyHeld('k')) {
-			this.camera.position[1] -= move;
-		}
+		this.previousTime = currentTime;
+		const deltaTimeInS = deltaTimeInMs / 1000;
 
-		// Rotation
-		if (this.rotate) {
-			this.shp.rotation.x += 1;
-			this.shp.rotation.y += 1;
-			this.shp.rotation.z += 1;
-			if (this.shp.rotation.x >= 360 || this.shp.rotation.x <= -360) this.shp.rotation.x %= 360;
-			if (this.shp.rotation.y >= 360 || this.shp.rotation.y <= -360) this.shp.rotation.y %= 360;
-			if (this.shp.rotation.z >= 360 || this.shp.rotation.z <= -360) this.shp.rotation.z %= 360;
-		}
-	}
+		// Update
+		this.update(deltaTimeInS);
 
-	public run(): void {
-		// update
-
-		this.update();
-
-		// listeners
-
-		for (const listener of this.listeners) {
-			listener();
-		}
-
-		// draw
-
+		// Rendering
 		this.renderer.clear();
-		this.renderer.drawShape(this.shp);
+		for (const shape of this.shapes) this.renderer.drawShape(shape);
 
-		// recall
-
-		setTimeout(this.run.bind(this), 1000 / 60);
+		// Recall
+		requestAnimationFrame(this.gameLoop.bind(this));
 	}
 
-	public readonly shapeController = {
-		loadType: (name: ShapeNames): void => {
-			this.shp = Shape.createShape(name, 0, this.shp);
-		},
-		loadFile: (file: File): void => {
-			(async () => {
-				this.shp = await Shape.createShapeFromObjFile(file, this.shp);
-			})();
-		},
-		setSize: (size: number): void => {
-			if (size < 0) {
-				console.error('Size should be a positive number');
-				return;
-			}
-			this.shp.size = size;
-		},
-		setOrigin: (origin: { x: number; y: number; z: number }): void => {
-			this.shp.origin = origin;
-		},
-		setColor: (hex: string): void => {
-			this.shp.setColor(hex);
-		},
-		setRotation: (rotation: { x: number; y: number; z: number }): void => {
-			this.shp.rotation = rotation;
-			if (this.shp.rotation.x >= 360 || this.shp.rotation.x <= -360) this.shp.rotation.x %= 360;
-			if (this.shp.rotation.y >= 360 || this.shp.rotation.y <= -360) this.shp.rotation.y %= 360;
-			if (this.shp.rotation.z >= 360 || this.shp.rotation.z <= -360) this.shp.rotation.z %= 360;
-		},
-		getOrigin: (): { x: number; y: number; z: number } => {
-			return this.shp.origin;
-		},
-		getRotation: (): { x: number; y: number; z: number } => {
-			return this.shp.rotation;
+	// Public methods
+	public run(): void {
+		if (this.isRunning) {
+			console.warn('Tried to run game engine when it was already running');
+			return;
 		}
-	};
-
-	public addListener(fn: Function): void {
-		this.listeners.push(fn);
-	}
-
-	// Actions
-
-	private moveForward(): void {
-		const move: Vector = vec.vectorMultiply(this.camera.lookDirection, 0.1);
-		this.camera.position = vec.vectorAdd(this.camera.position, move);
-	}
-
-	private moveBackward(): void {
-		const move: Vector = vec.vectorMultiply(this.camera.lookDirection, 0.1);
-		this.camera.position = vec.vectorSubtract(this.camera.position, move);
+		this.isRunning = true;
+		requestAnimationFrame(this.gameLoop.bind(this));
 	}
 }
