@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Engine from '$lib/Engine';
-	import type { ShapeNames } from '$lib/Shape';
+	import Engine from '$lib/Engine/Engine';
+	import type { ShapeNames } from '$lib/Engine/Shape';
 	import { onMount } from 'svelte';
 
 	let selected: string = 'cube';
