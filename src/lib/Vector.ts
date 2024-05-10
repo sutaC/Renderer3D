@@ -10,17 +10,21 @@ export function vectorSubtract(a: Vector, b: Vector): Vector {
 	return [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
 }
 
-export function vectorMultiply(a: Vector, b: Vector): Vector {
-	return [a[0] * b[0], a[1] * b[1], a[2] * b[2]];
+export function vectorMultiply(vector: Vector, num: number): Vector {
+	return [vector[0] * num, vector[1] * num, vector[2] * num];
 }
 
-export function vectorDevide(a: Vector, b: Vector): Vector {
-	return [a[0] / b[0], a[1] / b[1], a[2] / b[2]];
+export function vectorDevide(vector: Vector, num: number): Vector {
+	return [vector[0] / num, vector[1] / num, vector[2] / num];
+}
+
+export function vectorLength(vector: Vector): number {
+	return Math.sqrt(vector[0] ** 2 + vector[1] ** 2 + vector[2] ** 2);
 }
 
 export function vectorNormalise(vector: Vector): Vector {
-	const l = Math.sqrt(vector[0] ** 2 + vector[1] ** 2 + vector[2] ** 2);
-	return [vector[0] / l, vector[1] / l, vector[2] / l];
+	const len = vectorLength(vector);
+	return [vector[0] / len, vector[1] / len, vector[2] / len];
 }
 
 // Calculations
@@ -38,7 +42,11 @@ export function vectorMatrixMultiply(matrix: Vector[], vector: Vector): Vector {
 	return result;
 }
 
-export function calculateNormal(a: Vector, b: Vector, c: Vector): Vector {
+export function vectorCrossProduct(a: Vector, b: Vector): Vector {
+	return [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+}
+
+export function vectorNormal(a: Vector, b: Vector, c: Vector): Vector {
 	const lineA: Vector = vectorSubtract(b, a);
 	const lineB: Vector = vectorSubtract(c, a);
 	const normal: Vector = [
@@ -49,8 +57,37 @@ export function calculateNormal(a: Vector, b: Vector, c: Vector): Vector {
 	return vectorNormalise(normal);
 }
 
-export function calculateDotPoint(vector: Vector, normal: Vector) {
+export function vectorDotProduct(vector: Vector, normal: Vector) {
 	return normal[0] * vector[0] + normal[1] * vector[1] + normal[2] * vector[2];
+}
+
+export function matrixPointAt(position: Vector, target: Vector, up: Vector) {
+	const newForward: Vector = vectorNormalise(vectorSubtract(target, position));
+	const a: Vector = vectorMultiply(newForward, vectorDotProduct(up, newForward));
+	const newUp = vectorNormalise(vectorSubtract(up, a));
+	const newRight: Vector = vectorCrossProduct(newUp, newForward);
+
+	const matrix: Vector[] = [newRight, newUp, newForward];
+
+	// add  pos
+
+	return matrix;
+}
+
+export function matrixInverseRotation(matrix: Vector[]): Vector[] {
+	return [
+		[matrix[0][0], matrix[1][0], matrix[2][0]],
+		[matrix[0][1], matrix[1][1], matrix[2][1]],
+		[matrix[0][2], matrix[1][2], matrix[2][2]]
+	];
+}
+
+export function matrixInverseTranslation(matrix: Vector, matrixPointAt: Vector[]): Vector {
+	return [
+		-vectorDotProduct(matrix, matrixPointAt[0]),
+		-vectorDotProduct(matrix, matrixPointAt[1]),
+		-vectorDotProduct(matrix, matrixPointAt[2])
+	];
 }
 
 // Translations
@@ -82,11 +119,6 @@ export function vectorRotate(vector: Vector, angle: number, axis: 'x' | 'y' | 'z
 			break;
 	}
 	return vectorMatrixMultiply(matrix, vector);
-}
-
-export function vectorScale(vector: Vector, multiplier: number): Vector {
-	const multiplierVec: Vector = [multiplier, multiplier, multiplier];
-	return vectorMultiply(vector, multiplierVec);
 }
 
 export function vectorProject2d(vector: Vector): Vector {

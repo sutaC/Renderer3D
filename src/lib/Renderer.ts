@@ -8,7 +8,9 @@ export default class Renderer {
 	private readonly centerX: number;
 	private readonly centerY: number;
 
-	public cameraPosition: Vector = [0, 0, 0];
+	public vCamera: Vector = [0, 0, 0];
+	public vLookDirection: Vector = [0, 0, 1];
+	public yaw: number = 0;
 
 	constructor(canvas: HTMLCanvasElement) {
 		this.canvas = canvas;
@@ -68,10 +70,39 @@ export default class Renderer {
 		this.drawTriangle(a, b, c, color);
 	}
 
-	public drawShape(shape: Shape) {
-		// Transforming
-		const transformed: Vector[] = [];
+	// TMP
 
+	public moveForward(): void {
+		const vMove = vec.vectorMultiply(this.vLookDirection, 0.1);
+		this.vCamera = vec.vectorAdd(this.vCamera, vMove);
+	}
+
+	public moveBackward(): void {
+		const vMove = vec.vectorMultiply(this.vLookDirection, 0.1);
+		this.vCamera = vec.vectorSubtract(this.vCamera, vMove);
+	}
+
+	// /TMP
+
+	public drawShape(shape: Shape) {
+		// View
+		const vUp: Vector = [0, 1, 0];
+		let vTarget: Vector = [0, 0, 1];
+		this.vLookDirection = vec.vectorRotate(vTarget, this.yaw, 'y');
+		vTarget = vec.vectorAdd(this.vCamera, this.vLookDirection);
+
+		const matCamera: Vector[] = vec.matrixPointAt(this.vCamera, vTarget, vUp);
+		const matViewRotation: Vector[] = vec.matrixInverseRotation(matCamera);
+		const matViewTranslation: Vector = vec.matrixInverseTranslation(this.vCamera, matCamera);
+
+		// Pipeline stages
+		const pointsTransformed: Vector[] = [];
+		const pointsProjected: Vector[] = [];
+
+		const visibleTriangles: Triangle[] = [];
+		const triangleColors = new Map<Triangle, string>();
+
+		// Transforming
 		const translationVec: Vector = [
 			shape.origin.x / shape.size,
 			shape.origin.y / shape.size,
@@ -84,52 +115,55 @@ export default class Renderer {
 			point = vec.vectorRotate(point, shape.rotation.z, 'z');
 			// Translating
 			point = vec.vectorAdd(point, translationVec);
-			// Transformed elements
-			transformed.push(point);
+			// Transformed points
+			pointsTransformed.push(point);
 		}
 
 		// Selecting triangles
-		const visibleTriangles: Triangle[] = [];
-		const triangleColors = new Map<Triangle, string>();
 		for (const triangle of shape.triangles) {
-			const normal = vec.calculateNormal(
-				transformed[triangle[0]],
-				transformed[triangle[1]],
-				transformed[triangle[2]]
+			const normal = vec.vectorNormal(
+				pointsTransformed[triangle[0]],
+				pointsTransformed[triangle[1]],
+				pointsTransformed[triangle[2]]
 			);
-			const dotPoint = vec.calculateDotPoint(
-				vec.vectorSubtract(transformed[triangle[0]], this.cameraPosition),
+			const dotProduct = vec.vectorDotProduct(
+				vec.vectorSubtract(pointsTransformed[triangle[0]], this.vCamera),
 				normal
 			);
-			if (dotPoint > 0.0) continue;
-			// Ilumination
+			if (dotProduct > 0.0) continue;
+			// Iluminating triangles
 			const color = this.calculateColor(normal, shape);
 			triangleColors.set(triangle, color);
+			// Selected triangles
 			visibleTriangles.push(triangle);
 		}
 
-		// Projecting
-		const projected: Vector[] = [];
-		for (let point of transformed) {
+		// Projecting points
+		for (let point of pointsTransformed) {
+			// Moving by view
+			point = vec.vectorMatrixMultiply(matViewRotation, point);
+			point = vec.vectorAdd(point, matViewTranslation);
+			// Projecting to 2d
 			point = vec.vectorProject2d(point);
-			point = vec.vectorScale(point, shape.size);
-			projected.push(point);
+			// Scaling
+			point = vec.vectorMultiply(point, shape.size);
+			pointsProjected.push(point);
 		}
 
-		// Painters algorithm for perspective
+		// Sorting triangles by perspective (painter's algorithm)
 		visibleTriangles.sort((a, b) => {
-			const zA = projected[a[0]][2] + projected[a[1]][2] + projected[a[2]][2];
-			const zB = projected[b[0]][2] + projected[b[1]][2] + projected[b[2]][2];
+			const zA = pointsProjected[a[0]][2] + pointsProjected[a[1]][2] + pointsProjected[a[2]][2];
+			const zB = pointsProjected[b[0]][2] + pointsProjected[b[1]][2] + pointsProjected[b[2]][2];
 			return zB - zA;
 		});
 
-		// Drawing
+		// Drawing traingles
 		for (const triangle of visibleTriangles) {
 			const color = triangleColors.get(triangle) || 'red';
 			this.fillTriangle(
-				projected[triangle[0]],
-				projected[triangle[1]],
-				projected[triangle[2]],
+				pointsProjected[triangle[0]],
+				pointsProjected[triangle[1]],
+				pointsProjected[triangle[2]],
 				color
 			);
 		}

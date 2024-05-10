@@ -50,31 +50,40 @@
 
 	const handleKeyboard = (event: KeyboardEvent): void => {
 		if (!engine) return;
+		event.preventDefault();
 		const { key } = event;
+		const move = 0.1;
+
 		switch (key) {
-			case 'w':
-				position.z -= 1;
-				break;
 			case 's':
-				position.z += 1;
+				engine.moveBackward();
+				break;
+			case 'w':
+				engine.moveForward();
 				break;
 			case 'a':
-				position.x += 1;
+				engine.yaw -= 1;
 				break;
 			case 'd':
-				position.x -= 1;
+				engine.yaw += 1;
 				break;
-			case 'q':
-				position.y += 1;
+			case 'j':
+				engine.cameraPosition[0] -= move;
 				break;
-			case 'e':
-				position.y -= 1;
+			case 'l':
+				engine.cameraPosition[0] += move;
+				break;
+			case 'i':
+				engine.cameraPosition[1] += move;
+				break;
+			case 'k':
+				engine.cameraPosition[1] -= move;
 				break;
 
 			default:
 				return;
 		}
-		event.preventDefault();
+		// event.preventDefault();
 	};
 </script>
 

@@ -85,4 +85,28 @@ export default class Engine {
 	public addListener(fn: Function): void {
 		this.listeners.push(fn);
 	}
+
+	// Getters / Setters
+
+	public get cameraPosition() {
+		return this.renderer.vCamera;
+	}
+
+	public get yaw() {
+		return this.renderer.yaw;
+	}
+
+	public set yaw(yaw: number) {
+		this.renderer.yaw = yaw;
+	}
+
+	// Move
+
+	public moveForward() {
+		this.renderer.moveForward();
+	}
+
+	public moveBackward() {
+		this.renderer.moveBackward();
+	}
 }
