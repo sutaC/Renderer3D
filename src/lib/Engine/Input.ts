@@ -7,12 +7,14 @@ export default class Input {
 	}
 
 	private handleKeyDown(event: KeyboardEvent): void {
+		event.preventDefault();
 		const key = event.key;
 		if (this.heldKeys.has(key)) return;
 		this.heldKeys.set(key, true);
 	}
 
 	private handleKeyUp(event: KeyboardEvent): void {
+		event.preventDefault();
 		const key = event.key;
 		if (!this.heldKeys.has(key)) return;
 		this.heldKeys.delete(key);
