@@ -6,7 +6,7 @@
 	let selected: string = 'cube';
 	let size: number = 100;
 	let color: string = '#ffffff';
-	let rotate: boolean = false;
+	let rotate: boolean = true;
 
 	let customObj = false;
 	let rotation: { x: number; y: number; z: number } = { x: 0, y: 0, z: 0 };
