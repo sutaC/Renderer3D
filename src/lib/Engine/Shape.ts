@@ -9,7 +9,7 @@ interface ShapeObject {
 	triangles: number[][];
 }
 
-interface ColorObject {
+export interface ColorObject {
 	hex: string;
 	r: number;
 	g: number;
