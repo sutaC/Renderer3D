@@ -14,6 +14,7 @@ export default class Input {
 
 	/**
 	 * Adds given key to held keys map
+	 * @param event Keydown event
 	 */
 	private handleKeyDown(event: KeyboardEvent): void {
 		const key = event.key;
@@ -23,6 +24,7 @@ export default class Input {
 
 	/**
 	 * Removes given key from held keys map
+	 * @param event Keyup event
 	 */
 	private handleKeyUp(event: KeyboardEvent): void {
 		const key = event.key;
@@ -31,7 +33,8 @@ export default class Input {
 	}
 
 	/**
-	 * Returns true if given key is currently held
+	 * Determines whether the key is currently held
+	 * @returns Whether or not a key is currently held
 	 */
 	public isKeyHeld(key: string): boolean {
 		return this.heldKeys.has(key);
