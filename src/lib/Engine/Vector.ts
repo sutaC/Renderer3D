@@ -2,26 +2,60 @@ export type Vector = [x: number, y: number, z: number];
 
 // Operations
 
+/**
+ * Adds two vectors
+ * @param a Vector to add
+ * @param b  Vector to add
+ * @returns Vectors of sum
+ */
 export function vectorAdd(a: Vector, b: Vector): Vector {
 	return [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
 }
 
+/**
+ * Subtracts two vectors
+ * @param a Vector to subtract
+ * @param b	Subtractor vector
+ * @returns Subtracted vector
+ */
 export function vectorSubtract(a: Vector, b: Vector): Vector {
 	return [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
 }
 
-export function vectorMultiply(vector: Vector, num: number): Vector {
-	return [vector[0] * num, vector[1] * num, vector[2] * num];
+/**
+ * Multiplies vector by given multiplier
+ * @param vector Vector to multiply
+ * @param multiplier Multiplier
+ * @returns Multiplied vector
+ */
+export function vectorMultiply(vector: Vector, multiplier: number): Vector {
+	return [vector[0] * multiplier, vector[1] * multiplier, vector[2] * multiplier];
 }
 
-export function vectorDevide(vector: Vector, num: number): Vector {
-	return [vector[0] / num, vector[1] / num, vector[2] / num];
+/**
+ * Devides vector by given devider
+ * @param vector Vector to devide
+ * @param divider Devider
+ * @returns Devided vector
+ */
+export function vectorDevide(vector: Vector, divider: number): Vector {
+	return [vector[0] / divider, vector[1] / divider, vector[2] / divider];
 }
 
+/**
+ * Calculates length of given vector
+ * @param vector Vector to which the length is calculated
+ * @returns Vector length
+ */
 export function vectorLength(vector: Vector): number {
 	return Math.sqrt(vector[0] ** 2 + vector[1] ** 2 + vector[2] ** 2);
 }
 
+/**
+ * Normalises given vector
+ * @param vector Vector to normalise
+ * @returns Normalised vector
+ */
 export function vectorNormalise(vector: Vector): Vector {
 	const len = vectorLength(vector);
 	return [vector[0] / len, vector[1] / len, vector[2] / len];
@@ -29,6 +63,12 @@ export function vectorNormalise(vector: Vector): Vector {
 
 // Calculations
 
+/**
+ * Multiplies vector by given matrix
+ * @param matrix Matrix multiplier (must have the same ammount of rows as vectors ammount of collumns)
+ * @param vector Vector to multiply
+ * @returns Multiplied vector
+ */
 export function vectorMatrixMultiply(matrix: Vector[], vector: Vector): Vector {
 	if (matrix.length !== vector.length) {
 		throw new Error('Matrix length must be be the same size as vector length');
@@ -42,10 +82,23 @@ export function vectorMatrixMultiply(matrix: Vector[], vector: Vector): Vector {
 	return result;
 }
 
+/**
+ * Calculate cross product of two vectors
+ * @param a Vector to calculate corss product
+ * @param b Vector to calculate corss product
+ * @returns Vector cross product
+ */
 export function vectorCrossProduct(a: Vector, b: Vector): Vector {
 	return [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
 }
 
+/**
+ * Calculate normal of three vectors
+ * @param a Vector to calculate normal
+ * @param b Vector to calculate normal
+ * @param c Vector to calculate normal
+ * @returns Normal vector
+ */
 export function vectorNormal(a: Vector, b: Vector, c: Vector): Vector {
 	const lineA: Vector = vectorSubtract(b, a);
 	const lineB: Vector = vectorSubtract(c, a);
@@ -57,23 +110,37 @@ export function vectorNormal(a: Vector, b: Vector, c: Vector): Vector {
 	return vectorNormalise(normal);
 }
 
-export function vectorDotProduct(vector: Vector, normal: Vector) {
-	return normal[0] * vector[0] + normal[1] * vector[1] + normal[2] * vector[2];
+/**
+ * Calculate dot product of two vectors
+ * @param a Vetcor to claculate dot product
+ * @param b Vetcor to claculate dot product
+ * @returns Dot product
+ */
+export function vectorDotProduct(a: Vector, b: Vector): number {
+	return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
 }
 
-export function matrixPointAt(position: Vector, target: Vector, up: Vector) {
+/**
+ * Calculates matrix point at
+ * @param position Position vector - object position
+ * @param target Target vector - object facing direction
+ * @param up Up vector - normal to objects facing direction axle
+ * @returns Point at matrix - transformation for object rotation depending on given position
+ */
+export function matrixPointAt(position: Vector, target: Vector, up: Vector): Vector[] {
 	const newForward: Vector = vectorNormalise(vectorSubtract(target, position));
 	const a: Vector = vectorMultiply(newForward, vectorDotProduct(up, newForward));
 	const newUp = vectorNormalise(vectorSubtract(up, a));
 	const newRight: Vector = vectorCrossProduct(newUp, newForward);
-
 	const matrix: Vector[] = [newRight, newUp, newForward];
-
-	// add  pos
-
 	return matrix;
 }
 
+/**
+ * Inverts rotation matrix
+ * @param matrix Rottaion matrix
+ * @returns Inverted rotation matrix
+ */
 export function matrixInverseRotation(matrix: Vector[]): Vector[] {
 	return [
 		[matrix[0][0], matrix[1][0], matrix[2][0]],
@@ -82,16 +149,29 @@ export function matrixInverseRotation(matrix: Vector[]): Vector[] {
 	];
 }
 
-export function matrixInverseTranslation(matrix: Vector, matrixPointAt: Vector[]): Vector {
+/**
+ * Inverts translation matrix
+ * @param position Position vector on which matrix invetrs
+ * @param matrix Translation matrix
+ * @returns Inverted translation matrix
+ */
+export function matrixInverseTranslation(position: Vector, matrix: Vector[]): Vector {
 	return [
-		-vectorDotProduct(matrix, matrixPointAt[0]),
-		-vectorDotProduct(matrix, matrixPointAt[1]),
-		-vectorDotProduct(matrix, matrixPointAt[2])
+		-vectorDotProduct(position, matrix[0]),
+		-vectorDotProduct(position, matrix[1]),
+		-vectorDotProduct(position, matrix[2])
 	];
 }
 
 // Translations
 
+/**
+ * Rotates vector by given angle in selected axis
+ * @param vector Vector to rotate
+ * @param angle Angle at which vector rotates (in degrees)
+ * @param axis Axis on which vector rotates (x | y | z)
+ * @returns Rotated vector
+ */
 export function vectorRotate(vector: Vector, angle: number, axis: 'x' | 'y' | 'z'): Vector {
 	const radians = angle * (Math.PI / 180);
 	let matrix: Vector[];
@@ -121,12 +201,17 @@ export function vectorRotate(vector: Vector, angle: number, axis: 'x' | 'y' | 'z
 	return vectorMatrixMultiply(matrix, vector);
 }
 
+/**
+ * Projects 3D vector to 2D (also sets Z position to 0)
+ * @param vector Vector to project
+ * @returns Projected vector
+ */
 export function vectorProject2d(vector: Vector): Vector {
 	const z = 1 / vector[2];
 	const projection: Vector[] = [
 		[z, 0, 0],
 		[0, z, 0],
-		[0, 0, 1]
+		[0, 0, 0]
 	];
 	return vectorMatrixMultiply(projection, vector);
 }

@@ -131,6 +131,15 @@ export default class Renderer {
 			visibleTriangles.push(triangle);
 		}
 
+		// Sorting triangles by perspective (painter's algorithm)
+		visibleTriangles.sort((a, b) => {
+			const zA =
+				pointsTransformed[a[0]][2] + pointsTransformed[a[1]][2] + pointsTransformed[a[2]][2];
+			const zB =
+				pointsTransformed[b[0]][2] + pointsTransformed[b[1]][2] + pointsTransformed[b[2]][2];
+			return zB - zA;
+		});
+
 		// Projecting points
 		for (let point of pointsTransformed) {
 			// Moving by view
@@ -142,13 +151,6 @@ export default class Renderer {
 			point = vec.vectorMultiply(point, shape.size);
 			pointsProjected.push(point);
 		}
-
-		// Sorting triangles by perspective (painter's algorithm)
-		visibleTriangles.sort((a, b) => {
-			const zA = pointsProjected[a[0]][2] + pointsProjected[a[1]][2] + pointsProjected[a[2]][2];
-			const zB = pointsProjected[b[0]][2] + pointsProjected[b[1]][2] + pointsProjected[b[2]][2];
-			return zB - zA;
-		});
 
 		// Drawing traingles
 		for (const triangle of visibleTriangles) {
