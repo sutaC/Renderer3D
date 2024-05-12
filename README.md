@@ -1,4 +1,4 @@
-# Renderer 3D
+# Renderer3D
 
 This is a project that explores 3D rendering. It allows you to draw 3D objects loaded from `.obj` files and provides a simple engine for creating interactive experiences.
 
