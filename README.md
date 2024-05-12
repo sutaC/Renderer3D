@@ -1,22 +1,38 @@
-# create-svelte
+# Renderer 3D
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
+This is a project that explores 3D rendering. It allows you to draw 3D objects loaded from `.obj` files and provides a simple engine for creating interactive experiences.
 
-## Creating a project
+> The project is still in the construction process and still differs from the final concept
 
-If you're seeing this, you've probably already done this step. Congrats!
+## Where to find the official release?
+
+The github repository for this project is public and can be found [here](https://github.com/sutaC/Renderer3D)
+
+The official deploy is available at [this address](https://sutac-renderer3d.netlify.app/)
+
+> The project is made and managed by [sutaC](https://github.com/sutaC)
+
+## Documentation
+
+The documentation is generated using TypeDoc and can be found [here](./docs/index.html)
+
+> To generate documentation, simply use the command `npm run document`
+
+## Technologies
+
+- Svelte / SvelteKit
+- Typescript
+- TypeDoc
+
+## Running project
+
+1. Install dependencies using:
 
 ```bash
-# create a new project in the current directory
-npm create svelte@latest
-
-# create a new project in my-app
-npm create svelte@latest my-app
+    npm install
 ```
 
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+3. Start a development server
 
 ```bash
 npm run dev
