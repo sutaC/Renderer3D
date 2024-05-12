@@ -1,7 +1,7 @@
 /**
  * Engine module for handling input
  */
-export default class Input {
+export class Input {
 	/**
 	 * Stores currently held keys
 	 */

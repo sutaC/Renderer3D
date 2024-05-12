@@ -1,7 +1,7 @@
-import Engine from './Engine/Engine';
-import Shape, { type ShapeNames } from './Engine/Shape';
+import { Engine } from './Engine/Engine';
+import { Shape, type ShapeNames } from './Engine/Shape';
 
-export default class Showcase extends Engine {
+export class Showcase extends Engine {
 	// Private
 	private updateListeners: Function[] = [];
 	private shp: Shape = new Shape();

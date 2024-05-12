@@ -1,8 +1,8 @@
-import Engine from './Engine/Engine';
+import { Engine } from './Engine/Engine';
 import * as vec from '$lib/Engine/Vector';
-import Shape from './Engine/Shape';
+import { Shape } from './Engine/Shape';
 
-export default class Game extends Engine {
+export class Game extends Engine {
 	constructor(canvas: HTMLCanvasElement) {
 		super(canvas);
 	}

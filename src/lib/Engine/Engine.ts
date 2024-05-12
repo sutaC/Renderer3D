@@ -1,11 +1,11 @@
-import Input from './Input';
-import Renderer, { type Camera } from './Renderer';
-import Shape from './Shape';
+import { Input } from './Input';
+import { Renderer, type Camera } from './Renderer';
+import { Shape } from './Shape';
 
 /**
  * Engine states enum
  */
-enum EngineState {
+export enum EngineState {
 	'starting',
 	'preparing',
 	'ready',
@@ -17,7 +17,7 @@ enum EngineState {
 /**
  * Engine abstract class to build more specialized engines
  */
-export default abstract class Engine {
+export abstract class Engine {
 	// Modules
 	/**
 	 * Engines renderer module for handling graphics

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { ShapeNames } from '$lib/Engine/Shape';
-	import Showcase from '$lib/Showcase';
+	import { Showcase } from '$lib/Showcase';
 	import { onMount, onDestroy } from 'svelte';
 
 	let selected: string = 'cube';

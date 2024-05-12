@@ -56,7 +56,7 @@ export type ShapeNames = 'cube' | 'prism' | 'prismSqB';
 /**
  * Shape class defining shapes understandable by the renderer
  */
-export default class Shape {
+export class Shape {
 	/**
 	 * Points that make up a shape [readonly]
 	 */

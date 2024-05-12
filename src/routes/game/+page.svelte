@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
-	import Game from '$lib/Game';
+	import { Game } from '$lib/Game';
 
 	let game: Game | undefined = undefined;
 

@@ -1,4 +1,4 @@
-import Shape, { type ColorObject, type Triangle } from './Shape';
+import { Shape, type ColorObject, type Triangle } from './Shape';
 import { type Vector } from './Vector';
 import * as vec from './Vector';
 
@@ -23,7 +23,7 @@ export interface Camera {
 /**
  * Engine module for handling graphics
  */
-export default class Renderer {
+export class Renderer {
 	/**
 	 * Canvas used to display graphics [readonly]
 	 */
