@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { EngineState } from '$lib/Engine/Engine';
 	import type { ShapeNames } from '$lib/Engine/Shape';
 	import { Showcase } from '$lib/Showcase';
 	import { onMount, onDestroy } from 'svelte';
@@ -37,7 +38,7 @@
 	onDestroy(() => {
 		if (showcase) {
 			// Engine running
-			if (showcase.getState() === 3) {
+			if (showcase.getState() === EngineState.running) {
 				showcase.stop();
 			}
 		}

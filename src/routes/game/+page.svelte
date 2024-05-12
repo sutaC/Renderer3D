@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
 	import { Game } from '$lib/Game';
+	import { EngineState } from '$lib/Engine/Engine';
 
 	let game: Game | undefined = undefined;
 
@@ -19,7 +20,7 @@
 	onDestroy(() => {
 		if (game) {
 			// Engine running
-			if (game.getState() === 3) {
+			if (game.getState() === EngineState.running) {
 				game.stop();
 			}
 		}
