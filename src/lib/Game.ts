@@ -17,6 +17,7 @@ export class Game extends Engine {
 	protected update(deltaTime: number): void {
 		// Input handling
 		const move = 8 * deltaTime;
+		const rotation = 64 * deltaTime;
 		const moveVector = vec.vectorMultiply(this.camera.lookDirection, 8 * deltaTime);
 		if (this.input.isKeyHeld('w')) {
 			// Move forward
@@ -26,21 +27,13 @@ export class Game extends Engine {
 			// Move backward
 			this.camera.position = vec.vectorSubtract(this.camera.position, moveVector);
 		}
-		if (this.input.isKeyHeld('q')) {
-			// Look left
-			this.camera.yaw -= 1;
-		}
-		if (this.input.isKeyHeld('e')) {
-			// Look right
-			this.camera.yaw += 1;
-		}
 		if (this.input.isKeyHeld('a')) {
-			// Move left
-			this.camera.position[0] -= move;
+			// Look left
+			this.camera.yaw -= rotation;
 		}
 		if (this.input.isKeyHeld('d')) {
-			// Move right
-			this.camera.position[0] += move;
+			// Look right
+			this.camera.yaw += rotation;
 		}
 		if (this.input.isKeyHeld('Shift')) {
 			// Move up
