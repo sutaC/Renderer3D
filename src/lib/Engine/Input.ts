@@ -35,7 +35,7 @@ export class Input {
 	 * @param button Alternative to key button
 	 * @param key Key that the button represents
 	 */
-	public addAlternativeButton(button: HTMLButtonElement, key: string) {
+	public addAlternativeButton(button: HTMLButtonElement, key: string): void {
 		// Button down
 		button.addEventListener('click', () => this.addKey(key));
 		button.addEventListener('mousedown', () => this.addKey(key));

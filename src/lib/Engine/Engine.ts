@@ -163,4 +163,13 @@ export abstract class Engine {
 	public getState(): EngineState {
 		return this.state;
 	}
+
+	/**
+	 * Adds button as alternative to holding keyboard key
+	 * @param button Alternative to key button
+	 * @param key Key that the button represents
+	 */
+	public addAlternativeButton(button: HTMLButtonElement, key: string): void {
+		this.input.addAlternativeButton(button, key);
+	}
 }
