@@ -159,9 +159,11 @@ export class Renderer {
 
 		// Pipeline stages
 		const pointsTransformed: Vector[] = [];
+		const pointsViewed: Vector[] = [];
 		const pointsProjected: Vector[] = [];
 
 		const visibleTriangles: Triangle[] = [];
+		const clippedTriangles: Triangle[] = [];
 		const triangleColors = new Map<Triangle, string>();
 
 		// Transforming
@@ -209,12 +211,34 @@ export class Renderer {
 			return zB - zA;
 		});
 
-		// Projecting points
+		// Views points
 		for (let point of pointsTransformed) {
 			// Moving by view
 			point = vec.vectorMatrixMultiply(matViewRotation, point);
 			point = vec.vectorAdd(point, matViewTranslation);
-			// Projecting to 2d
+			pointsViewed.push(point);
+		}
+
+		// Clip triangles
+		for (const triangle of visibleTriangles) {
+			const color = triangleColors.get(triangle) || 'red';
+			// Clips by screen plane
+			const clipped: Triangle[] = vec.triangleClippingAgainstPlane(
+				[0, 0.5, 0],
+				[0, 0, 1],
+				triangle,
+				pointsViewed
+			);
+			// Adds clipped triangles
+			for (const ctr of clipped) {
+				triangleColors.set(ctr, color);
+				clippedTriangles.push(ctr);
+			}
+		}
+
+		// Projecting points to 2d
+		for (let point of pointsViewed) {
+			// Projection
 			point = vec.vectorProject2d(point);
 			// Scaling
 			point = vec.vectorMultiply(point, shape.size);
@@ -222,7 +246,7 @@ export class Renderer {
 		}
 
 		// Drawing traingles
-		for (const triangle of visibleTriangles) {
+		for (const triangle of clippedTriangles) {
 			const color = triangleColors.get(triangle) || 'red';
 			this.fillTriangle(
 				pointsProjected[triangle[0]],
@@ -230,6 +254,12 @@ export class Renderer {
 				pointsProjected[triangle[2]],
 				color
 			);
+			// this.drawTriangle(
+			// 	pointsProjected[triangle[0]],
+			// 	pointsProjected[triangle[1]],
+			// 	pointsProjected[triangle[2]],
+			// 	'#000000'
+			// );
 		}
 	}
 

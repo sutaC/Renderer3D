@@ -1,3 +1,5 @@
+import type { Triangle } from './Shape';
+
 export type Vector = [x: number, y: number, z: number];
 
 // Operations
@@ -161,6 +163,133 @@ export function matrixInverseTranslation(position: Vector, matrix: Vector[]): Ve
 		-vectorDotProduct(position, matrix[1]),
 		-vectorDotProduct(position, matrix[2])
 	];
+}
+
+/**
+ * Returns point where the line intesects with the plane
+ * @param planePoint Point of the plane
+ * @param planeNormal Normal of the plane
+ * @param lineStart Start point of line
+ * @param lineEnd End point of line
+ * @returns Point of line intersection with plane
+ */
+export function vectorIntersectPlane(
+	planePoint: Vector,
+	planeNormal: Vector,
+	lineStart: Vector,
+	lineEnd: Vector
+): Vector {
+	planeNormal = vectorNormalise(planeNormal);
+	const planeDotProduct = -vectorDotProduct(planePoint, planeNormal);
+	const lineStartDotProduct = vectorDotProduct(lineStart, planeNormal);
+	const lineEndDotProduct = vectorDotProduct(lineEnd, planeNormal);
+	const t = (-planeDotProduct - lineStartDotProduct) / (lineEndDotProduct - lineStartDotProduct);
+	const lineStartToEnd = vectorSubtract(lineEnd, lineStart);
+	const lineToInntersect = vectorMultiply(lineStartToEnd, t);
+	return vectorAdd(lineStart, lineToInntersect);
+}
+
+/**
+ * Clips triangle off the plane
+ * @param planePoint Point of the plane
+ * @param planeNormal Normal of the plane
+ * @param triangle Triangle to clip
+ * @returns Clipped triangles
+ */
+export function triangleClippingAgainstPlane(
+	planePoint: Vector,
+	planeNormal: Vector,
+	triangle: Triangle,
+	points: Vector[]
+): Triangle[] {
+	planeNormal = vectorNormalise(planeNormal);
+
+	// Return shortest distance from point to plane
+	const distance = (point: Vector): number =>
+		planeNormal[0] * point[0] +
+		planeNormal[1] * point[1] +
+		planeNormal[2] * point[2] -
+		vectorDotProduct(planeNormal, planePoint);
+
+	const insidePoints: number[] = [];
+	const outsidePoints: number[] = [];
+
+	for (let i = 0; i < triangle.length; i++) {
+		const dist = distance(points[triangle[i]]);
+		if (dist >= 0) {
+			insidePoints.push(triangle[i]);
+		} else {
+			outsidePoints.push(triangle[i]);
+		}
+	}
+
+	if (insidePoints.length === 0) {
+		// All points are outside of the plane, so clips the whole triangles
+		return [];
+	}
+
+	if (insidePoints.length === 3) {
+		// All points are inside of the plane, so clipping is no needed
+		return [triangle];
+	}
+
+	if (insidePoints.length === 1 && outsidePoints.length === 2) {
+		// Returns new smaller triangle
+		const validPoint = points[insidePoints[0]];
+		const newPoint1 = vectorIntersectPlane(
+			planePoint,
+			planeNormal,
+			validPoint,
+			points[outsidePoints[0]]
+		);
+		const newPoint2 = vectorIntersectPlane(
+			planePoint,
+			planeNormal,
+			validPoint,
+			points[outsidePoints[1]]
+		);
+		const newTriangle = [
+			insidePoints[0],
+			points.push(newPoint1) - 1,
+			points.push(newPoint2) - 1
+		] as Triangle;
+		return [newTriangle];
+	}
+
+	if (insidePoints.length === 2 && outsidePoints.length === 1) {
+		const validPoint1 = points[insidePoints[0]];
+		const validPoint2 = points[insidePoints[1]];
+
+		// 1st new triangle
+		const newPointT1 = vectorIntersectPlane(
+			planePoint,
+			planeNormal,
+			validPoint1,
+			points[outsidePoints[0]]
+		);
+		const newTriangle1 = [
+			insidePoints[0],
+			insidePoints[1],
+			points.push(newPointT1) - 1
+		] as Triangle;
+
+		// 2nd new triangle
+		const newPointT2 = vectorIntersectPlane(
+			planePoint,
+			planeNormal,
+			validPoint2,
+			points[outsidePoints[0]]
+		);
+		const newTriangle2 = [
+			insidePoints[1],
+			points.length - 1,
+			points.push(newPointT2) - 1
+		] as Triangle;
+
+		return [newTriangle1, newTriangle2];
+	}
+
+	throw new Error('Error ocurred while clipping triangles, no valid points ammount was found');
 }
 
 // Translations
