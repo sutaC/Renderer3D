@@ -89,9 +89,10 @@
 		grid-template-areas: '. forward . up' 'left backward right down';
 	}
 
-	.controller > * {
+	.controller button {
 		aspect-ratio: 1;
 		width: 2.5rem;
+		user-select: none;
 	}
 
 	#left {
