@@ -8,28 +8,43 @@ export class Input {
 	private heldKeys: Map<string, boolean> = new Map();
 
 	constructor() {
-		window.addEventListener('keydown', this.handleKeyDown.bind(this));
-		window.addEventListener('keyup', this.handleKeyUp.bind(this));
+		window.addEventListener('keydown', (e) => this.addKey(e.key));
+		window.addEventListener('keyup', (e) => this.deleteKey(e.key));
 	}
 
 	/**
-	 * Adds given key to held keys map
-	 * @param event Keydown event
+	 * Addes key to currently held keys
+	 * @param key Key to add
 	 */
-	private handleKeyDown(event: KeyboardEvent): void {
-		const key = event.key;
+	private addKey(key: string): void {
 		if (this.heldKeys.has(key)) return;
 		this.heldKeys.set(key, true);
 	}
 
 	/**
-	 * Removes given key from held keys map
-	 * @param event Keyup event
+	 * Deletes key from currently held keys
+	 * @param key Key to delete
 	 */
-	private handleKeyUp(event: KeyboardEvent): void {
-		const key = event.key;
+	private deleteKey(key: string): void {
 		if (!this.heldKeys.has(key)) return;
 		this.heldKeys.delete(key);
+	}
+
+	/**
+	 * Adds button as alternative to holding keyboard key
+	 * @param button Alternative to key button
+	 * @param key Key that the button represents
+	 */
+	public addAlternativeButton(button: HTMLButtonElement, key: string) {
+		// Button down
+		button.addEventListener('click', () => this.addKey(key));
+		button.addEventListener('mousedown', () => this.addKey(key));
+		button.addEventListener('touchstart', () => this.addKey(key));
+		// Button up
+		button.addEventListener('mouseup', () => this.deleteKey(key));
+		button.addEventListener('mouseleave', () => this.deleteKey(key));
+		button.addEventListener('touchend', () => this.deleteKey(key));
+		button.addEventListener('touchcancel', () => this.deleteKey(key));
 	}
 
 	/**
