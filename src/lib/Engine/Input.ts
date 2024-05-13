@@ -37,7 +37,6 @@ export class Input {
 	 */
 	public addAlternativeButton(button: HTMLButtonElement, key: string): void {
 		// Button down
-		button.addEventListener('click', () => this.addKey(key));
 		button.addEventListener('mousedown', () => this.addKey(key));
 		button.addEventListener('touchstart', () => this.addKey(key));
 		// Button up
