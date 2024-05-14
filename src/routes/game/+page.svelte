@@ -3,33 +3,32 @@
 	import { Game } from '$lib/Game';
 	import { EngineState } from '$lib/Engine/Engine';
 
-	let game: Game | undefined = undefined;
+	let engine: Game | undefined = undefined;
 
 	onMount(() => {
 		const canvas = document.querySelector('canvas') as HTMLCanvasElement;
-		game = new Game(canvas);
+		engine = new Game(canvas);
 
-		game.addAlternativeButton(document.querySelector('#left') as HTMLButtonElement, 'a');
-		game.addAlternativeButton(document.querySelector('#forward') as HTMLButtonElement, 'w');
-		game.addAlternativeButton(document.querySelector('#right') as HTMLButtonElement, 'd');
-		game.addAlternativeButton(document.querySelector('#backward') as HTMLButtonElement, 's');
-		game.addAlternativeButton(document.querySelector('#up') as HTMLButtonElement, 'Shift');
-		game.addAlternativeButton(document.querySelector('#down') as HTMLButtonElement, 'Control');
+		engine.addAlternativeButton(document.querySelector('#left') as HTMLButtonElement, 'a');
+		engine.addAlternativeButton(document.querySelector('#forward') as HTMLButtonElement, 'w');
+		engine.addAlternativeButton(document.querySelector('#right') as HTMLButtonElement, 'd');
+		engine.addAlternativeButton(document.querySelector('#backward') as HTMLButtonElement, 's');
+		engine.addAlternativeButton(document.querySelector('#up') as HTMLButtonElement, 'Shift');
+		engine.addAlternativeButton(document.querySelector('#down') as HTMLButtonElement, 'Control');
 
-		game.onready = (gm) => {
-			gm.run();
-			console.log('Game is running!');
+		engine.onready = (eng) => {
+			eng.run();
 		};
-		game.onfail = (error) => {
-			console.error('Error ocurred while starting game: ', error);
+		engine.onfail = (error) => {
+			console.error('Error ocurred while starting engine: ', error);
 		};
 	});
 
 	onDestroy(() => {
-		if (game) {
+		if (engine) {
 			// Engine running
-			if (game.getState() === EngineState.running) {
-				game.stop();
+			if (engine.getState() === EngineState.running) {
+				engine.stop();
 			}
 		}
 	});
