@@ -17,6 +17,7 @@ export class Input {
 	 * @param key Key to add
 	 */
 	private addKey(key: string): void {
+		key = key.toLowerCase();
 		if (this.heldKeys.has(key)) return;
 		this.heldKeys.set(key, true);
 	}
@@ -26,6 +27,7 @@ export class Input {
 	 * @param key Key to delete
 	 */
 	private deleteKey(key: string): void {
+		key = key.toLowerCase();
 		if (!this.heldKeys.has(key)) return;
 		this.heldKeys.delete(key);
 	}
