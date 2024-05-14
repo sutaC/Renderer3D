@@ -113,7 +113,7 @@ export function vectorMatrixMultiply(matrix: number[][], vector: Vector): Vector
 			arrResult[i] += matrix[i][j] * vecArray[j];
 		}
 	}
-	return arrayToVector(vecArray);
+	return arrayToVector(arrResult);
 }
 
 /**
