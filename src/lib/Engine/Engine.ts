@@ -152,12 +152,6 @@ export abstract class Engine {
 
 	/**
 	 * Gives current engine state
-	 * - 0 : starting
-	 * - 1 : preparing
-	 * - 2 : ready
-	 * - 3 : running
-	 * - 4 : stopped
-	 * - 5 : failed
 	 * @returns Engine state code
 	 */
 	public getState(): EngineState {
@@ -171,5 +165,21 @@ export abstract class Engine {
 	 */
 	public addAlternativeButton(button: HTMLButtonElement, key: string): void {
 		this.input.addAlternativeButton(button, key);
+	}
+
+	/**
+	 * Sets engine debug option
+	 * @param option Debug option
+	 * @param value New value of option
+	 */
+	public setDebugOption(option: 'wireframe' | 'clipping', value: boolean): void {
+		switch (option) {
+			case 'wireframe':
+				this.renderer.debugOptions.wireframe = value;
+				break;
+			case 'clipping':
+				this.renderer.debugOptions.wireframe = value;
+				break;
+		}
 	}
 }
