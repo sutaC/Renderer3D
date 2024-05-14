@@ -37,7 +37,7 @@ export type ShapeNames = 'cube' | 'prism' | 'piramid' | 'cup' | 'diamond' | 'tea
  */
 export class Shape {
 	/**
-	 * Triangles that make up a shape [readonly]
+	 * Triangles that make up a shape
 	 */
 	public readonly triangles: Triangle[];
 
@@ -158,7 +158,6 @@ export class Shape {
 	/**
 	 * Creates shape from given `.obj` file
 	 * @param file `.obj` file
-	 * @param origin Shape to copy params of [optional]
 	 * @returns New shape from given file
 	 */
 	public static createShapeFromObjFile(file: File): Promise<Shape> {
