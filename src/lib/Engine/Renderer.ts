@@ -46,6 +46,16 @@ export class Renderer {
 	private readonly camera: Camera;
 
 	/**
+	 * Renderer debug options
+	 * @prop {boolean} wireframe - Draws triangle wireframe on shape
+	 * @prop {boolean} clipping - Sets clipped triangle color to green
+	 */
+	public debugOptions = {
+		wireframe: false,
+		clipping: false
+	};
+
+	/**
 	 * @param canvas Canvas used to display graphics
 	 * @param camera Camera object representing player
 	 */
@@ -80,9 +90,9 @@ export class Renderer {
 	/**
 	 * Draws given point
 	 * @param point Point to draw
-	 * @param color Point color [default='#FFFFFF']
+	 * @param color Point color
 	 */
-	private drawPoint(point: Vector, color = '#FFFFFF'): void {
+	public drawPoint(point: Vector, color = '#FFFFFF'): void {
 		this.ctx.fillStyle = color;
 		this.ctx.beginPath();
 		this.ctx.arc(this.centerX + point.x, this.centerY - point.y, 3, 0, Math.PI * 2);
@@ -94,14 +104,14 @@ export class Renderer {
 	 * Draws line between two given points
 	 * @param a Point a
 	 * @param b Point b
-	 * @param color Line color [default='#FFFFFF']
+	 * @param color Line color
 	 */
-	private drawLine(a: Vector, b: Vector, color: string = '#FFFFFF'): void {
+	public drawLine(a: Vector, b: Vector, color: string = '#FFFFFF'): void {
 		this.ctx.strokeStyle = color;
 		this.ctx.lineWidth = 1.5;
 		this.ctx.beginPath();
-		this.ctx.moveTo(this.centerX + a.x, this.centerY - a.y);
-		this.ctx.lineTo(this.centerX + b.x, this.centerY - b.y);
+		this.ctx.moveTo(a.x, this.canvas.height - a.y);
+		this.ctx.lineTo(b.x, this.canvas.height - b.y);
 		this.ctx.stroke();
 		this.ctx.closePath();
 	}
@@ -129,11 +139,11 @@ export class Renderer {
 	private fillTriangle(a: Vector, b: Vector, c: Vector, color: string = '#FFFFFF'): void {
 		this.ctx.fillStyle = color;
 		this.ctx.beginPath();
-		this.ctx.moveTo(this.centerX + a.x, this.centerY - a.y);
-		this.ctx.lineTo(this.centerX + b.x, this.centerY - b.y);
-		this.ctx.lineTo(this.centerX + c.x, this.centerY - c.y);
-		this.ctx.moveTo(this.centerX + b.x, this.centerY - b.y);
-		this.ctx.lineTo(this.centerX + c.x, this.centerY - c.y);
+		this.ctx.moveTo(a.x, this.canvas.height - a.y);
+		this.ctx.lineTo(b.x, this.canvas.height - b.y);
+		this.ctx.lineTo(c.x, this.canvas.height - c.y);
+		this.ctx.moveTo(b.x, this.canvas.height - b.y);
+		this.ctx.lineTo(c.x, this.canvas.height - c.y);
 		this.ctx.fill();
 		this.ctx.closePath();
 		this.drawTriangle(a, b, c, color);
@@ -215,39 +225,97 @@ export class Renderer {
 				triangle[i] = point;
 			}
 
-			// Clip triangles
-
+			// Clipping
+			// Clip setup
 			const color = triangleColors.get(triangle) || 'red';
+			triangleColors.delete(triangle);
+			let clipped: Triangle[] = [];
 
-			// Clips by screen plane
-			const clipped: Triangle[] = vec.triangleClippingAgainstPlane(
-				{ x: 0, y: 0.5, z: 0 },
+			// Clipping against screen depth
+			clipped = vec.triangleClippingAgainstPlane(
+				{ x: 0, y: 0, z: 1 },
 				{ x: 0, y: 0, z: 1 },
 				triangle
 			);
+
+			// Skips if no clipped triangles
+			if (clipped.length === 0) continue;
+
+			// Projecting points to 2d
+			for (const tri of clipped) {
+				for (let i = 0; i < tri.length; i++) {
+					let point = tri[i];
+					// Projection
+					point = vec.vectorProject2d(point);
+					// Scaling
+					point = vec.vectorMultiply(point, shape.size);
+					// Centering
+					const centerVec: Vector = {
+						x: this.centerX,
+						y: this.centerY,
+						z: 0
+					};
+					point = vec.vectorAdd(point, centerVec);
+					tri[i] = point;
+				}
+			}
+
+			// Clips array of triangles
+			const clipArray = (
+				triangles: Triangle[],
+				clipFn: (tr: Triangle) => Triangle[]
+			): Triangle[] => {
+				const result: Triangle[] = [];
+				for (const tr of triangles) {
+					const clippedTr: Triangle[] = clipFn(tr);
+					for (const tr of clippedTr) {
+						result.push(tr);
+					}
+				}
+				return result;
+			};
+
+			// Clips against screan edges
+			clipped = clipArray(clipped, (tr) =>
+				vec.triangleClippingAgainstPlane({ x: 0, y: 0, z: 0 }, { x: 0, y: 1, z: 0 }, tr)
+			);
+			clipped = clipArray(clipped, (tr) =>
+				vec.triangleClippingAgainstPlane(
+					{ x: 0, y: this.canvas.height - 1, z: 0 },
+					{ x: 0, y: -1, z: 0 },
+					tr
+				)
+			);
+			clipped = clipArray(clipped, (tr) =>
+				vec.triangleClippingAgainstPlane({ x: 0, y: 0, z: 0 }, { x: 1, y: 0, z: 0 }, tr)
+			);
+			clipped = clipArray(clipped, (tr) =>
+				vec.triangleClippingAgainstPlane(
+					{ x: this.canvas.width - 1, y: 0, z: 0 },
+					{ x: -1, y: 0, z: 0 },
+					tr
+				)
+			);
+
 			// Adds clipped triangles
 			for (const ctr of clipped) {
 				triangleColors.set(ctr, color);
+				// Debug clipping
+				if (this.debugOptions.clipping && ctr !== triangle) {
+					triangleColors.set(ctr, 'green');
+				}
 				drawable.push(ctr);
 			}
 		}
 
+		// Drawing traingles
 		for (const triangle of drawable) {
-			// Projecting points to 2d
-			for (let i = 0; i < triangle.length; i++) {
-				let point = triangle[i];
-				// Projection
-				point = vec.vectorProject2d(point);
-				// Scaling
-				point = vec.vectorMultiply(point, shape.size);
-				triangle[i] = point;
-			}
-
-			// Drawing traingles
-
 			const color = triangleColors.get(triangle) || 'red';
-
 			this.fillTriangle(triangle[0], triangle[1], triangle[2], color);
+			// Debug wireframe
+			if (this.debugOptions.wireframe) {
+				this.drawTriangle(triangle[0], triangle[1], triangle[2], 'black');
+			}
 		}
 	}
 
