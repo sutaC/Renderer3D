@@ -1,8 +1,39 @@
 import type { Triangle } from './Shape';
 
-export type Vector = [x: number, y: number, z: number];
+export interface Vector {
+	x: number;
+	y: number;
+	z: number;
+}
 
 // Operations
+
+/**
+ * Covetrs array to vector
+ * @param array Array to convert
+ * @returns Converted array
+ */
+export function arrayToVector(array: number[]): Vector {
+	if (array.length !== 3) {
+		throw new Error(
+			'Could not convert array to vector, becouse array length is not eaqual to vector length (3)'
+		);
+	}
+	return {
+		x: array[0],
+		y: array[1],
+		z: array[2]
+	};
+}
+
+/**
+ * Converts vector to array
+ * @param vector Vector to convert
+ * @returns Converted vector
+ */
+export function vectorToArray(vector: Vector): number[] {
+	return [vector.x, vector.y, vector.z];
+}
 
 /**
  * Adds two vectors
@@ -11,7 +42,7 @@ export type Vector = [x: number, y: number, z: number];
  * @returns Vectors of sum
  */
 export function vectorAdd(a: Vector, b: Vector): Vector {
-	return [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
+	return { x: a.x + b.x, y: a.y + b.y, z: a.z + b.z };
 }
 
 /**
@@ -21,7 +52,7 @@ export function vectorAdd(a: Vector, b: Vector): Vector {
  * @returns Subtracted vector
  */
 export function vectorSubtract(a: Vector, b: Vector): Vector {
-	return [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
+	return { x: a.x - b.x, y: a.y - b.y, z: a.z - b.z };
 }
 
 /**
@@ -31,7 +62,7 @@ export function vectorSubtract(a: Vector, b: Vector): Vector {
  * @returns Multiplied vector
  */
 export function vectorMultiply(vector: Vector, multiplier: number): Vector {
-	return [vector[0] * multiplier, vector[1] * multiplier, vector[2] * multiplier];
+	return { x: vector.x * multiplier, y: vector.y * multiplier, z: vector.z * multiplier };
 }
 
 /**
@@ -41,7 +72,7 @@ export function vectorMultiply(vector: Vector, multiplier: number): Vector {
  * @returns Devided vector
  */
 export function vectorDevide(vector: Vector, divider: number): Vector {
-	return [vector[0] / divider, vector[1] / divider, vector[2] / divider];
+	return { x: vector.x / divider, y: vector.y / divider, z: vector.z / divider };
 }
 
 /**
@@ -50,7 +81,7 @@ export function vectorDevide(vector: Vector, divider: number): Vector {
  * @returns Vector length
  */
 export function vectorLength(vector: Vector): number {
-	return Math.sqrt(vector[0] ** 2 + vector[1] ** 2 + vector[2] ** 2);
+	return Math.sqrt(vector.x ** 2 + vector.y ** 2 + vector.z ** 2);
 }
 
 /**
@@ -60,7 +91,7 @@ export function vectorLength(vector: Vector): number {
  */
 export function vectorNormalise(vector: Vector): Vector {
 	const len = vectorLength(vector);
-	return [vector[0] / len, vector[1] / len, vector[2] / len];
+	return { x: vector.x / len, y: vector.y / len, z: vector.z / len };
 }
 
 // Calculations
@@ -71,17 +102,18 @@ export function vectorNormalise(vector: Vector): Vector {
  * @param vector Vector to multiply
  * @returns Multiplied vector
  */
-export function vectorMatrixMultiply(matrix: Vector[], vector: Vector): Vector {
-	if (matrix.length !== vector.length) {
-		throw new Error('Matrix length must be be the same size as vector length');
+export function vectorMatrixMultiply(matrix: number[][], vector: Vector): Vector {
+	if (matrix.length !== 3) {
+		throw new Error('Matrix length must be be the same size as vector length (3)');
 	}
-	const result: Vector = [0, 0, 0];
-	for (let i = 0; i < vector.length; i++) {
-		for (let j = 0; j < vector.length; j++) {
-			result[i] += matrix[i][j] * vector[j];
+	const vecArray: number[] = vectorToArray(vector);
+	const arrResult: number[] = [0, 0, 0];
+	for (let i = 0; i < vecArray.length; i++) {
+		for (let j = 0; j < vecArray.length; j++) {
+			arrResult[i] += matrix[i][j] * vecArray[j];
 		}
 	}
-	return result;
+	return arrayToVector(vecArray);
 }
 
 /**
@@ -91,7 +123,7 @@ export function vectorMatrixMultiply(matrix: Vector[], vector: Vector): Vector {
  * @returns Vector cross product
  */
 export function vectorCrossProduct(a: Vector, b: Vector): Vector {
-	return [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+	return { x: a.y * b.z - a.z * b.y, y: a.z * b.x - a.x * b.z, z: a.x * b.y - a.y * b.x };
 }
 
 /**
@@ -104,11 +136,11 @@ export function vectorCrossProduct(a: Vector, b: Vector): Vector {
 export function vectorNormal(a: Vector, b: Vector, c: Vector): Vector {
 	const lineA: Vector = vectorSubtract(b, a);
 	const lineB: Vector = vectorSubtract(c, a);
-	const normal: Vector = [
-		lineA[1] * lineB[2] - lineA[2] * lineB[1],
-		lineA[2] * lineB[0] - lineA[0] * lineB[2],
-		lineA[0] * lineB[1] - lineA[1] * lineB[0]
-	];
+	const normal: Vector = {
+		x: lineA.y * lineB.z - lineA.z * lineB.y,
+		y: lineA.z * lineB.x - lineA.x * lineB.z,
+		z: lineA.x * lineB.y - lineA.y * lineB.x
+	};
 	return vectorNormalise(normal);
 }
 
@@ -119,7 +151,7 @@ export function vectorNormal(a: Vector, b: Vector, c: Vector): Vector {
  * @returns Dot product
  */
 export function vectorDotProduct(a: Vector, b: Vector): number {
-	return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+	return a.x * b.x + a.y * b.y + a.z * b.z;
 }
 
 /**
@@ -129,12 +161,16 @@ export function vectorDotProduct(a: Vector, b: Vector): number {
  * @param up Up vector - normal to objects facing direction axle
  * @returns Point at matrix - transformation for object rotation depending on given position
  */
-export function matrixPointAt(position: Vector, target: Vector, up: Vector): Vector[] {
+export function matrixPointAt(position: Vector, target: Vector, up: Vector): number[][] {
 	const newForward: Vector = vectorNormalise(vectorSubtract(target, position));
 	const a: Vector = vectorMultiply(newForward, vectorDotProduct(up, newForward));
 	const newUp = vectorNormalise(vectorSubtract(up, a));
 	const newRight: Vector = vectorCrossProduct(newUp, newForward);
-	const matrix: Vector[] = [newRight, newUp, newForward];
+	const matrix: number[][] = [
+		vectorToArray(newRight),
+		vectorToArray(newUp),
+		vectorToArray(newForward)
+	];
 	return matrix;
 }
 
@@ -143,7 +179,7 @@ export function matrixPointAt(position: Vector, target: Vector, up: Vector): Vec
  * @param matrix Rottaion matrix
  * @returns Inverted rotation matrix
  */
-export function matrixInverseRotation(matrix: Vector[]): Vector[] {
+export function matrixInverseRotation(matrix: number[][]): number[][] {
 	return [
 		[matrix[0][0], matrix[1][0], matrix[2][0]],
 		[matrix[0][1], matrix[1][1], matrix[2][1]],
@@ -157,12 +193,12 @@ export function matrixInverseRotation(matrix: Vector[]): Vector[] {
  * @param matrix Translation matrix
  * @returns Inverted translation matrix
  */
-export function matrixInverseTranslation(position: Vector, matrix: Vector[]): Vector {
-	return [
-		-vectorDotProduct(position, matrix[0]),
-		-vectorDotProduct(position, matrix[1]),
-		-vectorDotProduct(position, matrix[2])
-	];
+export function matrixInverseTranslation(position: Vector, matrix: number[][]): Vector {
+	return {
+		x: -vectorDotProduct(position, arrayToVector(matrix[0])),
+		y: -vectorDotProduct(position, arrayToVector(matrix[1])),
+		z: -vectorDotProduct(position, arrayToVector(matrix[2]))
+	};
 }
 
 /**
@@ -206,9 +242,9 @@ export function triangleClippingAgainstPlane(
 
 	// Return shortest distance from point to plane
 	const distance = (point: Vector): number =>
-		planeNormal[0] * point[0] +
-		planeNormal[1] * point[1] +
-		planeNormal[2] * point[2] -
+		planeNormal.x * point.x +
+		planeNormal.y * point.y +
+		planeNormal.z * point.z -
 		vectorDotProduct(planeNormal, planePoint);
 
 	const insidePoints: number[] = [];
@@ -303,7 +339,7 @@ export function triangleClippingAgainstPlane(
  */
 export function vectorRotate(vector: Vector, angle: number, axis: 'x' | 'y' | 'z'): Vector {
 	const radians = angle * (Math.PI / 180);
-	let matrix: Vector[];
+	let matrix: number[][];
 	switch (axis) {
 		case 'x':
 			matrix = [
@@ -331,16 +367,10 @@ export function vectorRotate(vector: Vector, angle: number, axis: 'x' | 'y' | 'z
 }
 
 /**
- * Projects 3D vector to 2D (also sets Z position to 0)
+ * Projects 3D vector to 2D (also sets Z position to 1)
  * @param vector Vector to project
  * @returns Projected vector
  */
 export function vectorProject2d(vector: Vector): Vector {
-	const z = 1 / vector[2];
-	const projection: Vector[] = [
-		[z, 0, 0],
-		[0, z, 0],
-		[0, 0, 0]
-	];
-	return vectorMatrixMultiply(projection, vector);
+	return vectorDevide(vector, vector.z);
 }

@@ -134,7 +134,7 @@ export class Shape {
 				const x = Number(vertices[0]);
 				const y = Number(vertices[1]);
 				const z = Number(vertices[2]);
-				const point: Vector = [x, y, z];
+				const point: Vector = { x, y, z };
 				shape.points.push(point);
 			} else if (type === 'f') {
 				const faces = data.split(' ');
