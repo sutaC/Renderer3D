@@ -45,7 +45,9 @@
 	});
 
 	$: if (showcase && !customObj) {
-		if (selected !== 'custom') {
+		if (selected === 'custom') {
+			showcase.shapeController.unsetShape();
+		} else {
 			showcase.shapeController.loadType(selected as ShapeNames);
 		}
 	}
@@ -92,7 +94,10 @@
 			>
 				<option value="cube">Cube</option>
 				<option value="prism">Prism</option>
-				<option value="prismSqB">Prism / square base</option>
+				<option value="piramid">Piramid</option>
+				<option value="cup">Cup</option>
+				<option value="diamond">Diamond</option>
+				<option value="teapot">Teapot</option>
 				<option value="custom">Custom</option>
 			</select>
 
@@ -107,22 +112,6 @@
 					accept=".obj"
 					on:input={(e) => handleAddFile(e)}
 				/>
-
-				<p class="highlight">Sample objects</p>
-				<ul class="sampleObjects">
-					<li>
-						<a href="/sample-objects/cube.obj">Cube</a>
-					</li>
-					<li>
-						<a href="/sample-objects/diamind.obj">Diamond</a>
-					</li>
-					<li>
-						<a href="/sample-objects/cup.obj">Cup</a>
-					</li>
-					<li>
-						<a href="/sample-objects/teapot.obj">Teapot</a>
-					</li>
-				</ul>
 			{/if}
 		</div>
 
@@ -265,12 +254,5 @@
 
 	.field li {
 		list-style: none;
-	}
-
-	.field .sampleObjects {
-		display: flex;
-		justify-content: space-evenly;
-		align-items: center;
-		gap: 1rem;
 	}
 </style>

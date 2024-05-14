@@ -1,25 +1,4 @@
-import cubeObj from './shapes/cube.json';
-import prismObj from './shapes/prism.json';
-import prismSqBObj from './shapes/prismSqB.json';
 import { type Vector } from './Vector';
-
-/**
- * Interface defining shape object stored in JSON files
- */
-interface ShapeObject {
-	/**
-	 * Shape name
-	 */
-	name: string;
-	/**
-	 * Points that make up a shape
-	 */
-	points: number[][];
-	/**
-	 * Triangles that make up a shape
-	 */
-	triangles: number[][];
-}
 
 /**
  * Interface for handling shape color
@@ -51,7 +30,7 @@ export type Triangle = [aIdx: number, bIdx: number, cIdx: number];
 /**
  * Names of shapes stored in JSON files
  */
-export type ShapeNames = 'cube' | 'prism' | 'prismSqB';
+export type ShapeNames = 'cube' | 'prism' | 'piramid' | 'cup' | 'diamond' | 'teapot';
 
 /**
  * Shape class defining shapes understandable by the renderer
@@ -126,32 +105,6 @@ export class Shape {
 		shape.origin = origin.origin;
 		shape.rotation = origin.rotation;
 		shape.colorObj = origin.colorObj;
-	}
-
-	/**
-	 * Crates shape from stored JSON files
-	 * @param name Name of stored shape
-	 * @param origin Shape to copy params of [optional]
-	 * @returns Selected new shape
-	 */
-	public static createShape(name: ShapeNames, origin?: Shape) {
-		let obj: ShapeObject;
-		switch (name) {
-			case 'cube':
-				obj = cubeObj;
-				break;
-			case 'prism':
-				obj = prismObj;
-				break;
-			case 'prismSqB':
-				obj = prismSqBObj;
-				break;
-		}
-		const shp = new Shape(obj.points as Vector[], obj.triangles as Triangle[]);
-		if (origin) {
-			this.copyShapeParams(shp, origin);
-		}
-		return shp;
 	}
 
 	/**

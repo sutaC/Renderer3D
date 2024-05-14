@@ -14,7 +14,7 @@ export class Showcase extends Engine {
 	}
 
 	protected async start(): Promise<void> {
-		this.shp = Shape.createShape('cube');
+		this.shp = await Shape.loadShape('/sample-objects/cube.obj');
 		this.shapes.push(this.shp);
 	}
 
@@ -41,8 +41,11 @@ export class Showcase extends Engine {
 
 	// Exposed controll
 	public readonly shapeController = {
-		loadType: (name: ShapeNames): void => {
-			this.shp = Shape.createShape(name, this.shp);
+		unsetShape: (): void => {
+			this.shp = new Shape();
+		},
+		loadType: async (name: ShapeNames): Promise<void> => {
+			this.shp = await Shape.loadShape(`/sample-objects/${name}.obj`);
 		},
 		loadFile: (file: File): void => {
 			(async () => {
