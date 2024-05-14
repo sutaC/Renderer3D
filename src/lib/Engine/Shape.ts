@@ -25,7 +25,7 @@ export interface ColorObject {
 /**
  * Triangle tuple list containing indexes of points of which it consists
  */
-export type Triangle = [aIdx: number, bIdx: number, cIdx: number];
+export type Triangle = [a: Vector, b: Vector, c: Vector];
 
 /**
  * Names of shapes stored in JSON files
@@ -36,10 +36,6 @@ export type ShapeNames = 'cube' | 'prism' | 'piramid' | 'cup' | 'diamond' | 'tea
  * Shape class defining shapes understandable by the renderer
  */
 export class Shape {
-	/**
-	 * Points that make up a shape [readonly]
-	 */
-	public readonly points: Vector[];
 	/**
 	 * Triangles that make up a shape [readonly]
 	 */
@@ -68,11 +64,9 @@ export class Shape {
 	};
 
 	/**
-	 * @param points Points that make up a shape [deafult=emptyArray]
-	 * @param triangles Triangles that make up a shape [deafult=emptyArray]
+	 * @param triangles Triangles that make up a shape
 	 */
-	constructor(points: Vector[] = [], triangles: Triangle[] = []) {
-		this.points = points;
+	constructor(triangles: Triangle[] = []) {
 		this.triangles = triangles;
 	}
 
@@ -113,7 +107,9 @@ export class Shape {
 	 * @returns New shape from given text
 	 */
 	public static parseToShape(text: string): Shape {
-		const shape = new Shape();
+		const points: Vector[] = [];
+		const trianglesIdx: number[][] = [];
+
 		const read = text.split('\n');
 		for (let i = 0; i < read.length; i++) {
 			const line = read[i];
@@ -135,7 +131,7 @@ export class Shape {
 				const y = Number(vertices[1]);
 				const z = Number(vertices[2]);
 				const point: Vector = { x, y, z };
-				shape.points.push(point);
+				points.push(point);
 			} else if (type === 'f') {
 				const faces = data.split(' ');
 				if (faces.length !== 3) {
@@ -147,11 +143,16 @@ export class Shape {
 				const v1 = Number(faces[0].split('/')[0]) - 1;
 				const v2 = Number(faces[1].split('/')[0]) - 1;
 				const v3 = Number(faces[2].split('/')[0]) - 1;
-				const triangle: Triangle = [v1, v2, v3];
-				shape.triangles.push(triangle);
+				const trIdx: number[] = [v1, v2, v3];
+				trianglesIdx.push(trIdx);
 			}
 		}
-		return shape;
+
+		const triangles: Triangle[] = trianglesIdx.map(
+			(tri) => [points[tri[0]], points[tri[1]], points[tri[2]]] as Triangle
+		);
+
+		return new Shape(triangles);
 	}
 
 	/**

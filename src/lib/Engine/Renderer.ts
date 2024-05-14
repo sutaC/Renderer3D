@@ -157,107 +157,97 @@ export class Renderer {
 			matCamera
 		);
 
-		// Pipeline stages
-		const pointsTransformed: Vector[] = [];
-		const pointsViewed: Vector[] = [];
-		const pointsProjected: Vector[] = [];
+		const triangles: Triangle[] = shape.triangles.map((tr) => tr.map((p) => p)) as Triangle[]; // Copies triangles
+		const transformed: Triangle[] = [];
+		const drawable: Triangle[] = [];
 
-		const visibleTriangles: Triangle[] = [];
-		const clippedTriangles: Triangle[] = [];
 		const triangleColors = new Map<Triangle, string>();
 
-		// Transforming
 		const translationVec: Vector = {
 			x: shape.origin.x / shape.size,
 			y: shape.origin.y / shape.size,
 			z: shape.origin.z / shape.size
 		};
-		for (let point of shape.points) {
-			// Rotating
-			point = vec.vectorRotate(point, shape.rotation.x, 'x');
-			point = vec.vectorRotate(point, shape.rotation.y, 'y');
-			point = vec.vectorRotate(point, shape.rotation.z, 'z');
-			// Translating
-			point = vec.vectorAdd(point, translationVec);
-			// Transformed points
-			pointsTransformed.push(point);
-		}
 
-		// Selecting triangles
-		for (const triangle of shape.triangles) {
-			const normal = vec.vectorNormal(
-				pointsTransformed[triangle[0]],
-				pointsTransformed[triangle[1]],
-				pointsTransformed[triangle[2]]
-			);
+		for (const triangle of triangles) {
+			// Transforming
+			for (let i = 0; i < triangle.length; i++) {
+				let point = triangle[i];
+				// Rotating
+				point = vec.vectorRotate(point, shape.rotation.x, 'x');
+				point = vec.vectorRotate(point, shape.rotation.y, 'y');
+				point = vec.vectorRotate(point, shape.rotation.z, 'z');
+				// Translating
+				point = vec.vectorAdd(point, translationVec);
+				// Transformed points
+				triangle[i] = point;
+			}
+
+			// Selecting triangle
+			const normal = vec.vectorNormal(triangle[0], triangle[1], triangle[2]);
 			const dotProduct = vec.vectorDotProduct(
-				vec.vectorSubtract(pointsTransformed[triangle[0]], this.camera.position),
+				vec.vectorSubtract(triangle[0], this.camera.position),
 				normal
 			);
 			if (dotProduct > 0.0) continue;
-			// Iluminating triangles
+
+			// Iluminating triangle
 			const color = this.calculateColor(normal, shape.colorObj);
 			triangleColors.set(triangle, color);
-			// Selected triangles
-			visibleTriangles.push(triangle);
+
+			transformed.push(triangle);
 		}
 
 		// Sorting triangles by perspective (painter's algorithm)
-		visibleTriangles.sort((a, b) => {
-			const zA = pointsTransformed[a[0]].z + pointsTransformed[a[1]].z + pointsTransformed[a[2]].z;
-			const zB = pointsTransformed[b[0]].z + pointsTransformed[b[1]].z + pointsTransformed[b[2]].z;
+		transformed.sort((a, b) => {
+			const zA = a[0].z + a[1].z + a[2].z;
+			const zB = b[0].z + b[1].z + b[2].z;
 			return zB - zA;
 		});
 
-		// Views points
-		for (let point of pointsTransformed) {
-			// Moving by view
-			point = vec.vectorMatrixMultiply(matViewRotation, point);
-			point = vec.vectorAdd(point, matViewTranslation);
-			pointsViewed.push(point);
-		}
+		for (const triangle of transformed) {
+			// Views points
+			for (let i = 0; i < triangle.length; i++) {
+				let point = triangle[i];
+				// Moving by view
+				point = vec.vectorMatrixMultiply(matViewRotation, point);
+				point = vec.vectorAdd(point, matViewTranslation);
+				triangle[i] = point;
+			}
 
-		// Clip triangles
-		for (const triangle of visibleTriangles) {
+			// Clip triangles
+
 			const color = triangleColors.get(triangle) || 'red';
+
 			// Clips by screen plane
 			const clipped: Triangle[] = vec.triangleClippingAgainstPlane(
 				{ x: 0, y: 0.5, z: 0 },
 				{ x: 0, y: 0, z: 1 },
-				triangle,
-				pointsViewed
+				triangle
 			);
 			// Adds clipped triangles
 			for (const ctr of clipped) {
 				triangleColors.set(ctr, color);
-				clippedTriangles.push(ctr);
+				drawable.push(ctr);
 			}
 		}
 
-		// Projecting points to 2d
-		for (let point of pointsViewed) {
-			// Projection
-			point = vec.vectorProject2d(point);
-			// Scaling
-			point = vec.vectorMultiply(point, shape.size);
-			pointsProjected.push(point);
-		}
+		for (const triangle of drawable) {
+			// Projecting points to 2d
+			for (let i = 0; i < triangle.length; i++) {
+				let point = triangle[i];
+				// Projection
+				point = vec.vectorProject2d(point);
+				// Scaling
+				point = vec.vectorMultiply(point, shape.size);
+				triangle[i] = point;
+			}
 
-		// Drawing traingles
-		for (const triangle of clippedTriangles) {
+			// Drawing traingles
+
 			const color = triangleColors.get(triangle) || 'red';
-			this.fillTriangle(
-				pointsProjected[triangle[0]],
-				pointsProjected[triangle[1]],
-				pointsProjected[triangle[2]],
-				color
-			);
-			// this.drawTriangle(
-			// 	pointsProjected[triangle[0]],
-			// 	pointsProjected[triangle[1]],
-			// 	pointsProjected[triangle[2]],
-			// 	'#000000'
-			// );
+
+			this.fillTriangle(triangle[0], triangle[1], triangle[2], color);
 		}
 	}
 

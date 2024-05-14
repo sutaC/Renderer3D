@@ -235,8 +235,7 @@ export function vectorIntersectPlane(
 export function triangleClippingAgainstPlane(
 	planePoint: Vector,
 	planeNormal: Vector,
-	triangle: Triangle,
-	points: Vector[]
+	triangle: Triangle
 ): Triangle[] {
 	planeNormal = vectorNormalise(planeNormal);
 
@@ -247,11 +246,11 @@ export function triangleClippingAgainstPlane(
 		planeNormal.z * point.z -
 		vectorDotProduct(planeNormal, planePoint);
 
-	const insidePoints: number[] = [];
-	const outsidePoints: number[] = [];
+	const insidePoints: Vector[] = [];
+	const outsidePoints: Vector[] = [];
 
 	for (let i = 0; i < triangle.length; i++) {
-		const dist = distance(points[triangle[i]]);
+		const dist = distance(triangle[i]);
 		if (dist >= 0) {
 			insidePoints.push(triangle[i]);
 		} else {
@@ -271,56 +270,40 @@ export function triangleClippingAgainstPlane(
 
 	if (insidePoints.length === 1 && outsidePoints.length === 2) {
 		// Returns new smaller triangle
-		const validPoint = points[insidePoints[0]];
 		const newPoint1 = vectorIntersectPlane(
 			planePoint,
 			planeNormal,
-			validPoint,
-			points[outsidePoints[0]]
+			insidePoints[0],
+			outsidePoints[0]
 		);
 		const newPoint2 = vectorIntersectPlane(
 			planePoint,
 			planeNormal,
-			validPoint,
-			points[outsidePoints[1]]
-		);
-		const newTriangle = [
 			insidePoints[0],
-			points.push(newPoint1) - 1,
-			points.push(newPoint2) - 1
-		] as Triangle;
+			outsidePoints[1]
+		);
+		const newTriangle = [insidePoints[0], newPoint1, newPoint2] as Triangle;
 		return [newTriangle];
 	}
 
 	if (insidePoints.length === 2 && outsidePoints.length === 1) {
-		const validPoint1 = points[insidePoints[0]];
-		const validPoint2 = points[insidePoints[1]];
-
 		// 1st new triangle
 		const newPointT1 = vectorIntersectPlane(
 			planePoint,
 			planeNormal,
-			validPoint1,
-			points[outsidePoints[0]]
-		);
-		const newTriangle1 = [
 			insidePoints[0],
-			insidePoints[1],
-			points.push(newPointT1) - 1
-		] as Triangle;
+			outsidePoints[0]
+		);
+		const newTriangle1 = [insidePoints[0], insidePoints[1], newPointT1] as Triangle;
 
 		// 2nd new triangle
 		const newPointT2 = vectorIntersectPlane(
 			planePoint,
 			planeNormal,
-			validPoint2,
-			points[outsidePoints[0]]
-		);
-		const newTriangle2 = [
 			insidePoints[1],
-			points.length - 1,
-			points.push(newPointT2) - 1
-		] as Triangle;
+			outsidePoints[0]
+		);
+		const newTriangle2 = [insidePoints[1], newPointT1, newPointT2] as Triangle;
 
 		return [newTriangle1, newTriangle2];
 	}
