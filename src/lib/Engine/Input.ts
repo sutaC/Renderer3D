@@ -53,6 +53,7 @@ export class Input {
 	 * @returns Whether or not a key is currently held
 	 */
 	public isKeyHeld(key: string): boolean {
+		key = key.toLowerCase();
 		return this.heldKeys.has(key);
 	}
 
