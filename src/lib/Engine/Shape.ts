@@ -25,7 +25,7 @@ export interface ColorObject {
 /**
  * Triangle tuple list containing indexes of points of which it consists
  */
-export type Triangle = [aIdx: number, bIdx: number, cIdx: number];
+export type Triangle = [a: Vector, b: Vector, c: Vector];
 
 /**
  * Names of shapes stored in JSON files
@@ -36,10 +36,6 @@ export type ShapeNames = 'cube' | 'prism' | 'piramid' | 'cup' | 'diamond' | 'tea
  * Shape class defining shapes understandable by the renderer
  */
 export class Shape {
-	/**
-	 * Points that make up a shape [readonly]
-	 */
-	public readonly points: Vector[];
 	/**
 	 * Triangles that make up a shape [readonly]
 	 */
@@ -68,11 +64,9 @@ export class Shape {
 	};
 
 	/**
-	 * @param points Points that make up a shape [deafult=emptyArray]
-	 * @param triangles Triangles that make up a shape [deafult=emptyArray]
+	 * @param triangles Triangles that make up a shape
 	 */
-	constructor(points: Vector[] = [], triangles: Triangle[] = []) {
-		this.points = points;
+	constructor(triangles: Triangle[] = []) {
 		this.triangles = triangles;
 	}
 
@@ -100,7 +94,7 @@ export class Shape {
 	 * @param shape Shape to to which it is copied
 	 * @param origin Shape from which it is copied
 	 */
-	private static copyShapeParams(shape: Shape, origin: Shape): void {
+	public static copyShapeParams(shape: Shape, origin: Shape): void {
 		shape.size = origin.size;
 		shape.origin = origin.origin;
 		shape.rotation = origin.rotation;
@@ -113,7 +107,9 @@ export class Shape {
 	 * @returns New shape from given text
 	 */
 	public static parseToShape(text: string): Shape {
-		const shape = new Shape();
+		const points: Vector[] = [];
+		const trianglesIdx: number[][] = [];
+
 		const read = text.split('\n');
 		for (let i = 0; i < read.length; i++) {
 			const line = read[i];
@@ -134,8 +130,8 @@ export class Shape {
 				const x = Number(vertices[0]);
 				const y = Number(vertices[1]);
 				const z = Number(vertices[2]);
-				const point: Vector = [x, y, z];
-				shape.points.push(point);
+				const point: Vector = { x, y, z };
+				points.push(point);
 			} else if (type === 'f') {
 				const faces = data.split(' ');
 				if (faces.length !== 3) {
@@ -147,11 +143,16 @@ export class Shape {
 				const v1 = Number(faces[0].split('/')[0]) - 1;
 				const v2 = Number(faces[1].split('/')[0]) - 1;
 				const v3 = Number(faces[2].split('/')[0]) - 1;
-				const triangle: Triangle = [v1, v2, v3];
-				shape.triangles.push(triangle);
+				const trIdx: number[] = [v1, v2, v3];
+				trianglesIdx.push(trIdx);
 			}
 		}
-		return shape;
+
+		const triangles: Triangle[] = trianglesIdx.map(
+			(tri) => [points[tri[0]], points[tri[1]], points[tri[2]]] as Triangle
+		);
+
+		return new Shape(triangles);
 	}
 
 	/**
@@ -160,7 +161,7 @@ export class Shape {
 	 * @param origin Shape to copy params of [optional]
 	 * @returns New shape from given file
 	 */
-	public static createShapeFromObjFile(file: File, origin?: Shape): Promise<Shape> {
+	public static createShapeFromObjFile(file: File): Promise<Shape> {
 		const extension = file.name.substring(file.name.lastIndexOf('.'));
 		if (extension !== '.obj') {
 			throw new Error(
@@ -177,9 +178,6 @@ export class Shape {
 				}
 				try {
 					const shape: Shape = this.parseToShape(result as string);
-					if (origin) {
-						this.copyShapeParams(shape, origin);
-					}
 					return resolve(shape);
 				} catch (error) {
 					return reject(`Error ocurred while shape parsing: ${error}`);

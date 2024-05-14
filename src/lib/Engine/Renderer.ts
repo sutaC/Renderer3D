@@ -66,9 +66,9 @@ export class Renderer {
 	 * @returns Color in rgb notation
 	 */
 	private calculateColor(normal: Vector, colorObj: ColorObject): string {
-		const lightDirection: Vector = [0, 0, -1];
+		const lightDirection: Vector = { x: 0, y: 0, z: -1 };
 		const luminationFactor =
-			normal[0] * lightDirection[0] + normal[1] * lightDirection[1] + normal[2] * lightDirection[2];
+			normal.x * lightDirection.x + normal.y * lightDirection.y + normal.z * lightDirection.z;
 		const r = Math.floor(colorObj.r * luminationFactor);
 		const g = Math.floor(colorObj.g * luminationFactor);
 		const b = Math.floor(colorObj.b * luminationFactor);
@@ -85,7 +85,7 @@ export class Renderer {
 	private drawPoint(point: Vector, color = '#FFFFFF'): void {
 		this.ctx.fillStyle = color;
 		this.ctx.beginPath();
-		this.ctx.arc(this.centerX + point[0], this.centerY - point[1], 3, 0, Math.PI * 2);
+		this.ctx.arc(this.centerX + point.x, this.centerY - point.y, 3, 0, Math.PI * 2);
 		this.ctx.fill();
 		this.ctx.closePath();
 	}
@@ -100,8 +100,8 @@ export class Renderer {
 		this.ctx.strokeStyle = color;
 		this.ctx.lineWidth = 1.5;
 		this.ctx.beginPath();
-		this.ctx.moveTo(this.centerX + a[0], this.centerY - a[1]);
-		this.ctx.lineTo(this.centerX + b[0], this.centerY - b[1]);
+		this.ctx.moveTo(this.centerX + a.x, this.centerY - a.y);
+		this.ctx.lineTo(this.centerX + b.x, this.centerY - b.y);
 		this.ctx.stroke();
 		this.ctx.closePath();
 	}
@@ -129,11 +129,11 @@ export class Renderer {
 	private fillTriangle(a: Vector, b: Vector, c: Vector, color: string = '#FFFFFF'): void {
 		this.ctx.fillStyle = color;
 		this.ctx.beginPath();
-		this.ctx.moveTo(this.centerX + a[0], this.centerY - a[1]);
-		this.ctx.lineTo(this.centerX + b[0], this.centerY - b[1]);
-		this.ctx.lineTo(this.centerX + c[0], this.centerY - c[1]);
-		this.ctx.moveTo(this.centerX + b[0], this.centerY - b[1]);
-		this.ctx.lineTo(this.centerX + c[0], this.centerY - c[1]);
+		this.ctx.moveTo(this.centerX + a.x, this.centerY - a.y);
+		this.ctx.lineTo(this.centerX + b.x, this.centerY - b.y);
+		this.ctx.lineTo(this.centerX + c.x, this.centerY - c.y);
+		this.ctx.moveTo(this.centerX + b.x, this.centerY - b.y);
+		this.ctx.lineTo(this.centerX + c.x, this.centerY - c.y);
 		this.ctx.fill();
 		this.ctx.closePath();
 		this.drawTriangle(a, b, c, color);
@@ -145,121 +145,109 @@ export class Renderer {
 	 */
 	public drawShape(shape: Shape): void {
 		// View
-		const vUp: Vector = [0, 1, 0];
-		let vTarget: Vector = [0, 0, 1];
+		const vUp: Vector = { x: 0, y: 1, z: 0 };
+		let vTarget: Vector = { x: 0, y: 0, z: 1 };
 		this.camera.lookDirection = vec.vectorRotate(vTarget, this.camera.yaw, 'y');
 		vTarget = vec.vectorAdd(this.camera.position, this.camera.lookDirection);
 
-		const matCamera: Vector[] = vec.matrixPointAt(this.camera.position, vTarget, vUp);
-		const matViewRotation: Vector[] = vec.matrixInverseRotation(matCamera);
+		const matCamera: number[][] = vec.matrixPointAt(this.camera.position, vTarget, vUp);
+		const matViewRotation: number[][] = vec.matrixInverseRotation(matCamera);
 		const matViewTranslation: Vector = vec.matrixInverseTranslation(
 			this.camera.position,
 			matCamera
 		);
 
-		// Pipeline stages
-		const pointsTransformed: Vector[] = [];
-		const pointsViewed: Vector[] = [];
-		const pointsProjected: Vector[] = [];
+		const triangles: Triangle[] = shape.triangles.map((tr) => tr.map((p) => p)) as Triangle[]; // Copies triangles
+		const transformed: Triangle[] = [];
+		const drawable: Triangle[] = [];
 
-		const visibleTriangles: Triangle[] = [];
-		const clippedTriangles: Triangle[] = [];
 		const triangleColors = new Map<Triangle, string>();
 
-		// Transforming
-		const translationVec: Vector = [
-			shape.origin.x / shape.size,
-			shape.origin.y / shape.size,
-			shape.origin.z / shape.size
-		];
-		for (let point of shape.points) {
-			// Rotating
-			point = vec.vectorRotate(point, shape.rotation.x, 'x');
-			point = vec.vectorRotate(point, shape.rotation.y, 'y');
-			point = vec.vectorRotate(point, shape.rotation.z, 'z');
-			// Translating
-			point = vec.vectorAdd(point, translationVec);
-			// Transformed points
-			pointsTransformed.push(point);
-		}
+		const translationVec: Vector = {
+			x: shape.origin.x / shape.size,
+			y: shape.origin.y / shape.size,
+			z: shape.origin.z / shape.size
+		};
 
-		// Selecting triangles
-		for (const triangle of shape.triangles) {
-			const normal = vec.vectorNormal(
-				pointsTransformed[triangle[0]],
-				pointsTransformed[triangle[1]],
-				pointsTransformed[triangle[2]]
-			);
+		for (const triangle of triangles) {
+			// Transforming
+			for (let i = 0; i < triangle.length; i++) {
+				let point = triangle[i];
+				// Rotating
+				point = vec.vectorRotate(point, shape.rotation.x, 'x');
+				point = vec.vectorRotate(point, shape.rotation.y, 'y');
+				point = vec.vectorRotate(point, shape.rotation.z, 'z');
+				// Translating
+				point = vec.vectorAdd(point, translationVec);
+				// Transformed points
+				triangle[i] = point;
+			}
+
+			// Selecting triangle
+			const normal = vec.vectorNormal(triangle[0], triangle[1], triangle[2]);
 			const dotProduct = vec.vectorDotProduct(
-				vec.vectorSubtract(pointsTransformed[triangle[0]], this.camera.position),
+				vec.vectorSubtract(triangle[0], this.camera.position),
 				normal
 			);
 			if (dotProduct > 0.0) continue;
-			// Iluminating triangles
+
+			// Iluminating triangle
 			const color = this.calculateColor(normal, shape.colorObj);
 			triangleColors.set(triangle, color);
-			// Selected triangles
-			visibleTriangles.push(triangle);
+
+			transformed.push(triangle);
 		}
 
 		// Sorting triangles by perspective (painter's algorithm)
-		visibleTriangles.sort((a, b) => {
-			const zA =
-				pointsTransformed[a[0]][2] + pointsTransformed[a[1]][2] + pointsTransformed[a[2]][2];
-			const zB =
-				pointsTransformed[b[0]][2] + pointsTransformed[b[1]][2] + pointsTransformed[b[2]][2];
+		transformed.sort((a, b) => {
+			const zA = a[0].z + a[1].z + a[2].z;
+			const zB = b[0].z + b[1].z + b[2].z;
 			return zB - zA;
 		});
 
-		// Views points
-		for (let point of pointsTransformed) {
-			// Moving by view
-			point = vec.vectorMatrixMultiply(matViewRotation, point);
-			point = vec.vectorAdd(point, matViewTranslation);
-			pointsViewed.push(point);
-		}
+		for (const triangle of transformed) {
+			// Views points
+			for (let i = 0; i < triangle.length; i++) {
+				let point = triangle[i];
+				// Moving by view
+				point = vec.vectorMatrixMultiply(matViewRotation, point);
+				point = vec.vectorAdd(point, matViewTranslation);
+				triangle[i] = point;
+			}
 
-		// Clip triangles
-		for (const triangle of visibleTriangles) {
+			// Clip triangles
+
 			const color = triangleColors.get(triangle) || 'red';
+
 			// Clips by screen plane
 			const clipped: Triangle[] = vec.triangleClippingAgainstPlane(
-				[0, 0.5, 0],
-				[0, 0, 1],
-				triangle,
-				pointsViewed
+				{ x: 0, y: 0.5, z: 0 },
+				{ x: 0, y: 0, z: 1 },
+				triangle
 			);
 			// Adds clipped triangles
 			for (const ctr of clipped) {
 				triangleColors.set(ctr, color);
-				clippedTriangles.push(ctr);
+				drawable.push(ctr);
 			}
 		}
 
-		// Projecting points to 2d
-		for (let point of pointsViewed) {
-			// Projection
-			point = vec.vectorProject2d(point);
-			// Scaling
-			point = vec.vectorMultiply(point, shape.size);
-			pointsProjected.push(point);
-		}
+		for (const triangle of drawable) {
+			// Projecting points to 2d
+			for (let i = 0; i < triangle.length; i++) {
+				let point = triangle[i];
+				// Projection
+				point = vec.vectorProject2d(point);
+				// Scaling
+				point = vec.vectorMultiply(point, shape.size);
+				triangle[i] = point;
+			}
 
-		// Drawing traingles
-		for (const triangle of clippedTriangles) {
+			// Drawing traingles
+
 			const color = triangleColors.get(triangle) || 'red';
-			this.fillTriangle(
-				pointsProjected[triangle[0]],
-				pointsProjected[triangle[1]],
-				pointsProjected[triangle[2]],
-				color
-			);
-			// this.drawTriangle(
-			// 	pointsProjected[triangle[0]],
-			// 	pointsProjected[triangle[1]],
-			// 	pointsProjected[triangle[2]],
-			// 	'#000000'
-			// );
+
+			this.fillTriangle(triangle[0], triangle[1], triangle[2], color);
 		}
 	}
 

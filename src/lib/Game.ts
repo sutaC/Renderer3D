@@ -37,11 +37,11 @@ export class Game extends Engine {
 		}
 		if (this.input.isKeyHeld('Shift')) {
 			// Move up
-			this.camera.position[1] += move;
+			this.camera.position.y += move;
 		}
 		if (this.input.isKeyHeld('Control')) {
 			// Move down
-			this.camera.position[1] -= move;
+			this.camera.position.y -= move;
 		}
 	}
 }

@@ -15,7 +15,7 @@ export class Showcase extends Engine {
 
 	protected async start(): Promise<void> {
 		this.shp = await Shape.loadShape('/sample-objects/cube.obj');
-		this.shapes.push(this.shp);
+		this.shapes = [this.shp];
 	}
 
 	protected update(deltaTime: number): void {
@@ -36,21 +36,25 @@ export class Showcase extends Engine {
 		}
 
 		// Shape reload
-		this.shapes[0] = this.shp;
+		this.shapes = [this.shp];
 	}
 
 	// Exposed controll
 	public readonly shapeController = {
 		unsetShape: (): void => {
-			this.shp = new Shape();
+			const nshp = new Shape();
+			Shape.copyShapeParams(nshp, this.shp);
+			this.shp = nshp;
 		},
 		loadType: async (name: ShapeNames): Promise<void> => {
-			this.shp = await Shape.loadShape(`/sample-objects/${name}.obj`);
+			const nshp = await Shape.loadShape(`/sample-objects/${name}.obj`);
+			Shape.copyShapeParams(nshp, this.shp);
+			this.shp = nshp;
 		},
-		loadFile: (file: File): void => {
-			(async () => {
-				this.shp = await Shape.createShapeFromObjFile(file, this.shp);
-			})();
+		loadFile: async (file: File): Promise<void> => {
+			const nshp = await Shape.createShapeFromObjFile(file);
+			Shape.copyShapeParams(nshp, this.shp);
+			this.shp = nshp;
 		},
 		setSize: (size: number): void => {
 			if (size < 0) {
