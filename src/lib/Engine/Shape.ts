@@ -94,7 +94,7 @@ export class Shape {
 	 * @param shape Shape to to which it is copied
 	 * @param origin Shape from which it is copied
 	 */
-	private static copyShapeParams(shape: Shape, origin: Shape): void {
+	public static copyShapeParams(shape: Shape, origin: Shape): void {
 		shape.size = origin.size;
 		shape.origin = origin.origin;
 		shape.rotation = origin.rotation;
@@ -161,7 +161,7 @@ export class Shape {
 	 * @param origin Shape to copy params of [optional]
 	 * @returns New shape from given file
 	 */
-	public static createShapeFromObjFile(file: File, origin?: Shape): Promise<Shape> {
+	public static createShapeFromObjFile(file: File): Promise<Shape> {
 		const extension = file.name.substring(file.name.lastIndexOf('.'));
 		if (extension !== '.obj') {
 			throw new Error(
@@ -178,9 +178,6 @@ export class Shape {
 				}
 				try {
 					const shape: Shape = this.parseToShape(result as string);
-					if (origin) {
-						this.copyShapeParams(shape, origin);
-					}
 					return resolve(shape);
 				} catch (error) {
 					return reject(`Error ocurred while shape parsing: ${error}`);
