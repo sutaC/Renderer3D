@@ -1,6 +1,7 @@
 import { Input } from './Input';
 import { Renderer, type Camera } from './Renderer';
 import { Shape } from './Shape';
+import { vector } from './Vector';
 
 /**
  * Engine states enum
@@ -62,8 +63,8 @@ export abstract class Engine {
 	 * Camera object for player position
 	 */
 	protected camera: Camera = {
-		position: { x: 0, y: 0, z: 0 },
-		lookDirection: { x: 0, y: 0, z: 1 },
+		position: vector({ x: 0, y: 0, z: 0 }),
+		lookDirection: vector({ x: 0, y: 0, z: 1 }),
 		yaw: 0
 	};
 
