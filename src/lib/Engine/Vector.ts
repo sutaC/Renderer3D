@@ -9,14 +9,14 @@ export interface Vector {
 
 /**
  * Creates vector with default values
- * @param vector Vector initializer
+ * @param vec Vector initializer
  */
-export function vector(vector?: { x?: number; y?: number; z?: number; w?: number }): Vector {
+export function vector(vec?: { x?: number; y?: number; z?: number; w?: number }): Vector {
 	return {
-		x: vector?.x || 0,
-		y: vector?.y || 0,
-		z: vector?.z || 0,
-		w: vector?.w || 1
+		x: vec?.x || 0,
+		y: vec?.y || 0,
+		z: vec?.z || 0,
+		w: vec?.w || 1
 	};
 }
 
@@ -36,14 +36,13 @@ export function arrayToVector(array: number[]): Vector {
 	return vector({
 		x: array[0],
 		y: array[1],
-		z: array[2],
-		w: array[3]
+		z: array[2]
 	});
 }
 
 /**
  * Converts vector to array
- * @param vector Vector to convert
+ * @param vec Vector to convert
  * @returns Converted vector
  */
 export function vectorToArray(vector: Vector): number[] {
@@ -72,7 +71,7 @@ export function vectorSubtract(a: Vector, b: Vector): Vector {
 
 /**
  * Multiplies vector by given multiplier
- * @param vector Vector to multiply
+ * @param vec Vector to multiply
  * @param multiplier Multiplier
  * @returns Multiplied vector
  */
@@ -82,7 +81,7 @@ export function vectorMultiply(vec: Vector, multiplier: number): Vector {
 
 /**
  * Devides vector by given devider
- * @param vector Vector to devide
+ * @param vec Vector to devide
  * @param divider Devider
  * @returns Devided vector
  */
@@ -92,7 +91,7 @@ export function vectorDevide(vec: Vector, divider: number): Vector {
 
 /**
  * Calculates length of given vector
- * @param vector Vector to which the length is calculated
+ * @param vec Vector to which the length is calculated
  * @returns Vector length
  */
 export function vectorLength(vec: Vector): number {
@@ -101,7 +100,7 @@ export function vectorLength(vec: Vector): number {
 
 /**
  * Normalises given vector
- * @param vector Vector to normalise
+ * @param vec Vector to normalise
  * @returns Normalised vector
  */
 export function vectorNormalise(vec: Vector): Vector {
@@ -110,26 +109,6 @@ export function vectorNormalise(vec: Vector): Vector {
 }
 
 // Calculations
-
-/**
- * Multiplies vector by given matrix
- * @param matrix Matrix multiplier (must have the same ammount of rows as vectors ammount of collumns)
- * @param vector Vector to multiply
- * @returns Multiplied vector
- */
-export function vectorMatrixMultiply(matrix: number[][], vec: Vector): Vector {
-	if (matrix.length !== 4) {
-		throw new Error('Matrix length must be be the same size as vector length (3)');
-	}
-	const vecArray: number[] = vectorToArray(vec);
-	const arrResult: number[] = [0, 0, 0, 0];
-	for (let i = 0; i < vecArray.length; i++) {
-		for (let j = 0; j < vecArray.length; j++) {
-			arrResult[i] += matrix[i][j] * vecArray[j];
-		}
-	}
-	return arrayToVector(arrResult);
-}
 
 /**
  * Calculate cross product of two vectors
@@ -167,56 +146,6 @@ export function vectorNormal(a: Vector, b: Vector, c: Vector): Vector {
  */
 export function vectorDotProduct(a: Vector, b: Vector): number {
 	return a.x * b.x + a.y * b.y + a.z * b.z;
-}
-
-/**
- * Calculates matrix point at
- * @param position Position vector - object position
- * @param target Target vector - object facing direction
- * @param up Up vector - normal to objects facing direction axle
- * @returns Point at matrix - transformation for object rotation depending on given position
- */
-export function matrixPointAt(position: Vector, target: Vector, up: Vector): number[][] {
-	const newForward: Vector = vectorNormalise(vectorSubtract(target, position));
-	const a: Vector = vectorMultiply(newForward, vectorDotProduct(up, newForward));
-	const newUp = vectorNormalise(vectorSubtract(up, a));
-	const newRight: Vector = vectorCrossProduct(newUp, newForward);
-
-	const matrix: number[][] = [
-		[newRight.x, newRight.y, newRight.z, 0],
-		[newUp.x, newUp.y, newUp.z, 0],
-		[newForward.x, newForward.y, newForward.z, 0],
-		[0, 0, 0, 1]
-	];
-	return matrix;
-}
-
-/**
- * Inverts rotation matrix
- * @param matrix Rottaion matrix
- * @returns Inverted rotation matrix
- */
-export function matrixInverseRotation(matrix: number[][]): number[][] {
-	return [
-		[matrix[0][0], matrix[1][0], matrix[2][0], 0],
-		[matrix[0][1], matrix[1][1], matrix[2][1], 0],
-		[matrix[0][2], matrix[1][2], matrix[2][2], 0],
-		[0, 0, 0, 1]
-	];
-}
-
-/**
- * Inverts translation matrix
- * @param position Position vector on which matrix invetrs
- * @param matrix Translation matrix
- * @returns Inverted translation matrix
- */
-export function matrixInverseTranslation(position: Vector, matrix: number[][]): Vector {
-	return vector({
-		x: -vectorDotProduct(position, arrayToVector(matrix[0])),
-		y: -vectorDotProduct(position, arrayToVector(matrix[1])),
-		z: -vectorDotProduct(position, arrayToVector(matrix[2]))
-	});
 }
 
 /**
@@ -329,45 +258,110 @@ export function triangleClippingAgainstPlane(
 	throw new Error('Error ocurred while clipping triangles, no valid points ammount was found');
 }
 
-// Translations
+// Matrices
+/**
+ * Multiplies vector by given matrix
+ * @param matrix Matrix multiplier (must have the same ammount of rows as vectors ammount of collumns)
+ * @param vec Vector to multiply
+ * @returns Multiplied vector
+ */
+export function vectorMatrixMultiply(matrix: number[][], vec: Vector): Vector {
+	if (matrix.length !== 4 && matrix[0].length !== 4) {
+		throw new Error('Matrix length must be be the same size as vector length (3)');
+	}
+	const vecArray: number[] = vectorToArray(vec);
+	const arrResult: number[] = [0, 0, 0, 0];
+	for (let i = 0; i < vecArray.length; i++) {
+		for (let j = 0; j < vecArray.length; j++) {
+			arrResult[i] += matrix[i][j] * vecArray[j];
+		}
+	}
+	return arrayToVector(arrResult);
+}
 
 /**
- * Rotates vector by given angle in selected axis
- * @param vector Vector to rotate
- * @param angle Angle at which vector rotates (in degrees)
- * @param axis Axis on which vector rotates (x | y | z)
- * @returns Rotated vector
+ * Returns rotation matrix at given angle
+ * @param angle Angle at of rotation (in degrees)
+ * @param axis Axis of rotation (x | y | z)
+ * @returns Rotation matrix
  */
-export function vectorRotate(vector: Vector, angle: number, axis: 'x' | 'y' | 'z'): Vector {
+export function matrixRotation(angle: number, axis: 'x' | 'y' | 'z'): number[][] {
 	const radians = angle * (Math.PI / 180);
-	let matrix: number[][];
 	switch (axis) {
 		case 'x':
-			matrix = [
+			return [
 				[1, 0, 0, 0],
 				[0, Math.cos(radians), -Math.sin(radians), 0],
 				[0, Math.sin(radians), Math.cos(radians), 0],
-				[0, 0, 0, 1]
+				[0, 0, 0, 0]
 			];
-			break;
 		case 'y':
-			matrix = [
+			return [
 				[Math.cos(radians), 0, -Math.sin(radians), 0],
 				[0, 1, 0, 0],
 				[Math.sin(radians), 0, Math.cos(radians), 0],
-				[0, 0, 0, 1]
+				[0, 0, 0, 0]
 			];
-			break;
 		case 'z':
-			matrix = [
+			return [
 				[Math.cos(radians), -Math.sin(radians), 0, 0],
 				[Math.sin(radians), Math.cos(radians), 0, 0],
 				[0, 0, 1, 0],
-				[0, 0, 0, 1]
+				[0, 0, 0, 0]
 			];
-			break;
 	}
-	return vectorMatrixMultiply(matrix, vector);
+}
+
+/**
+ * Calculates matrix point at
+ * @param position Position vector - object position
+ * @param target Target vector - object facing direction
+ * @param up Up vector - normal to objects facing direction axle
+ * @returns Point at matrix - transformation for object rotation depending on given position
+ */
+export function matrixPointAt(position: Vector, target: Vector, up: Vector): number[][] {
+	const newForward: Vector = vectorNormalise(vectorSubtract(target, position));
+	const a: Vector = vectorMultiply(newForward, vectorDotProduct(up, newForward));
+	const newUp = vectorNormalise(vectorSubtract(up, a));
+	const newRight: Vector = vectorCrossProduct(newUp, newForward);
+	// TODO: FIX w
+	const matrix: number[][] = [
+		[newRight.x, newRight.y, newRight.z, 0],
+		[newUp.x, newUp.y, newUp.z, 0],
+		[newForward.x, newForward.y, newForward.z, 0],
+		[0, 0, 0, 0]
+	];
+	return matrix;
+}
+
+/**
+ * Inverts rotation matrix
+ * @param matrix Rottaion matrix
+ * @returns Inverted rotation matrix
+ */
+export function matrixInverseRotation(matrix: number[][]): number[][] {
+	// TODO: ADD w
+	return [
+		[matrix[0][0], matrix[1][0], matrix[2][0], 0],
+		[matrix[0][1], matrix[1][1], matrix[2][1], 0],
+		[matrix[0][2], matrix[1][2], matrix[2][2], 0],
+		[0, 0, 0, 0]
+	];
+}
+
+/**
+ * Inverts translation matrix
+ * @param position Position vector on which matrix invetrs
+ * @param matrix Translation matrix
+ * @returns Inverted translation matrix
+ */
+export function matrixInverseTranslation(position: Vector, matrix: number[][]): Vector {
+	// TODO: DELETE
+	return vector({
+		x: -vectorDotProduct(position, arrayToVector(matrix[0])),
+		y: -vectorDotProduct(position, arrayToVector(matrix[1])),
+		z: -vectorDotProduct(position, arrayToVector(matrix[2]))
+	});
 }
 
 /**
@@ -376,5 +370,6 @@ export function vectorRotate(vector: Vector, angle: number, axis: 'x' | 'y' | 'z
  * @returns Projected vector
  */
 export function vectorProject2d(vector: Vector): Vector {
+	// TODO: FIX
 	return vectorDevide(vector, vector.z);
 }

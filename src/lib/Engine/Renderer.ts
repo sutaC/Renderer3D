@@ -154,12 +154,20 @@ export class Renderer {
 	 * @param shape Shape to draw
 	 */
 	public drawShape(shape: Shape): void {
-		// View
+		// Setup
+		const triangles: Triangle[] = shape.triangles.map((tr) => tr.map((p) => p)) as Triangle[]; // Copies triangles
+		const transformed: Triangle[] = [];
+		const drawable: Triangle[] = [];
+
+		const triangleColors = new Map<Triangle, string>();
+
+		// Matrices
+		// Shape view
 		const vUp: Vector = vec.vector({ x: 0, y: 1, z: 0 });
 		let vTarget: Vector = vec.vector({ x: 0, y: 0, z: 1 });
-		this.camera.lookDirection = vec.vectorRotate(vTarget, this.camera.yaw, 'y');
+		const cameraRotationMatrix = vec.matrixRotation(this.camera.yaw, 'y');
+		this.camera.lookDirection = vec.vectorMatrixMultiply(cameraRotationMatrix, vTarget);
 		vTarget = vec.vectorAdd(this.camera.position, this.camera.lookDirection);
-
 		const matCamera: number[][] = vec.matrixPointAt(this.camera.position, vTarget, vUp);
 		const matViewRotation: number[][] = vec.matrixInverseRotation(matCamera);
 		const matViewTranslation: Vector = vec.matrixInverseTranslation(
@@ -167,12 +175,12 @@ export class Renderer {
 			matCamera
 		);
 
-		const triangles: Triangle[] = shape.triangles.map((tr) => tr.map((p) => p)) as Triangle[]; // Copies triangles
-		const transformed: Triangle[] = [];
-		const drawable: Triangle[] = [];
+		// Shape rotation
+		const rotationXMatrix = vec.matrixRotation(shape.rotation.x, 'x');
+		const rotationYMatrix = vec.matrixRotation(shape.rotation.y, 'y');
+		const rotationZMatrix = vec.matrixRotation(shape.rotation.z, 'z');
 
-		const triangleColors = new Map<Triangle, string>();
-
+		// Shape translation
 		const translationVec: Vector = vec.vector({
 			x: shape.origin.x / shape.size,
 			y: shape.origin.y / shape.size,
@@ -185,9 +193,9 @@ export class Renderer {
 			for (let i = 0; i < triangle.length; i++) {
 				let point = triangle[i];
 				// Rotating
-				point = vec.vectorRotate(point, shape.rotation.x, 'x');
-				point = vec.vectorRotate(point, shape.rotation.y, 'y');
-				point = vec.vectorRotate(point, shape.rotation.z, 'z');
+				point = vec.vectorMatrixMultiply(rotationXMatrix, point);
+				point = vec.vectorMatrixMultiply(rotationYMatrix, point);
+				point = vec.vectorMatrixMultiply(rotationZMatrix, point);
 				// Translating
 				point = vec.vectorAdd(point, translationVec);
 				// Transformed points
