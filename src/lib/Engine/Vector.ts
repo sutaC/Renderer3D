@@ -45,8 +45,8 @@ export function arrayToVector(array: number[]): Vector {
  * @param vec Vector to convert
  * @returns Converted vector
  */
-export function vectorToArray(vector: Vector): number[] {
-	return [vector.x, vector.y, vector.z, vector.w];
+export function vectorToArray(vec: Vector): number[] {
+	return [vec.x, vec.y, vec.z, vec.w];
 }
 
 /**
