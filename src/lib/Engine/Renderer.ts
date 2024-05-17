@@ -196,6 +196,14 @@ export class Renderer {
 			})
 		);
 
+		// Shape projection
+		const fov = 90;
+		// const aspect = this.canvas.width / this.canvas.height;
+		const aspect = 16 / 9;
+		const near = 1;
+		const far = 500;
+		const projectionMatrix: number[][] = vec.matrixProjection(fov, aspect, far, near);
+
 		for (const triangle of triangles) {
 			// Transforming
 			for (let i = 0; i < triangle.length; i++) {
@@ -262,7 +270,7 @@ export class Renderer {
 				for (let i = 0; i < tri.length; i++) {
 					let point = tri[i];
 					// Projection
-					point = vec.vectorProject2d(point);
+					point = vec.vectorMatrixMultiply(projectionMatrix, point);
 					// Scaling
 					point = vec.vectorMultiply(point, shape.size);
 					// Centering

@@ -281,6 +281,11 @@ export function vectorMatrixMultiply(matrix: number[][], vec: Vector): Vector {
 	return arrayToVector(arrResult);
 }
 
+/**
+ * Creates translation matrix
+ * @param translation Translation vector
+ * @returns Translation matrix
+ */
 export function matrixTranslaton(translation: Vector): number[][] {
 	return [
 		[1, 0, 0, translation.x],
@@ -376,11 +381,24 @@ export function matrixInverseTranslation(position: Vector, matrix: number[][]): 
 }
 
 /**
- * Projects 3D vector to 2D (also sets Z position to 1)
- * @param vector Vector to project
- * @returns Projected vector
+ * Creates projection matrix for projecting 3d vector to 2d vector
+ * @param fov field of view (in degrees)
+ * @param aspect asepct ratio of screen
+ * @param far farthest projection distance
+ * @param near closest projection distance
+ * @returns Projection matrix
  */
-export function vectorProject2d(vector: Vector): Vector {
-	// TODO: FIX
-	return vectorDevide(vector, vector.z);
+export function matrixProjection(
+	fov: number,
+	aspect: number,
+	far: number,
+	near: number
+): number[][] {
+	const fovR = fov * (Math.PI / 180);
+	return [
+		[1 / (Math.tan(fovR / 2) * aspect), 0, 0, 0],
+		[0, 1 / Math.tan(fov / 2), 0, 0],
+		[0, 0, (far + near) / (near - far), (2 * far * near) / (near - far)],
+		[0, 0, -1, 0]
+	];
 }
