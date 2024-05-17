@@ -176,17 +176,25 @@ export class Renderer {
 		);
 
 		// Shape rotation
-		const rotationXMatrix = vec.matrixRotation(shape.rotation.x, 'x');
-		const rotationYMatrix = vec.matrixRotation(shape.rotation.y, 'y');
-		const rotationZMatrix = vec.matrixRotation(shape.rotation.z, 'z');
+		const rotationXMatrix: number[][] = vec.matrixRotation(shape.rotation.x, 'x');
+		const rotationYMatrix: number[][] = vec.matrixRotation(shape.rotation.y, 'y');
+		const rotationZMatrix: number[][] = vec.matrixRotation(shape.rotation.z, 'z');
 
 		// Shape translation
-		const translationVec: Vector = vec.vector({
-			x: shape.origin.x / shape.size,
-			y: shape.origin.y / shape.size,
-			z: shape.origin.z / shape.size
-		});
-		// TODO: matrix
+		const translationMatrix: number[][] = vec.matrixTranslaton(
+			vec.vector({
+				x: shape.origin.x / shape.size,
+				y: shape.origin.y / shape.size,
+				z: shape.origin.z / shape.size
+			})
+		);
+		const centeringMatrix: number[][] = vec.matrixTranslaton(
+			vec.vector({
+				x: this.centerX,
+				y: this.centerY,
+				z: 0
+			})
+		);
 
 		for (const triangle of triangles) {
 			// Transforming
@@ -197,7 +205,7 @@ export class Renderer {
 				point = vec.vectorMatrixMultiply(rotationYMatrix, point);
 				point = vec.vectorMatrixMultiply(rotationZMatrix, point);
 				// Translating
-				point = vec.vectorAdd(point, translationVec);
+				point = vec.vectorMatrixMultiply(translationMatrix, point);
 				// Transformed points
 				triangle[i] = point;
 			}
@@ -228,6 +236,7 @@ export class Renderer {
 				let point = triangle[i];
 				// Moving by view
 				point = vec.vectorMatrixMultiply(matViewRotation, point);
+				// TODO: change
 				point = vec.vectorAdd(point, matViewTranslation);
 				triangle[i] = point;
 			}
@@ -257,12 +266,7 @@ export class Renderer {
 					// Scaling
 					point = vec.vectorMultiply(point, shape.size);
 					// Centering
-					const centerVec: Vector = vec.vector({
-						x: this.centerX,
-						y: this.centerY,
-						z: 0
-					});
-					point = vec.vectorAdd(point, centerVec);
+					point = vec.vectorMatrixMultiply(centeringMatrix, point);
 					tri[i] = point;
 				}
 			}

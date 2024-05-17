@@ -7,6 +7,7 @@ export interface Vector {
 	w: number;
 }
 
+// Type transformations
 /**
  * Creates vector with default values
  * @param vec Vector initializer
@@ -19,8 +20,6 @@ export function vector(vec?: { x?: number; y?: number; z?: number; w?: number })
 		w: vec?.w || 1
 	};
 }
-
-// Operations
 
 /**
  * Covetrs array to vector
@@ -36,7 +35,8 @@ export function arrayToVector(array: number[]): Vector {
 	return vector({
 		x: array[0],
 		y: array[1],
-		z: array[2]
+		z: array[2],
+		w: array[3]
 	});
 }
 
@@ -58,6 +58,8 @@ export function vectorToArray(vector: Vector): number[] {
 export function vectorAdd(a: Vector, b: Vector): Vector {
 	return vector({ x: a.x + b.x, y: a.y + b.y, z: a.z + b.z });
 }
+
+// Operations
 
 /**
  * Subtracts two vectors
@@ -279,6 +281,15 @@ export function vectorMatrixMultiply(matrix: number[][], vec: Vector): Vector {
 	return arrayToVector(arrResult);
 }
 
+export function matrixTranslaton(translation: Vector): number[][] {
+	return [
+		[1, 0, 0, translation.x],
+		[0, 1, 0, translation.y],
+		[0, 0, 1, translation.z],
+		[0, 0, 0, 1]
+	];
+}
+
 /**
  * Returns rotation matrix at given angle
  * @param angle Angle at of rotation (in degrees)
@@ -293,21 +304,21 @@ export function matrixRotation(angle: number, axis: 'x' | 'y' | 'z'): number[][]
 				[1, 0, 0, 0],
 				[0, Math.cos(radians), -Math.sin(radians), 0],
 				[0, Math.sin(radians), Math.cos(radians), 0],
-				[0, 0, 0, 0]
+				[0, 0, 0, 1]
 			];
 		case 'y':
 			return [
 				[Math.cos(radians), 0, -Math.sin(radians), 0],
 				[0, 1, 0, 0],
 				[Math.sin(radians), 0, Math.cos(radians), 0],
-				[0, 0, 0, 0]
+				[0, 0, 0, 1]
 			];
 		case 'z':
 			return [
 				[Math.cos(radians), -Math.sin(radians), 0, 0],
 				[Math.sin(radians), Math.cos(radians), 0, 0],
 				[0, 0, 1, 0],
-				[0, 0, 0, 0]
+				[0, 0, 0, 1]
 			];
 	}
 }
@@ -329,7 +340,7 @@ export function matrixPointAt(position: Vector, target: Vector, up: Vector): num
 		[newRight.x, newRight.y, newRight.z, 0],
 		[newUp.x, newUp.y, newUp.z, 0],
 		[newForward.x, newForward.y, newForward.z, 0],
-		[0, 0, 0, 0]
+		[0, 0, 0, 1]
 	];
 	return matrix;
 }
@@ -345,7 +356,7 @@ export function matrixInverseRotation(matrix: number[][]): number[][] {
 		[matrix[0][0], matrix[1][0], matrix[2][0], 0],
 		[matrix[0][1], matrix[1][1], matrix[2][1], 0],
 		[matrix[0][2], matrix[1][2], matrix[2][2], 0],
-		[0, 0, 0, 0]
+		[0, 0, 0, 1]
 	];
 }
 
