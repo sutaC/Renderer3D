@@ -195,10 +195,8 @@ export class Renderer {
 
 			// Selecting triangle
 			const normal = vec.vectorNormal(triangle[0], triangle[1], triangle[2]);
-			const dotProduct = vec.vectorDotProduct(
-				vec.vectorSubtract(triangle[0], this.camera.position),
-				normal
-			);
+			const cameraRay = vec.vectorSubtract(triangle[0], this.camera.position);
+			const dotProduct = vec.vectorDotProduct(cameraRay, normal);
 			if (dotProduct > 0.0) continue;
 
 			// Iluminating triangle

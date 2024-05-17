@@ -123,7 +123,11 @@ export function vectorMatrixMultiply(matrix: number[][], vector: Vector): Vector
  * @returns Vector cross product
  */
 export function vectorCrossProduct(a: Vector, b: Vector): Vector {
-	return { x: a.y * b.z - a.z * b.y, y: a.z * b.x - a.x * b.z, z: a.x * b.y - a.y * b.x };
+	return {
+		x: a.y * b.z - a.z * b.y,
+		y: a.z * b.x - a.x * b.z,
+		z: a.x * b.y - a.y * b.x
+	};
 }
 
 /**
@@ -136,11 +140,7 @@ export function vectorCrossProduct(a: Vector, b: Vector): Vector {
 export function vectorNormal(a: Vector, b: Vector, c: Vector): Vector {
 	const lineA: Vector = vectorSubtract(b, a);
 	const lineB: Vector = vectorSubtract(c, a);
-	const normal: Vector = {
-		x: lineA.y * lineB.z - lineA.z * lineB.y,
-		y: lineA.z * lineB.x - lineA.x * lineB.z,
-		z: lineA.x * lineB.y - lineA.y * lineB.x
-	};
+	const normal: Vector = vectorCrossProduct(lineA, lineB);
 	return vectorNormalise(normal);
 }
 
