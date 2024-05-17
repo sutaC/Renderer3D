@@ -25,23 +25,23 @@ export interface Camera {
  */
 export class Renderer {
 	/**
-	 * Canvas used to display graphics [readonly]
+	 * Canvas used to display graphics
 	 */
 	private readonly canvas: HTMLCanvasElement;
 	/**
-	 * Canvas context 2D for drawing on canvas [readonly]
+	 * Canvas context 2D for drawing on canvas
 	 */
 	private readonly ctx: CanvasRenderingContext2D;
 	/**
-	 * Center X positionon canvas [readonly]
+	 * Center X positionon canvas
 	 */
 	private readonly centerX: number;
 	/**
-	 * Center Y positionon canvas [readonly]
+	 * Center Y positionon canvas
 	 */
 	private readonly centerY: number;
 	/**
-	 * Camera object representing player [readonly]
+	 * Camera object representing player
 	 */
 	private readonly camera: Camera;
 
@@ -121,7 +121,7 @@ export class Renderer {
 	 * @param a Point a
 	 * @param b Point b
 	 * @param c Point c
-	 * @param color Triangle color [default='#FFFFFF']
+	 * @param color Triangle color
 	 */
 	private drawTriangle(a: Vector, b: Vector, c: Vector, color: string = '#FFFFFF'): void {
 		this.drawLine(a, b, color);
@@ -134,7 +134,7 @@ export class Renderer {
 	 * @param a Point a
 	 * @param b Point b
 	 * @param c Point c
-	 * @param color Triangle color [default='#FFFFFF']
+	 * @param color Triangle color
 	 */
 	private fillTriangle(a: Vector, b: Vector, c: Vector, color: string = '#FFFFFF'): void {
 		this.ctx.fillStyle = color;
