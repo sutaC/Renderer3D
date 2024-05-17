@@ -222,7 +222,7 @@ export class Renderer {
 			const normal = vec.vectorNormal(triangle[0], triangle[1], triangle[2]);
 			const cameraRay = vec.vectorSubtract(triangle[0], this.camera.position);
 			const dotProduct = vec.vectorDotProduct(cameraRay, normal);
-			if (dotProduct > 0.0) continue;
+			if (dotProduct > 0) continue;
 
 			// Iluminating triangle
 			const color = this.calculateColor(normal, shape.colorObj);
