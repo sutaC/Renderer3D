@@ -10,8 +10,7 @@ export class Game extends Engine {
 	protected async start(): Promise<void> {
 		const shp = await Shape.loadShape('/sample-objects/teapot.obj');
 		shp.setColor('#FFFF00');
-		shp.size = 10;
-		shp.origin.z = 200;
+		shp.origin.z = 2000;
 		this.shapes.push(shp);
 	}
 
@@ -31,10 +30,12 @@ export class Game extends Engine {
 		if (this.input.isKeyHeld('a')) {
 			// Look left
 			this.camera.yaw -= rotation;
+			this.camera.yaw %= 360;
 		}
 		if (this.input.isKeyHeld('d')) {
 			// Look right
 			this.camera.yaw += rotation;
+			this.camera.yaw %= 360;
 		}
 		if (this.input.isKeyHeld('Shift')) {
 			// Move up

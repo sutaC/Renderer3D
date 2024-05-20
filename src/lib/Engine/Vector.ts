@@ -1,5 +1,12 @@
 import type { Triangle } from './Shape';
 
+export type Matrix = [
+	[number, number, number, number],
+	[number, number, number, number],
+	[number, number, number, number],
+	[number, number, number, number]
+]
+
 export interface Vector {
 	x: number;
 	y: number;
@@ -267,7 +274,7 @@ export function triangleClippingAgainstPlane(
  * @param vec Vector to multiply
  * @returns Multiplied vector
  */
-export function vectorMatrixMultiply(matrix: number[][], vec: Vector): Vector {
+export function vectorMatrixMultiply(matrix: Matrix, vec: Vector): Vector {
 	if (matrix.length !== 4 && matrix[0].length !== 4) {
 		throw new Error('Matrix length must be be the same size as vector length (3)');
 	}
@@ -286,7 +293,7 @@ export function vectorMatrixMultiply(matrix: number[][], vec: Vector): Vector {
  * @param translation Translation vector
  * @returns Translation matrix
  */
-export function matrixTranslaton(translation: Vector): number[][] {
+export function matrixTranslaton(translation: Vector): Matrix {
 	return [
 		[1, 0, 0, translation.x],
 		[0, 1, 0, translation.y],
@@ -301,7 +308,7 @@ export function matrixTranslaton(translation: Vector): number[][] {
  * @param axis Axis of rotation (x | y | z)
  * @returns Rotation matrix
  */
-export function matrixRotation(angle: number, axis: 'x' | 'y' | 'z'): number[][] {
+export function matrixRotation(angle: number, axis: 'x' | 'y' | 'z'): Matrix {
 	const radians = angle * (Math.PI / 180);
 	switch (axis) {
 		case 'x':
@@ -335,49 +342,39 @@ export function matrixRotation(angle: number, axis: 'x' | 'y' | 'z'): number[][]
  * @param up Up vector - normal to objects facing direction axle
  * @returns Point at matrix - transformation for object rotation depending on given position
  */
-export function matrixPointAt(position: Vector, target: Vector, up: Vector): number[][] {
+export function matrixPointAt(position: Vector, target: Vector, up: Vector): Matrix {
 	const newForward: Vector = vectorNormalise(vectorSubtract(target, position));
 	const a: Vector = vectorMultiply(newForward, vectorDotProduct(up, newForward));
 	const newUp = vectorNormalise(vectorSubtract(up, a));
 	const newRight: Vector = vectorCrossProduct(newUp, newForward);
 	// TODO: FIX w
-	const matrix: number[][] = [
+	const matrix: Matrix = [
 		[newRight.x, newRight.y, newRight.z, 0],
 		[newUp.x, newUp.y, newUp.z, 0],
 		[newForward.x, newForward.y, newForward.z, 0],
-		[0, 0, 0, 1]
+		[position.x, position.y, position.z, 1]
 	];
 	return matrix;
 }
 
 /**
- * Inverts rotation matrix
- * @param matrix Rottaion matrix
- * @returns Inverted rotation matrix
+ * Inverts 4x4 matrix
+ * @param matrix 4x4 matrix
+ * @returns Inverted 4x4 matrix
  */
-export function matrixInverseRotation(matrix: number[][]): number[][] {
-	// TODO: ADD w
+export function matrixInverse(matrix: Matrix): Matrix {
+	const position = arrayToVector(matrix[3])
 	return [
 		[matrix[0][0], matrix[1][0], matrix[2][0], 0],
 		[matrix[0][1], matrix[1][1], matrix[2][1], 0],
 		[matrix[0][2], matrix[1][2], matrix[2][2], 0],
-		[0, 0, 0, 1]
+		[
+			-vectorDotProduct(position, arrayToVector(matrix[0])), 
+			-vectorDotProduct(position, arrayToVector(matrix[1])), 
+			-vectorDotProduct(position, arrayToVector(matrix[2])), 
+			1
+		]
 	];
-}
-
-/**
- * Inverts translation matrix
- * @param position Position vector on which matrix invetrs
- * @param matrix Translation matrix
- * @returns Inverted translation matrix
- */
-export function matrixInverseTranslation(position: Vector, matrix: number[][]): Vector {
-	// TODO: DELETE
-	return vector({
-		x: -vectorDotProduct(position, arrayToVector(matrix[0])),
-		y: -vectorDotProduct(position, arrayToVector(matrix[1])),
-		z: -vectorDotProduct(position, arrayToVector(matrix[2]))
-	});
 }
 
 /**
@@ -388,14 +385,6 @@ export function matrixInverseTranslation(position: Vector, matrix: number[][]): 
  * @param near closest projection distance
  * @returns Projection matrix
  */
-<<<<<<< Updated upstream
-export function matrixProjection(
-	fov: number,
-	aspect: number,
-	far: number,
-	near: number
-): Matrix {
-=======
 export function matrixProjection(fov: number, aspect: number, far: number, near: number): Matrix {
 	const fovR = (fov * Math.PI) / 180;
 	const f = 1.0 / Math.tan(fovR / 2);

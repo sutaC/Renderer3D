@@ -1,5 +1,5 @@
 import { Shape, type ColorObject, type Triangle } from './Shape';
-import { type Vector } from './Vector';
+import type { Vector, Matrix } from './Vector';
 import * as vec from './Vector';
 
 /**
@@ -168,27 +168,24 @@ export class Renderer {
 		const cameraRotationMatrix = vec.matrixRotation(this.camera.yaw, 'y');
 		this.camera.lookDirection = vec.vectorMatrixMultiply(cameraRotationMatrix, vTarget);
 		vTarget = vec.vectorAdd(this.camera.position, this.camera.lookDirection);
-		const matCamera: number[][] = vec.matrixPointAt(this.camera.position, vTarget, vUp);
-		const matViewRotation: number[][] = vec.matrixInverseRotation(matCamera);
-		const matViewTranslation: Vector = vec.matrixInverseTranslation(
-			this.camera.position,
-			matCamera
-		);
+
+		const cameraMatrix: Matrix = vec.matrixPointAt(this.camera.position, vTarget, vUp);
+		const viewMatrix: Matrix = vec.matrixInverse(cameraMatrix);
 
 		// Shape rotation
-		const rotationXMatrix: number[][] = vec.matrixRotation(shape.rotation.x, 'x');
-		const rotationYMatrix: number[][] = vec.matrixRotation(shape.rotation.y, 'y');
-		const rotationZMatrix: number[][] = vec.matrixRotation(shape.rotation.z, 'z');
+		const rotationXMatrix: Matrix = vec.matrixRotation(shape.rotation.x, 'x');
+		const rotationYMatrix: Matrix = vec.matrixRotation(shape.rotation.y, 'y');
+		const rotationZMatrix: Matrix = vec.matrixRotation(shape.rotation.z, 'z');
 
 		// Shape translation
-		const translationMatrix: number[][] = vec.matrixTranslaton(
+		const translationMatrix: Matrix = vec.matrixTranslaton(
 			vec.vector({
 				x: shape.origin.x / shape.size,
 				y: shape.origin.y / shape.size,
 				z: shape.origin.z / shape.size
 			})
 		);
-		const centeringMatrix: number[][] = vec.matrixTranslaton(
+		const centeringMatrix: Matrix = vec.matrixTranslaton(
 			vec.vector({
 				x: this.centerX,
 				y: this.centerY,
@@ -198,11 +195,10 @@ export class Renderer {
 
 		// Shape projection
 		const fov = 90;
-		// const aspect = this.canvas.width / this.canvas.height;
-		const aspect = 16 / 9;
-		const near = 1;
-		const far = 500;
-		const projectionMatrix: number[][] = vec.matrixProjection(fov, aspect, far, near);
+		const aspect = this.canvas.width / this.canvas.height;
+		const near = 0.5;
+		const far = 1000;
+		const projectionMatrix: Matrix = vec.matrixProjection(fov, aspect, far, near);
 
 		for (const triangle of triangles) {
 			// Transforming
@@ -243,9 +239,7 @@ export class Renderer {
 			for (let i = 0; i < triangle.length; i++) {
 				let point = triangle[i];
 				// Moving by view
-				point = vec.vectorMatrixMultiply(matViewRotation, point);
-				// TODO: change
-				point = vec.vectorAdd(point, matViewTranslation);
+				point = vec.vectorMatrixMultiply(viewMatrix, point);
 				triangle[i] = point;
 			}
 
