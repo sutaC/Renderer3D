@@ -21,6 +21,18 @@ export interface Camera {
 }
 
 /**
+ * Renderer debug options
+ * @prop {boolean} wireframe - Draws triangle wireframe on shape
+ * @prop {boolean} clipping - Sets clipped triangle color to green
+ * @prop {boolean} points - Draws points of shape
+ */
+export type RendererDebugOptions = {
+	wireframe: boolean;
+	clipping: boolean;
+	points: boolean;
+};
+
+/**
  * Engine module for handling graphics
  */
 export class Renderer {
@@ -46,13 +58,12 @@ export class Renderer {
 	private readonly camera: Camera;
 
 	/**
-	 * Renderer debug options
-	 * @prop {boolean} wireframe - Draws triangle wireframe on shape
-	 * @prop {boolean} clipping - Sets clipped triangle color to green
+	 * Debug options
 	 */
-	public debugOptions = {
+	public readonly debugOptions: RendererDebugOptions = {
 		wireframe: false,
-		clipping: false
+		clipping: false,
+		points: false
 	};
 
 	/**
@@ -68,7 +79,6 @@ export class Renderer {
 	}
 
 	// Calculations
-
 	/**
 	 * Calculates triangles color after shading
 	 * @param normal Normal of triangle
@@ -340,6 +350,11 @@ export class Renderer {
 			// Debug wireframe
 			if (this.debugOptions.wireframe) {
 				this.drawTriangle(triangle[0], triangle[1], triangle[2], 'black');
+			}
+			if (this.debugOptions.points) {
+				for (const point of triangle) {
+					this.drawPoint(point, 'blue');
+				}
 			}
 		}
 	}
