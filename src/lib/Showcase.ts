@@ -7,7 +7,15 @@ export class Showcase extends Engine {
 	private shp: Shape = new Shape();
 
 	// Public
-	public rotate: boolean = true;
+	public rotate: {
+		x: boolean;
+		y: boolean;
+		z: boolean;
+	} = {
+		x: true,
+		y: true,
+		z: true
+	};
 
 	constructor(canvas: HTMLCanvasElement) {
 		super(canvas);
@@ -20,14 +28,20 @@ export class Showcase extends Engine {
 
 	protected update(deltaTime: number): void {
 		// Rotation
-		if (this.rotate) {
+		if (this.rotate.x || this.rotate.y || this.rotate.z) {
 			const rotation = 60 * deltaTime;
-			this.shp.rotation.x += rotation;
-			this.shp.rotation.y += rotation;
-			this.shp.rotation.z += rotation;
-			if (this.shp.rotation.x >= 360 || this.shp.rotation.x <= -360) this.shp.rotation.x %= 360;
-			if (this.shp.rotation.y >= 360 || this.shp.rotation.y <= -360) this.shp.rotation.y %= 360;
-			if (this.shp.rotation.z >= 360 || this.shp.rotation.z <= -360) this.shp.rotation.z %= 360;
+			if (this.rotate.x) {
+				this.shp.rotation.x += rotation;
+				this.shp.rotation.x %= 360;
+			}
+			if (this.rotate.y) {
+				this.shp.rotation.y += rotation;
+				this.shp.rotation.y %= 360;
+			}
+			if (this.rotate.z) {
+				this.shp.rotation.z += rotation;
+				this.shp.rotation.z %= 360;
+			}
 		}
 
 		// Update listeners

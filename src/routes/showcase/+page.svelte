@@ -7,7 +7,12 @@
 	let selected: string = 'cube';
 	let size: number = 100;
 	let color: string = '#ffffff';
-	let rotate: boolean = true;
+	let rotateAll: boolean = true;
+	let rotate = {
+		x: true,
+		y: true,
+		z: true
+	};
 
 	let customObj = false;
 	let rotation: { x: number; y: number; z: number } = { x: 0, y: 0, z: 0 };
@@ -43,6 +48,7 @@
 		}
 	});
 
+	$: rotate.x = rotate.y = rotate.z = rotateAll;
 	$: if (engine && !customObj) {
 		if (selected === 'custom') {
 			engine.shapeController.unsetShape();
@@ -52,7 +58,7 @@
 	}
 	$: if (engine) engine.shapeController.setSize(size);
 	$: if (engine) engine.shapeController.setColor(color);
-	$: if (engine && !rotate) engine.shapeController.setRotation(rotation);
+	$: if (engine) engine.shapeController.setRotation(rotation);
 	$: if (engine) engine.shapeController.setOrigin(position);
 	$: if (engine) engine.rotate = rotate;
 
@@ -148,7 +154,7 @@
 
 				<div>
 					<label for="inputRotate">Rotate: </label>
-					<input type="checkbox" name="rotate" id="inputRotate" bind:checked={rotate} />
+					<input type="checkbox" name="rotate" id="inputRotate" bind:checked={rotateAll} />
 				</div>
 
 				<ul>
@@ -161,7 +167,14 @@
 							min="-360"
 							max="360"
 							bind:value={rotation.x}
-							disabled={rotate}
+							disabled={rotate.x}
+						/>
+						<input
+							type="checkbox"
+							name="rotateX"
+							id="inputRotateX"
+							bind:checked={rotate.x}
+							disabled={rotateAll}
 						/>
 					</li>
 					<li>
@@ -173,7 +186,14 @@
 							min="-360"
 							max="360"
 							bind:value={rotation.y}
-							disabled={rotate}
+							disabled={rotate.y}
+						/>
+						<input
+							type="checkbox"
+							name="rotateY"
+							id="inputRotateY"
+							bind:checked={rotate.y}
+							disabled={rotateAll}
 						/>
 					</li>
 					<li>
@@ -185,7 +205,14 @@
 							min="-360"
 							max="360"
 							bind:value={rotation.z}
-							disabled={rotate}
+							disabled={rotate.z}
+						/>
+						<input
+							type="checkbox"
+							name="rotateZ"
+							id="inputRotateZ"
+							bind:checked={rotate.z}
+							disabled={rotateAll}
 						/>
 					</li>
 				</ul>
