@@ -1,5 +1,5 @@
 import { Shape, type ColorObject, type Triangle } from './Shape';
-import { type Vector } from './Vector';
+import type { Vector, Matrix } from './Vector';
 import * as vec from './Vector';
 
 /**
@@ -25,23 +25,23 @@ export interface Camera {
  */
 export class Renderer {
 	/**
-	 * Canvas used to display graphics [readonly]
+	 * Canvas used to display graphics
 	 */
 	private readonly canvas: HTMLCanvasElement;
 	/**
-	 * Canvas context 2D for drawing on canvas [readonly]
+	 * Canvas context 2D for drawing on canvas
 	 */
 	private readonly ctx: CanvasRenderingContext2D;
 	/**
-	 * Center X positionon canvas [readonly]
+	 * Center X positionon canvas
 	 */
 	private readonly centerX: number;
 	/**
-	 * Center Y positionon canvas [readonly]
+	 * Center Y positionon canvas
 	 */
 	private readonly centerY: number;
 	/**
-	 * Camera object representing player [readonly]
+	 * Camera object representing player
 	 */
 	private readonly camera: Camera;
 
@@ -76,7 +76,7 @@ export class Renderer {
 	 * @returns Color in rgb notation
 	 */
 	private calculateColor(normal: Vector, colorObj: ColorObject): string {
-		const lightDirection: Vector = { x: 0, y: 0, z: -1 };
+		const lightDirection: Vector = vec.vector({ x: 0, y: 0, z: -1 });
 		const luminationFactor =
 			normal.x * lightDirection.x + normal.y * lightDirection.y + normal.z * lightDirection.z;
 		const r = Math.floor(colorObj.r * luminationFactor);
@@ -95,7 +95,7 @@ export class Renderer {
 	public drawPoint(point: Vector, color = '#FFFFFF'): void {
 		this.ctx.fillStyle = color;
 		this.ctx.beginPath();
-		this.ctx.arc(this.centerX + point.x, this.centerY - point.y, 3, 0, Math.PI * 2);
+		this.ctx.arc(point.x, point.y, 3, 0, Math.PI * 2);
 		this.ctx.fill();
 		this.ctx.closePath();
 	}
@@ -110,8 +110,8 @@ export class Renderer {
 		this.ctx.strokeStyle = color;
 		this.ctx.lineWidth = 1.5;
 		this.ctx.beginPath();
-		this.ctx.moveTo(a.x, this.canvas.height - a.y);
-		this.ctx.lineTo(b.x, this.canvas.height - b.y);
+		this.ctx.moveTo(a.x, a.y);
+		this.ctx.lineTo(b.x, b.y);
 		this.ctx.stroke();
 		this.ctx.closePath();
 	}
@@ -121,7 +121,7 @@ export class Renderer {
 	 * @param a Point a
 	 * @param b Point b
 	 * @param c Point c
-	 * @param color Triangle color [default='#FFFFFF']
+	 * @param color Triangle color
 	 */
 	private drawTriangle(a: Vector, b: Vector, c: Vector, color: string = '#FFFFFF'): void {
 		this.drawLine(a, b, color);
@@ -134,16 +134,16 @@ export class Renderer {
 	 * @param a Point a
 	 * @param b Point b
 	 * @param c Point c
-	 * @param color Triangle color [default='#FFFFFF']
+	 * @param color Triangle color
 	 */
 	private fillTriangle(a: Vector, b: Vector, c: Vector, color: string = '#FFFFFF'): void {
 		this.ctx.fillStyle = color;
 		this.ctx.beginPath();
-		this.ctx.moveTo(a.x, this.canvas.height - a.y);
-		this.ctx.lineTo(b.x, this.canvas.height - b.y);
-		this.ctx.lineTo(c.x, this.canvas.height - c.y);
-		this.ctx.moveTo(b.x, this.canvas.height - b.y);
-		this.ctx.lineTo(c.x, this.canvas.height - c.y);
+		this.ctx.moveTo(a.x, a.y);
+		this.ctx.lineTo(b.x, b.y);
+		this.ctx.lineTo(c.x, c.y);
+		this.ctx.moveTo(b.x, b.y);
+		this.ctx.lineTo(c.x, c.y);
 		this.ctx.fill();
 		this.ctx.closePath();
 		this.drawTriangle(a, b, c, color);
@@ -154,52 +154,71 @@ export class Renderer {
 	 * @param shape Shape to draw
 	 */
 	public drawShape(shape: Shape): void {
-		// View
-		const vUp: Vector = { x: 0, y: 1, z: 0 };
-		let vTarget: Vector = { x: 0, y: 0, z: 1 };
-		this.camera.lookDirection = vec.vectorRotate(vTarget, this.camera.yaw, 'y');
-		vTarget = vec.vectorAdd(this.camera.position, this.camera.lookDirection);
-
-		const matCamera: number[][] = vec.matrixPointAt(this.camera.position, vTarget, vUp);
-		const matViewRotation: number[][] = vec.matrixInverseRotation(matCamera);
-		const matViewTranslation: Vector = vec.matrixInverseTranslation(
-			this.camera.position,
-			matCamera
-		);
-
+		// Setup
 		const triangles: Triangle[] = shape.triangles.map((tr) => tr.map((p) => p)) as Triangle[]; // Copies triangles
 		const transformed: Triangle[] = [];
 		const drawable: Triangle[] = [];
 
 		const triangleColors = new Map<Triangle, string>();
 
-		const translationVec: Vector = {
-			x: shape.origin.x / shape.size,
-			y: shape.origin.y / shape.size,
-			z: shape.origin.z / shape.size
-		};
+		// Matrices
+		// Shape view
+		const vUp: Vector = vec.vector({ x: 0, y: 1, z: 0 });
+		let vTarget: Vector = vec.vector({ x: 0, y: 0, z: 1 });
+		const cameraRotationMatrix = vec.matrixRotation(this.camera.yaw, 'y');
+		this.camera.lookDirection = vec.vectorMatrixMultiply(cameraRotationMatrix, vTarget);
+		vTarget = vec.vectorAdd(this.camera.position, this.camera.lookDirection);
+
+		const cameraMatrix: Matrix = vec.matrixPointAt(this.camera.position, vTarget, vUp);
+		const viewMatrix: Matrix = vec.matrixInverse(cameraMatrix);
+
+		// Shape rotation
+		const rotationXMatrix: Matrix = vec.matrixRotation(shape.rotation.x, 'x');
+		const rotationYMatrix: Matrix = vec.matrixRotation(shape.rotation.y, 'y');
+		const rotationZMatrix: Matrix = vec.matrixRotation(shape.rotation.z, 'z');
+
+		// Shape translation
+		const translationMatrix: Matrix = vec.matrixTranslaton(
+			vec.vector({
+				x: shape.origin.x / shape.size,
+				y: shape.origin.y / shape.size,
+				z: shape.origin.z / shape.size
+			})
+		);
+		const centeringMatrix: Matrix = vec.matrixTranslaton(
+			vec.vector({
+				x: this.centerX,
+				y: this.centerY,
+				z: 0
+			})
+		);
+
+		// Shape projection
+		const fov = 45;
+		const aspect = this.canvas.width / this.canvas.height;
+		const near = 0.5;
+		const far = 1000;
+		const projectionMatrix: Matrix = vec.matrixProjection(fov, aspect, far, near);
 
 		for (const triangle of triangles) {
 			// Transforming
 			for (let i = 0; i < triangle.length; i++) {
 				let point = triangle[i];
 				// Rotating
-				point = vec.vectorRotate(point, shape.rotation.x, 'x');
-				point = vec.vectorRotate(point, shape.rotation.y, 'y');
-				point = vec.vectorRotate(point, shape.rotation.z, 'z');
+				point = vec.vectorMatrixMultiply(rotationXMatrix, point);
+				point = vec.vectorMatrixMultiply(rotationYMatrix, point);
+				point = vec.vectorMatrixMultiply(rotationZMatrix, point);
 				// Translating
-				point = vec.vectorAdd(point, translationVec);
+				point = vec.vectorMatrixMultiply(translationMatrix, point);
 				// Transformed points
 				triangle[i] = point;
 			}
 
 			// Selecting triangle
 			const normal = vec.vectorNormal(triangle[0], triangle[1], triangle[2]);
-			const dotProduct = vec.vectorDotProduct(
-				vec.vectorSubtract(triangle[0], this.camera.position),
-				normal
-			);
-			if (dotProduct > 0.0) continue;
+			const cameraRay = vec.vectorSubtract(triangle[0], this.camera.position);
+			const dotProduct = vec.vectorDotProduct(cameraRay, normal);
+			if (dotProduct > 0) continue;
 
 			// Iluminating triangle
 			const color = this.calculateColor(normal, shape.colorObj);
@@ -220,8 +239,7 @@ export class Renderer {
 			for (let i = 0; i < triangle.length; i++) {
 				let point = triangle[i];
 				// Moving by view
-				point = vec.vectorMatrixMultiply(matViewRotation, point);
-				point = vec.vectorAdd(point, matViewTranslation);
+				point = vec.vectorMatrixMultiply(viewMatrix, point);
 				triangle[i] = point;
 			}
 
@@ -233,8 +251,8 @@ export class Renderer {
 
 			// Clipping against screen depth
 			clipped = vec.triangleClippingAgainstPlane(
-				{ x: 0, y: 0, z: 1 },
-				{ x: 0, y: 0, z: 1 },
+				vec.vector({ x: 0, y: 0, z: 1 }),
+				vec.vector({ x: 0, y: 0, z: 1 }),
 				triangle
 			);
 
@@ -246,16 +264,15 @@ export class Renderer {
 				for (let i = 0; i < tri.length; i++) {
 					let point = tri[i];
 					// Projection
-					point = vec.vectorProject2d(point);
+					point = vec.vectorMatrixMultiply(projectionMatrix, point);
+
+					// Perspectivic devision
+					point = vec.vectorDevide(point, point.w);
+
 					// Scaling
 					point = vec.vectorMultiply(point, shape.size);
 					// Centering
-					const centerVec: Vector = {
-						x: this.centerX,
-						y: this.centerY,
-						z: 0
-					};
-					point = vec.vectorAdd(point, centerVec);
+					point = vec.vectorMatrixMultiply(centeringMatrix, point);
 					tri[i] = point;
 				}
 			}
@@ -277,22 +294,30 @@ export class Renderer {
 
 			// Clips against screan edges
 			clipped = clipArray(clipped, (tr) =>
-				vec.triangleClippingAgainstPlane({ x: 0, y: 0, z: 0 }, { x: 0, y: 1, z: 0 }, tr)
-			);
-			clipped = clipArray(clipped, (tr) =>
 				vec.triangleClippingAgainstPlane(
-					{ x: 0, y: this.canvas.height - 1, z: 0 },
-					{ x: 0, y: -1, z: 0 },
+					vec.vector({ x: 0, y: 0, z: 0 }),
+					vec.vector({ x: 0, y: 1, z: 0 }),
 					tr
 				)
 			);
 			clipped = clipArray(clipped, (tr) =>
-				vec.triangleClippingAgainstPlane({ x: 0, y: 0, z: 0 }, { x: 1, y: 0, z: 0 }, tr)
+				vec.triangleClippingAgainstPlane(
+					vec.vector({ x: 0, y: this.canvas.height - 1, z: 0 }),
+					vec.vector({ x: 0, y: -1, z: 0 }),
+					tr
+				)
 			);
 			clipped = clipArray(clipped, (tr) =>
 				vec.triangleClippingAgainstPlane(
-					{ x: this.canvas.width - 1, y: 0, z: 0 },
-					{ x: -1, y: 0, z: 0 },
+					vec.vector({ x: 0, y: 0, z: 0 }),
+					vec.vector({ x: 1, y: 0, z: 0 }),
+					tr
+				)
+			);
+			clipped = clipArray(clipped, (tr) =>
+				vec.triangleClippingAgainstPlane(
+					vec.vector({ x: this.canvas.width - 1, y: 0, z: 0 }),
+					vec.vector({ x: -1, y: 0, z: 0 }),
 					tr
 				)
 			);

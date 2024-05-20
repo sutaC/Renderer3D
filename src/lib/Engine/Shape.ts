@@ -1,4 +1,4 @@
-import { type Vector } from './Vector';
+import { vector, type Vector } from './Vector';
 
 /**
  * Interface for handling shape color
@@ -130,7 +130,7 @@ export class Shape {
 				const x = Number(vertices[0]);
 				const y = Number(vertices[1]);
 				const z = Number(vertices[2]);
-				const point: Vector = { x, y, z };
+				const point: Vector = vector({ x, y, z });
 				points.push(point);
 			} else if (type === 'f') {
 				const faces = data.split(' ');

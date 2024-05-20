@@ -13,21 +13,20 @@
 	let rotation: { x: number; y: number; z: number } = { x: 0, y: 0, z: 0 };
 	let position: { x: number; y: number; z: number } = { x: 0, y: 0, z: 300 };
 
-	let showcase: Showcase | undefined = undefined;
+	let engine: Showcase | undefined = undefined;
 
 	onMount(() => {
 		const canvas = document.querySelector('canvas') as HTMLCanvasElement;
-		showcase = new Showcase(canvas);
-		showcase.onready = (shcs) => {
+		engine = new Showcase(canvas);
+		engine.onready = (shcs) => {
 			shcs.run();
-			console.log('Showcase is running!');
 		};
-		showcase.onfail = (error) => {
-			console.error('Error ocurred while starting showcase: ', error);
+		engine.onfail = (error) => {
+			console.error('Error ocurred while starting engine: ', error);
 		};
-		showcase.addUpdateListener(() => {
-			if (showcase) {
-				rotation = showcase.shapeController.getRotation();
+		engine.addUpdateListener(() => {
+			if (engine) {
+				rotation = engine.shapeController.getRotation();
 				rotation.x = Math.round(rotation.x);
 				rotation.y = Math.round(rotation.y);
 				rotation.z = Math.round(rotation.z);
@@ -36,26 +35,26 @@
 	});
 
 	onDestroy(() => {
-		if (showcase) {
+		if (engine) {
 			// Engine running
-			if (showcase.getState() === EngineState.running) {
-				showcase.stop();
+			if (engine.getState() === EngineState.running) {
+				engine.stop();
 			}
 		}
 	});
 
-	$: if (showcase && !customObj) {
+	$: if (engine && !customObj) {
 		if (selected === 'custom') {
-			showcase.shapeController.unsetShape();
+			engine.shapeController.unsetShape();
 		} else {
-			showcase.shapeController.loadType(selected as ShapeNames);
+			engine.shapeController.loadType(selected as ShapeNames);
 		}
 	}
-	$: if (showcase) showcase.shapeController.setSize(size);
-	$: if (showcase) showcase.shapeController.setColor(color);
-	$: if (showcase && !rotate) showcase.shapeController.setRotation(rotation);
-	$: if (showcase) showcase.shapeController.setOrigin(position);
-	$: if (showcase) showcase.rotate = rotate;
+	$: if (engine) engine.shapeController.setSize(size);
+	$: if (engine) engine.shapeController.setColor(color);
+	$: if (engine && !rotate) engine.shapeController.setRotation(rotation);
+	$: if (engine) engine.shapeController.setOrigin(position);
+	$: if (engine) engine.rotate = rotate;
 
 	const handleAddFile = async (event: Event) => {
 		const target = event.target as HTMLInputElement;
@@ -64,19 +63,19 @@
 			console.error('No files was provided', file);
 			return;
 		}
-		showcase?.shapeController.loadFile(file);
+		engine?.shapeController.loadFile(file);
 		target.value = '';
 		customObj = true;
 	};
 </script>
 
 <svelte:head>
-	<title>Renderer 3D Showcase</title>
+	<title>Renderer 3D engine</title>
 </svelte:head>
 
 <a href="/" class="return">Return</a>
 
-<h1>Renderer 3D Showcase</h1>
+<h1>Renderer 3D engine</h1>
 
 <main>
 	<section class="canvasContainer">

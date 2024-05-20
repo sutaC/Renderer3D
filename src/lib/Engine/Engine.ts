@@ -1,6 +1,7 @@
 import { Input } from './Input';
 import { Renderer, type Camera } from './Renderer';
 import { Shape } from './Shape';
+import { vector } from './Vector';
 
 /**
  * Engine states enum
@@ -30,6 +31,13 @@ export abstract class Engine {
 
 	// Private
 	/**
+	 * Engine debug options
+	 * @prop {boolean} logging - Loggs engine state
+	 */
+	private debugOptions: { logging: boolean } = {
+		logging: false
+	};
+	/**
 	 * Time treshold for rendering one frame (ms) [readonly]
 	 */
 	private readonly timeTresholdInMs: number = 60 / 1000;
@@ -55,8 +63,8 @@ export abstract class Engine {
 	 * Camera object for player position
 	 */
 	protected camera: Camera = {
-		position: { x: 0, y: 0, z: 0 },
-		lookDirection: { x: 0, y: 0, z: 1 },
+		position: vector({ x: 0, y: 0, z: 0 }),
+		lookDirection: vector({ x: 0, y: 0, z: 1 }),
 		yaw: 0
 	};
 
@@ -76,16 +84,23 @@ export abstract class Engine {
 	 * @param canvas Canvas used to show graphics
 	 */
 	constructor(canvas: HTMLCanvasElement) {
+		if (this.debugOptions.logging)
+			console.log('%cEngine is loading...', 'color: yellow; font-weight: bold;');
+
 		this.renderer = new Renderer(canvas, this.camera);
 		this.input = new Input();
 
 		this.start()
 			.catch((error) => {
 				this.state = EngineState.failed;
+				if (this.debugOptions.logging)
+					console.log('%cEngine encountered an error', 'color: red; font-weight: bold;');
 				this.onfail(error);
 			})
 			.then(() => {
 				this.state = EngineState.ready;
+				if (this.debugOptions.logging)
+					console.log('%cEngine is ready!', 'color: greenyellow; font-weight: bold;');
 				this.onready(this);
 			});
 	}
@@ -136,6 +151,8 @@ export abstract class Engine {
 			throw new Error('Cannot run engine when it is not in "ready" or "stopped" state');
 		}
 		this.state = EngineState.running;
+		if (this.debugOptions.logging)
+			console.log('%cEngine is running!', 'color: green; font-weight: bold;');
 		this.animationframeId = requestAnimationFrame(this.gameLoop.bind(this));
 	}
 
@@ -147,6 +164,8 @@ export abstract class Engine {
 			throw new Error('Cannot stop engine when it is not in "running" state');
 		}
 		if (this.animationframeId === null) return;
+		if (this.debugOptions.logging)
+			console.log('%cEngine is stopped!', 'color: orange; font-weight: bold;');
 		cancelAnimationFrame(this.animationframeId);
 	}
 
@@ -172,13 +191,16 @@ export abstract class Engine {
 	 * @param option Debug option
 	 * @param value New value of option
 	 */
-	public setDebugOption(option: 'wireframe' | 'clipping', value: boolean): void {
+	public setDebugOption(option: 'wireframe' | 'clipping' | 'logging', value: boolean): void {
 		switch (option) {
 			case 'wireframe':
 				this.renderer.debugOptions.wireframe = value;
 				break;
 			case 'clipping':
 				this.renderer.debugOptions.wireframe = value;
+				break;
+			case 'logging':
+				this.debugOptions.logging = value;
 				break;
 		}
 	}
