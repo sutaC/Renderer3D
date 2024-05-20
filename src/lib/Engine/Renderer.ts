@@ -194,7 +194,7 @@ export class Renderer {
 		);
 
 		// Shape projection
-		const fov = 90;
+		const fov = 45;
 		const aspect = this.canvas.width / this.canvas.height;
 		const near = 0.5;
 		const far = 1000;
