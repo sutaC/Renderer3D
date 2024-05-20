@@ -275,17 +275,16 @@ export function triangleClippingAgainstPlane(
  * @returns Multiplied vector
  */
 export function vectorMatrixMultiply(matrix: Matrix, vec: Vector): Vector {
-	if (matrix.length !== 4 && matrix[0].length !== 4) {
-		throw new Error('Matrix length must be be the same size as vector length (3)');
-	}
-	const vecArray: number[] = vectorToArray(vec);
-	const arrResult: number[] = [0, 0, 0, 0];
-	for (let i = 0; i < vecArray.length; i++) {
-		for (let j = 0; j < vecArray.length; j++) {
-			arrResult[i] += matrix[i][j] * vecArray[j];
-		}
-	}
-	return arrayToVector(arrResult);
+	const result: Vector = vector();
+	result.x =
+		vec.x * matrix[0][0] + vec.y * matrix[1][0] + vec.z * matrix[2][0] + vec.w * matrix[3][0];
+	result.y =
+		vec.x * matrix[0][1] + vec.y * matrix[1][1] + vec.z * matrix[2][1] + vec.w * matrix[3][1];
+	result.z =
+		vec.x * matrix[0][2] + vec.y * matrix[1][2] + vec.z * matrix[2][2] + vec.w * matrix[3][2];
+	result.w =
+		vec.x * matrix[0][3] + vec.y * matrix[1][3] + vec.z * matrix[2][3] + vec.w * matrix[3][3];
+	return result;
 }
 
 /**
@@ -295,10 +294,10 @@ export function vectorMatrixMultiply(matrix: Matrix, vec: Vector): Vector {
  */
 export function matrixTranslaton(translation: Vector): Matrix {
 	return [
-		[1, 0, 0, translation.x],
-		[0, 1, 0, translation.y],
-		[0, 0, 1, translation.z],
-		[0, 0, 0, 1]
+		[1, 0, 0, 0],
+		[0, 1, 0, 0],
+		[0, 0, 1, 0],
+		[translation.x, translation.y, translation.z, 1]
 	];
 }
 
@@ -347,7 +346,6 @@ export function matrixPointAt(position: Vector, target: Vector, up: Vector): Mat
 	const a: Vector = vectorMultiply(newForward, vectorDotProduct(up, newForward));
 	const newUp = vectorNormalise(vectorSubtract(up, a));
 	const newRight: Vector = vectorCrossProduct(newUp, newForward);
-	// TODO: FIX w
 	const matrix: Matrix = [
 		[newRight.x, newRight.y, newRight.z, 0],
 		[newUp.x, newUp.y, newUp.z, 0],
