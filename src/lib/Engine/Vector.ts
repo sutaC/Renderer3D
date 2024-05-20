@@ -5,7 +5,7 @@ export type Matrix = [
 	[number, number, number, number],
 	[number, number, number, number],
 	[number, number, number, number]
-]
+];
 
 export interface Vector {
 	x: number;
@@ -363,15 +363,15 @@ export function matrixPointAt(position: Vector, target: Vector, up: Vector): Mat
  * @returns Inverted 4x4 matrix
  */
 export function matrixInverse(matrix: Matrix): Matrix {
-	const position = arrayToVector(matrix[3])
+	const translation = arrayToVector(matrix[3]);
 	return [
 		[matrix[0][0], matrix[1][0], matrix[2][0], 0],
 		[matrix[0][1], matrix[1][1], matrix[2][1], 0],
 		[matrix[0][2], matrix[1][2], matrix[2][2], 0],
 		[
-			-vectorDotProduct(position, arrayToVector(matrix[0])), 
-			-vectorDotProduct(position, arrayToVector(matrix[1])), 
-			-vectorDotProduct(position, arrayToVector(matrix[2])), 
+			-vectorDotProduct(translation, arrayToVector(matrix[0])),
+			-vectorDotProduct(translation, arrayToVector(matrix[1])),
+			-vectorDotProduct(translation, arrayToVector(matrix[2])),
 			1
 		]
 	];
