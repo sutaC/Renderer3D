@@ -1,5 +1,5 @@
 import { Input } from './Input';
-import { Renderer, type Camera } from './Renderer';
+import { Renderer, type Camera, type RendererDebugOptions } from './Renderer';
 import { Shape } from './Shape';
 import { vector } from './Vector';
 
@@ -30,13 +30,6 @@ export abstract class Engine {
 	protected readonly input: Input;
 
 	// Private
-	/**
-	 * Engine debug options
-	 * @prop {boolean} logging - Loggs engine state
-	 */
-	private debugOptions: { logging: boolean } = {
-		logging: false
-	};
 	/**
 	 * Time treshold for rendering one frame (ms) [readonly]
 	 */
@@ -79,6 +72,14 @@ export abstract class Engine {
 	 * @param error Caught error
 	 */
 	public onfail: (error: any) => any = () => {};
+	/**
+	 * Engine debug options
+	 * @prop {boolean} logging - Loggs engine state
+	 */
+	public readonly debugOptions: { logging: boolean; renderer?: RendererDebugOptions } = {
+		logging: false,
+		renderer: undefined
+	};
 
 	/**
 	 * @param canvas Canvas used to show graphics
@@ -89,6 +90,9 @@ export abstract class Engine {
 
 		this.renderer = new Renderer(canvas, this.camera);
 		this.input = new Input();
+
+		// Debug
+		this.debugOptions.renderer = this.renderer.debugOptions;
 
 		this.start()
 			.catch((error) => {
@@ -184,24 +188,5 @@ export abstract class Engine {
 	 */
 	public addAlternativeButton(button: HTMLButtonElement, key: string): void {
 		this.input.addAlternativeButton(button, key);
-	}
-
-	/**
-	 * Sets engine debug option
-	 * @param option Debug option
-	 * @param value New value of option
-	 */
-	public setDebugOption(option: 'wireframe' | 'clipping' | 'logging', value: boolean): void {
-		switch (option) {
-			case 'wireframe':
-				this.renderer.debugOptions.wireframe = value;
-				break;
-			case 'clipping':
-				this.renderer.debugOptions.wireframe = value;
-				break;
-			case 'logging':
-				this.debugOptions.logging = value;
-				break;
-		}
 	}
 }
