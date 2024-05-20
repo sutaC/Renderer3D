@@ -29,12 +29,12 @@ export class Game extends Engine {
 		}
 		if (this.input.isKeyHeld('a')) {
 			// Look left
-			this.camera.yaw -= rotation;
+			this.camera.yaw += rotation;
 			this.camera.yaw %= 360;
 		}
 		if (this.input.isKeyHeld('d')) {
 			// Look right
-			this.camera.yaw += rotation;
+			this.camera.yaw -= rotation;
 			this.camera.yaw %= 360;
 		}
 		if (this.input.isKeyHeld('Shift')) {
