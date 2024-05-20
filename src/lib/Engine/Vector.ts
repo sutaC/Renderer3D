@@ -388,17 +388,22 @@ export function matrixInverseTranslation(position: Vector, matrix: number[][]): 
  * @param near closest projection distance
  * @returns Projection matrix
  */
+<<<<<<< Updated upstream
 export function matrixProjection(
 	fov: number,
 	aspect: number,
 	far: number,
 	near: number
-): number[][] {
-	const fovR = fov * (Math.PI / 180);
+): Matrix {
+=======
+export function matrixProjection(fov: number, aspect: number, far: number, near: number): Matrix {
+	const fovR = (fov * Math.PI) / 180;
+	const f = 1.0 / Math.tan(fovR / 2);
+	const rangeInv = 1.0 / (near - far);
 	return [
-		[1 / (Math.tan(fovR / 2) * aspect), 0, 0, 0],
-		[0, 1 / Math.tan(fov / 2), 0, 0],
-		[0, 0, (far + near) / (near - far), (2 * far * near) / (near - far)],
-		[0, 0, -1, 0]
+		[f / aspect, 0, 0, 0],
+		[0, f, 0, 0],
+		[0, 0, (near + far) * rangeInv, -1],
+		[0, 0, near * far * rangeInv * 2, 0]
 	];
 }

@@ -95,7 +95,7 @@ export class Renderer {
 	public drawPoint(point: Vector, color = '#FFFFFF'): void {
 		this.ctx.fillStyle = color;
 		this.ctx.beginPath();
-		this.ctx.arc(this.centerX + point.x, this.centerY - point.y, 3, 0, Math.PI * 2);
+		this.ctx.arc(point.x, point.y, 3, 0, Math.PI * 2);
 		this.ctx.fill();
 		this.ctx.closePath();
 	}
@@ -110,8 +110,8 @@ export class Renderer {
 		this.ctx.strokeStyle = color;
 		this.ctx.lineWidth = 1.5;
 		this.ctx.beginPath();
-		this.ctx.moveTo(a.x, this.canvas.height - a.y);
-		this.ctx.lineTo(b.x, this.canvas.height - b.y);
+		this.ctx.moveTo(a.x, a.y);
+		this.ctx.lineTo(b.x, b.y);
 		this.ctx.stroke();
 		this.ctx.closePath();
 	}
@@ -139,11 +139,11 @@ export class Renderer {
 	private fillTriangle(a: Vector, b: Vector, c: Vector, color: string = '#FFFFFF'): void {
 		this.ctx.fillStyle = color;
 		this.ctx.beginPath();
-		this.ctx.moveTo(a.x, this.canvas.height - a.y);
-		this.ctx.lineTo(b.x, this.canvas.height - b.y);
-		this.ctx.lineTo(c.x, this.canvas.height - c.y);
-		this.ctx.moveTo(b.x, this.canvas.height - b.y);
-		this.ctx.lineTo(c.x, this.canvas.height - c.y);
+		this.ctx.moveTo(a.x, a.y);
+		this.ctx.lineTo(b.x, b.y);
+		this.ctx.lineTo(c.x, c.y);
+		this.ctx.moveTo(b.x, b.y);
+		this.ctx.lineTo(c.x, c.y);
 		this.ctx.fill();
 		this.ctx.closePath();
 		this.drawTriangle(a, b, c, color);
@@ -271,6 +271,10 @@ export class Renderer {
 					let point = tri[i];
 					// Projection
 					point = vec.vectorMatrixMultiply(projectionMatrix, point);
+
+					// Perspectivic devision
+					point = vec.vectorDevide(point, point.w);
+
 					// Scaling
 					point = vec.vectorMultiply(point, shape.size);
 					// Centering
