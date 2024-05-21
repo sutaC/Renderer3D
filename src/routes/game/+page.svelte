@@ -13,8 +13,8 @@
 		engine.addAlternativeButton(document.querySelector('#forward') as HTMLButtonElement, 'w');
 		engine.addAlternativeButton(document.querySelector('#right') as HTMLButtonElement, 'd');
 		engine.addAlternativeButton(document.querySelector('#backward') as HTMLButtonElement, 's');
-		engine.addAlternativeButton(document.querySelector('#up') as HTMLButtonElement, 'Shift');
-		engine.addAlternativeButton(document.querySelector('#down') as HTMLButtonElement, 'Control');
+		engine.addAlternativeButton(document.querySelector('#up') as HTMLButtonElement, 'ArrowUp');
+		engine.addAlternativeButton(document.querySelector('#down') as HTMLButtonElement, 'ArrowDown');
 
 		engine.onready = (eng) => {
 			eng.run();
@@ -46,7 +46,7 @@
 
 <div class="wrap">
 	<p class="controlls">
-		W-S : moving forward-backward <br /> A-D : looking left-right <br /> Shift-Ctrl : moving up-down
+		W-S : moving forward-backward <br /> A-D : looking left-right <br /> ArrowUp-ArrowDown : moving up-down
 	</p>
 
 	<div class="controller">

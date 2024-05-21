@@ -8,7 +8,11 @@ export class Input {
 	private heldKeys: Map<string, boolean> = new Map();
 
 	constructor() {
-		window.addEventListener('keydown', (e) => this.addKey(e.key));
+		window.addEventListener('keydown', (e) => {
+			this.addKey(e.key);
+			// Prevent not functional keys
+			if (e.key.toLocaleLowerCase()[0] !== 'f') e.preventDefault();
+		});
 		window.addEventListener('keyup', (e) => this.deleteKey(e.key));
 	}
 

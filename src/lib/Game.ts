@@ -37,11 +37,11 @@ export class Game extends Engine {
 			this.camera.yaw -= rotation;
 			this.camera.yaw %= 360;
 		}
-		if (this.input.isKeyHeld('Shift')) {
+		if (this.input.isKeyHeld('ArrowUp')) {
 			// Move up
 			this.camera.position.y += move;
 		}
-		if (this.input.isKeyHeld('Control')) {
+		if (this.input.isKeyHeld('ArrowDown')) {
 			// Move down
 			this.camera.position.y -= move;
 		}
