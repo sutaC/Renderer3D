@@ -33,6 +33,14 @@ export type RendererDebugOptions = {
 };
 
 /**
+ * Graphics rendering options
+ * @prop {number} fov - Field of View in degrees
+ */
+export type GraphicsOptions = {
+	fov: number;
+};
+
+/**
  * Engine module for handling graphics
  */
 export class Renderer {
@@ -56,6 +64,10 @@ export class Renderer {
 		wireframe: false,
 		clipping: false,
 		points: false
+	};
+
+	public readonly graphicsOptions: GraphicsOptions = {
+		fov: 45
 	};
 
 	/**
@@ -193,11 +205,15 @@ export class Renderer {
 		);
 
 		// Shape projection
-		const fov = 45;
 		const aspect = this.canvas.width / this.canvas.height;
 		const near = 0.5;
 		const far = 1000;
-		const projectionMatrix: Matrix = vec.matrixProjection(fov, aspect, far, near);
+		const projectionMatrix: Matrix = vec.matrixProjection(
+			this.graphicsOptions.fov,
+			aspect,
+			far,
+			near
+		);
 
 		for (const triangle of triangles) {
 			// Transforming

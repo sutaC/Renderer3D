@@ -4,10 +4,16 @@
 
 	let options: Options = Engine.defaultOptions();
 
+	const reset = () => {
+		options = Engine.defaultOptions();
+		Engine.saveOptions(options);
+	};
+
 	onMount(() => {
 		// Load engine options
 		const svd = Engine.loadOptions();
 		if (svd) options = svd;
+		Engine.saveOptions(options);
 	});
 </script>
 
@@ -16,6 +22,25 @@
 <h1>Options</h1>
 
 <main>
+	<div class="field">
+		<p class="highlight">Graphics</p>
+
+		<ul>
+			<li>
+				<label for="inputFov">FoV: </label>
+				<input
+					type="number"
+					min="0"
+					max="360"
+					name="fov"
+					id="inputFov"
+					bind:value={options.graphics.fov}
+					on:change={() => Engine.saveOptions(options)}
+				/>
+			</li>
+		</ul>
+	</div>
+
 	<div class="field">
 		<p class="highlight">Debug</p>
 		<ul class="wrap">
@@ -62,6 +87,10 @@
 			</li>
 		</ul>
 	</div>
+
+	<div class="field">
+		<button type="reset" on:click={reset}>Reset to default</button>
+	</div>
 </main>
 
 <style>
@@ -82,12 +111,7 @@
 	}
 
 	main {
-		display: flex;
-		justify-content: center;
-		align-items: start;
-		gap: 1rem;
 		width: 80%;
-		flex-wrap: wrap;
 	}
 
 	main > * {
