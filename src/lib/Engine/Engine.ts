@@ -187,12 +187,22 @@ export abstract class Engine {
 		this.previousTime = currentTime;
 		const deltaTimeInS = deltaTimeInMs / 1000;
 
-		// Update
-		this.update(deltaTimeInS);
+		// Engine error handling
+		try {
+			// Update
+			this.update(deltaTimeInS);
 
-		// Rendering
-		this.renderer.clear();
-		for (const shape of this.shapes) this.renderer.drawShape(shape);
+			// Rendering
+			this.renderer.clear();
+			for (const shape of this.shapes) this.renderer.drawShape(shape);
+		} catch (error) {
+			this.stop();
+			this.state = EngineState.failed;
+			if (this.debugOptions.logging)
+				console.log('%cEngine encountered an error', 'color: red; font-weight: bold;');
+			this.onfail(error);
+			return;
+		}
 
 		// Recall
 		this.animationframeId = requestAnimationFrame(this.gameLoop.bind(this));

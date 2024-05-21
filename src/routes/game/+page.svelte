@@ -20,7 +20,7 @@
 			eng.run();
 		};
 		engine.onfail = (error) => {
-			console.error('Error ocurred while starting engine: ', error);
+			console.error('Error ocurred in engine workflow: ', error);
 		};
 	});
 
