@@ -19,7 +19,7 @@ export enum EngineState {
  * Engine debug options
  * @prop {boolean} logging - Loggs engine state
  */
-type EngineDebugOptions = { logging: boolean };
+export type EngineDebugOptions = { logging: boolean };
 
 /**
  * Engine options
