@@ -45,14 +45,6 @@ export class Renderer {
 	 */
 	private readonly ctx: CanvasRenderingContext2D;
 	/**
-	 * Center X positionon canvas
-	 */
-	private readonly centerX: number;
-	/**
-	 * Center Y positionon canvas
-	 */
-	private readonly centerY: number;
-	/**
 	 * Camera object representing player
 	 */
 	private readonly camera: Camera;
@@ -74,8 +66,6 @@ export class Renderer {
 		this.camera = camera;
 		this.canvas = canvas;
 		this.ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-		this.centerX = this.canvas.width / 2;
-		this.centerY = this.canvas.height / 2;
 	}
 
 	// Calculations
@@ -196,8 +186,8 @@ export class Renderer {
 		);
 		const centeringMatrix: Matrix = vec.matrixTranslaton(
 			vec.vector({
-				x: this.centerX,
-				y: this.centerY,
+				x: this.canvas.width / 2,
+				y: this.canvas.height / 2,
 				z: 0
 			})
 		);
