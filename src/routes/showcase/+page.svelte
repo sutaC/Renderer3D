@@ -2,7 +2,6 @@
 	import { EngineState } from '$lib/Engine/Engine';
 	import type { ShapeNames } from '$lib/Engine/Shape';
 	import { Showcase } from '$lib/Showcase';
-	import { browser } from '$app/environment';
 	import { onMount, onDestroy } from 'svelte';
 
 	let selected: string = 'cube';
@@ -14,12 +13,6 @@
 		y: true,
 		z: true
 	};
-	let debug = {
-		wireframe: false,
-		points: false,
-		logging: false,
-		clipping: false
-	};
 
 	let customObj = false;
 	let rotation: { x: number; y: number; z: number } = { x: 0, y: 0, z: 0 };
@@ -27,27 +20,8 @@
 
 	let engine: Showcase | undefined = undefined;
 
-	enum StorageKeys {
-		'debug' = 'dbg'
-	}
-	const loadStorage = () => {
-		if (!browser) return;
-		const debugData = localStorage.getItem(StorageKeys.debug);
-		if (!debugData) return;
-		debug = JSON.parse(debugData);
-	};
-	const saveStorage = () => {
-		if (!browser) return;
-		const debugData = JSON.stringify(debug);
-		localStorage.setItem(StorageKeys.debug, debugData);
-	};
-
 	onMount(() => {
 		const canvas = document.querySelector('canvas') as HTMLCanvasElement;
-
-		// Load debug options
-		loadStorage();
-		saveStorage();
 
 		engine = new Showcase(canvas);
 		engine.onready = (shcs) => {
@@ -88,10 +62,6 @@
 	$: if (engine) engine.shapeController.setRotation(rotation);
 	$: if (engine) engine.shapeController.setOrigin(position);
 	$: if (engine) engine.rotate = rotate;
-	$: if (engine) engine.debugOptions.logging = debug.logging;
-	$: if (engine?.debugOptions.renderer) engine.debugOptions.renderer.clipping = debug.clipping;
-	$: if (engine?.debugOptions.renderer) engine.debugOptions.renderer.points = debug.points;
-	$: if (engine?.debugOptions.renderer) engine.debugOptions.renderer.wireframe = debug.wireframe;
 
 	const handleAddFile = async (event: Event) => {
 		const target = event.target as HTMLInputElement;
@@ -248,53 +218,6 @@
 					</li>
 				</ul>
 			</div>
-		</div>
-
-		<div class="field">
-			<p class="highlight">Debug</p>
-			<ul class="wrap">
-				<li>
-					<label for="inputLogging">Logging: </label>
-					<input
-						type="checkbox"
-						name="logging"
-						id="inputLogging"
-						bind:checked={debug.logging}
-						on:change={saveStorage}
-					/>
-				</li>
-				<li>
-					<label for="inputPoints">Points: </label>
-
-					<input
-						type="checkbox"
-						name="points"
-						id="inputPoints"
-						bind:checked={debug.points}
-						on:change={saveStorage}
-					/>
-				</li>
-				<li>
-					<label for="inputClipping">Cipping: </label>
-					<input
-						type="checkbox"
-						name="cipping"
-						id="inputClipping"
-						bind:checked={debug.clipping}
-						on:change={saveStorage}
-					/>
-				</li>
-				<li>
-					<label for="inputWirefarme">Wireframe: </label>
-					<input
-						type="checkbox"
-						name="wireframe"
-						id="inputWirefarme"
-						bind:checked={debug.wireframe}
-						on:change={saveStorage}
-					/>
-				</li>
-			</ul>
 		</div>
 	</section>
 </main>

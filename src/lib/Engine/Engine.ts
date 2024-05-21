@@ -16,6 +16,23 @@ export enum EngineState {
 }
 
 /**
+ * Engine options
+ */
+export type Options = {
+	engine: {
+		logging: boolean;
+	};
+	renderer: RendererDebugOptions;
+};
+
+/**
+ * Keys for storing data in local storage
+ */
+enum StorageKeys {
+	'options' = 'opt'
+}
+
+/**
  * Engine abstract class to build more specialized engines
  */
 export abstract class Engine {
@@ -76,23 +93,23 @@ export abstract class Engine {
 	 * Engine debug options
 	 * @prop {boolean} logging - Loggs engine state
 	 */
-	public readonly debugOptions: { logging: boolean; renderer?: RendererDebugOptions } = {
-		logging: false,
-		renderer: undefined
+	private readonly debugOptions: { logging: boolean } = {
+		logging: false
 	};
 
 	/**
 	 * @param canvas Canvas used to show graphics
 	 */
 	constructor(canvas: HTMLCanvasElement) {
-		if (this.debugOptions.logging)
-			console.log('%cEngine is loading...', 'color: yellow; font-weight: bold;');
-
 		this.renderer = new Renderer(canvas, this.camera);
 		this.input = new Input();
 
+		// Options
+		this.updateOptions();
+
 		// Debug
-		this.debugOptions.renderer = this.renderer.debugOptions;
+		if (this.debugOptions.logging)
+			console.log('%cEngine is loading...', 'color: yellow; font-weight: bold;');
 
 		this.start()
 			.catch((error) => {
@@ -107,6 +124,41 @@ export abstract class Engine {
 					console.log('%cEngine is ready!', 'color: greenyellow; font-weight: bold;');
 				this.onready(this);
 			});
+	}
+
+	// Static
+	/**
+	 * Loads engine options from local storage
+	 */
+	public static loadOptions(): Options | null {
+		const json = localStorage.getItem(StorageKeys.options) || 'null';
+		return JSON.parse(json) as Options | null;
+	}
+
+	/**
+	 * Saves engine options in local storage
+	 * @param options Engine options to save
+	 */
+	public static saveOptions(options: Options): void {
+		const json = JSON.stringify(options);
+		localStorage.setItem(StorageKeys.options, json);
+	}
+
+	/**
+	 * Generates default engine options
+	 * @returns Default engine options
+	 */
+	public static defaultOptions(): Options {
+		return {
+			engine: {
+				logging: false
+			},
+			renderer: {
+				clipping: false,
+				points: false,
+				wireframe: false
+			}
+		};
 	}
 
 	// Abstract methods
@@ -188,5 +240,17 @@ export abstract class Engine {
 	 */
 	public addAlternativeButton(button: HTMLButtonElement, key: string): void {
 		this.input.addAlternativeButton(button, key);
+	}
+
+	/**
+	 * Updates engine options
+	 */
+	public updateOptions(): void {
+		const opt = Engine.loadOptions() || Engine.defaultOptions();
+		// Loads options
+		this.debugOptions.logging = opt.engine.logging;
+		this.renderer.debugOptions.clipping = opt.renderer.clipping;
+		this.renderer.debugOptions.points = opt.renderer.points;
+		this.renderer.debugOptions.wireframe = opt.renderer.wireframe;
 	}
 }

@@ -11,6 +11,7 @@
 <main>
 	<a href="/showcase">Render 3D Showcase</a>
 	<a href="/game">Game 3D</a>
+	<a href="/options">Options</a>
 </main>
 
 <style>
