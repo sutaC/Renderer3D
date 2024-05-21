@@ -1,5 +1,5 @@
 import { Input } from './Input';
-import { Renderer, type Camera, type RendererDebugOptions } from './Renderer';
+import { Renderer, type Camera, type GraphicsOptions, type RendererDebugOptions } from './Renderer';
 import { Shape } from './Shape';
 import { vector } from './Vector';
 
@@ -16,13 +16,18 @@ export enum EngineState {
 }
 
 /**
+ * Engine debug options
+ * @prop {boolean} logging - Loggs engine state
+ */
+export type EngineDebugOptions = { logging: boolean };
+
+/**
  * Engine options
  */
 export type Options = {
-	engine: {
-		logging: boolean;
-	};
+	engine: EngineDebugOptions;
 	renderer: RendererDebugOptions;
+	graphics: GraphicsOptions;
 };
 
 /**
@@ -91,9 +96,8 @@ export abstract class Engine {
 	public onfail: (error: any) => any = () => {};
 	/**
 	 * Engine debug options
-	 * @prop {boolean} logging - Loggs engine state
 	 */
-	private readonly debugOptions: { logging: boolean } = {
+	private readonly debugOptions: EngineDebugOptions = {
 		logging: false
 	};
 
@@ -157,6 +161,9 @@ export abstract class Engine {
 				clipping: false,
 				points: false,
 				wireframe: false
+			},
+			graphics: {
+				fov: 45
 			}
 		};
 	}
@@ -256,11 +263,13 @@ export abstract class Engine {
 	 * Updates engine options
 	 */
 	public updateOptions(): void {
-		const opt = Engine.loadOptions() || Engine.defaultOptions();
+		const opt = Engine.loadOptions();
+		const def = Engine.defaultOptions();
 		// Loads options
-		this.debugOptions.logging = opt.engine.logging;
-		this.renderer.debugOptions.clipping = opt.renderer.clipping;
-		this.renderer.debugOptions.points = opt.renderer.points;
-		this.renderer.debugOptions.wireframe = opt.renderer.wireframe;
+		this.debugOptions.logging = opt?.engine?.logging || def.engine.logging;
+		this.renderer.debugOptions.clipping = opt?.renderer?.clipping || def.renderer.clipping;
+		this.renderer.debugOptions.points = opt?.renderer?.points || def.renderer.points;
+		this.renderer.debugOptions.wireframe = opt?.renderer?.wireframe || def.renderer.wireframe;
+		this.renderer.graphicsOptions.fov = opt?.graphics?.fov || def.graphics.fov;
 	}
 }

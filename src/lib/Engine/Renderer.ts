@@ -33,6 +33,14 @@ export type RendererDebugOptions = {
 };
 
 /**
+ * Graphics rendering options
+ * @prop {number} fov - Field of View in degrees
+ */
+export type GraphicsOptions = {
+	fov: number;
+};
+
+/**
  * Engine module for handling graphics
  */
 export class Renderer {
@@ -44,14 +52,6 @@ export class Renderer {
 	 * Canvas context 2D for drawing on canvas
 	 */
 	private readonly ctx: CanvasRenderingContext2D;
-	/**
-	 * Center X positionon canvas
-	 */
-	private readonly centerX: number;
-	/**
-	 * Center Y positionon canvas
-	 */
-	private readonly centerY: number;
 	/**
 	 * Camera object representing player
 	 */
@@ -66,6 +66,10 @@ export class Renderer {
 		points: false
 	};
 
+	public readonly graphicsOptions: GraphicsOptions = {
+		fov: 45
+	};
+
 	/**
 	 * @param canvas Canvas used to display graphics
 	 * @param camera Camera object representing player
@@ -74,8 +78,6 @@ export class Renderer {
 		this.camera = camera;
 		this.canvas = canvas;
 		this.ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-		this.centerX = this.canvas.width / 2;
-		this.centerY = this.canvas.height / 2;
 	}
 
 	// Calculations
@@ -196,18 +198,22 @@ export class Renderer {
 		);
 		const centeringMatrix: Matrix = vec.matrixTranslaton(
 			vec.vector({
-				x: this.centerX,
-				y: this.centerY,
+				x: this.canvas.width / 2,
+				y: this.canvas.height / 2,
 				z: 0
 			})
 		);
 
 		// Shape projection
-		const fov = 45;
 		const aspect = this.canvas.width / this.canvas.height;
 		const near = 0.5;
 		const far = 1000;
-		const projectionMatrix: Matrix = vec.matrixProjection(fov, aspect, far, near);
+		const projectionMatrix: Matrix = vec.matrixProjection(
+			this.graphicsOptions.fov,
+			aspect,
+			far,
+			near
+		);
 
 		for (const triangle of triangles) {
 			// Transforming
