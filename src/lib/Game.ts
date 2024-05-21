@@ -8,10 +8,18 @@ export class Game extends Engine {
 	}
 
 	protected async start(): Promise<void> {
+		// Graphics
 		const shp = await Shape.loadShape('/sample-objects/teapot.obj');
 		shp.setColor('#fc0ad8');
 		shp.origin.z = 2000;
 		this.shapes.push(shp);
+		// Input
+		this.input.addPreventKey('w');
+		this.input.addPreventKey('s');
+		this.input.addPreventKey('a');
+		this.input.addPreventKey('d');
+		this.input.addPreventKey('ArrowUp');
+		this.input.addPreventKey('ArrowDown');
 	}
 
 	protected update(deltaTime: number): void {
@@ -37,11 +45,11 @@ export class Game extends Engine {
 			this.camera.yaw -= rotation;
 			this.camera.yaw %= 360;
 		}
-		if (this.input.isKeyHeld('Shift')) {
+		if (this.input.isKeyHeld('ArrowUp')) {
 			// Move up
 			this.camera.position.y += move;
 		}
-		if (this.input.isKeyHeld('Control')) {
+		if (this.input.isKeyHeld('ArrowDown')) {
 			// Move down
 			this.camera.position.y -= move;
 		}

@@ -1,3 +1,5 @@
+import type { Vector } from './Vector';
+
 /**
  * Engine module for handling input
  */
@@ -6,10 +8,23 @@ export class Input {
 	 * Stores currently held keys
 	 */
 	private heldKeys: Map<string, boolean> = new Map();
+	private prevKeys: Map<string, boolean> = new Map();
 
 	constructor() {
-		window.addEventListener('keydown', (e) => this.addKey(e.key));
+		window.addEventListener('keydown', (e) => {
+			this.addKey(e.key);
+			this.preventKey(e);
+		});
 		window.addEventListener('keyup', (e) => this.deleteKey(e.key));
+	}
+
+	/**
+	 * Prevents key from firing default event
+	 */
+	private preventKey(e: KeyboardEvent) {
+		const isPrev = this.prevKeys.has(e.key.toLocaleLowerCase());
+		if (!isPrev) return;
+		e.preventDefault();
 	}
 
 	/**
@@ -55,6 +70,14 @@ export class Input {
 	public isKeyHeld(key: string): boolean {
 		key = key.toLowerCase();
 		return this.heldKeys.has(key);
+	}
+
+	/**
+	 * Prevents given key from fireing default event
+	 * @param key Key to prevent
+	 */
+	public addPreventKey(key: string): void {
+		this.prevKeys.set(key.toLowerCase(), true);
 	}
 
 	/**

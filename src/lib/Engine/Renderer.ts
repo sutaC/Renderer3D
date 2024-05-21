@@ -86,9 +86,8 @@ export class Renderer {
 	 * @returns Color in rgb notation
 	 */
 	private calculateColor(normal: Vector, colorObj: ColorObject): string {
-		const lightDirection: Vector = vec.vector({ x: 0, y: 0, z: -1 });
-		const luminationFactor =
-			normal.x * lightDirection.x + normal.y * lightDirection.y + normal.z * lightDirection.z;
+		const lightDirection: Vector = vec.vector({ x: 0, y: 0.5, z: normal.z });
+		const luminationFactor = Math.max(0.1, vec.vectorDotProduct(normal, lightDirection));
 		const r = Math.floor(colorObj.r * luminationFactor);
 		const g = Math.floor(colorObj.g * luminationFactor);
 		const b = Math.floor(colorObj.b * luminationFactor);
@@ -234,6 +233,14 @@ export class Renderer {
 			const color = this.calculateColor(normal, shape.colorObj);
 			triangleColors.set(triangle, color);
 
+			// Views points
+			for (let i = 0; i < triangle.length; i++) {
+				let point = triangle[i];
+				// Moving by view
+				point = vec.vectorMatrixMultiply(viewMatrix, point);
+				triangle[i] = point;
+			}
+
 			transformed.push(triangle);
 		}
 
@@ -245,16 +252,7 @@ export class Renderer {
 		});
 
 		for (const triangle of transformed) {
-			// Views points
-			for (let i = 0; i < triangle.length; i++) {
-				let point = triangle[i];
-				// Moving by view
-				point = vec.vectorMatrixMultiply(viewMatrix, point);
-				triangle[i] = point;
-			}
-
 			// Clipping
-			// Clip setup
 			const color = triangleColors.get(triangle) || 'red';
 			triangleColors.delete(triangle);
 			let clipped: Triangle[] = [];
