@@ -69,6 +69,21 @@ export abstract class Engine {
 	 */
 	private animationframeId: number | null = null;
 
+	/**
+	 * Time since last fps update (ms)
+	 */
+	private fpsTime: number = 0;
+
+	/**
+	 * Engines frames count
+	 */
+	private fpsCount: number = 0;
+
+	/**
+	 * Engines frames per second
+	 */
+	private fps: number = 0;
+
 	// Protected
 	/**
 	 * Shapes that are drawn
@@ -194,6 +209,15 @@ export abstract class Engine {
 		this.previousTime = currentTime;
 		const deltaTimeInS = deltaTimeInMs / 1000;
 
+		// FPS
+		this.fpsCount++;
+		this.fpsTime += deltaTimeInMs;
+		if (this.fpsTime >= 1000) {
+			this.fps = this.fpsCount;
+			this.fpsTime = 0;
+			this.fpsCount = 0;
+		}
+
 		// Engine error handling
 		try {
 			// Update
@@ -271,5 +295,13 @@ export abstract class Engine {
 		this.renderer.debugOptions.points = opt?.renderer?.points || def.renderer.points;
 		this.renderer.debugOptions.wireframe = opt?.renderer?.wireframe || def.renderer.wireframe;
 		this.renderer.graphicsOptions.fov = opt?.graphics?.fov || def.graphics.fov;
+	}
+
+	/**
+	 * Engine frames per sectond
+	 * @returns FPS
+	 */
+	public getFPS() {
+		return this.fps;
 	}
 }
