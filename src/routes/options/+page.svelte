@@ -17,9 +17,11 @@
 	});
 </script>
 
-<a href="/" class="return">Return</a>
-
-<h1>Options</h1>
+<header>
+	<a href="/" class="return">Return</a>
+	<h1>Options</h1>
+	<div></div>
+</header>
 
 <main>
 	<div class="field">
@@ -94,15 +96,32 @@
 </main>
 
 <style>
-	.return {
-		position: absolute;
-		right: 1rem;
-		top: 1rem;
+	header {
+		width: 100%;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 1rem;
+	}
+
+	header > * {
+		width: 20ch;
+		font-size: 0.9rem;
 		color: black;
 	}
 
+	header > *:nth-child(1) {
+		text-align: left;
+	}
+	header > *:nth-child(2) {
+		text-align: center;
+	}
+	header > *:nth-child(3) {
+		text-align: right;
+	}
+
 	h1 {
-		margin: 0 0 1rem;
+		margin: 0;
 	}
 
 	.highlight {
@@ -111,6 +130,7 @@
 	}
 
 	main {
+		margin: auto;
 		width: 80%;
 	}
 
@@ -123,6 +143,7 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: stretch;
+		flex-wrap: wrap;
 		gap: 1rem;
 	}
 
