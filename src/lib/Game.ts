@@ -21,13 +21,26 @@ export class Game extends Engine {
 		this.input.addPreventKey('d');
 		this.input.addPreventKey('ArrowUp');
 		this.input.addPreventKey('ArrowDown');
+		this.input.addPreventKey('ArrowLeft');
+		this.input.addPreventKey('ArrowRight');
 	}
 
 	protected update(deltaTime: number): void {
 		// Input handling
 		const move = 8 * deltaTime;
 		const rotation = 64 * deltaTime;
-		const moveVector = vec.vectorMultiply(this.camera.lookDirection, 8 * deltaTime);
+
+		const moveVector = vec.vectorMultiply(this.camera.lookDirection, move);
+
+		const moveSidesVector = vec.vectorMultiply(
+			vec.vectorNormal(
+				this.camera.position,
+				vec.vectorAdd(this.camera.position, vec.vector({ x: 0, y: 1, z: 0 })),
+				vec.vectorAdd(this.camera.position, this.camera.lookDirection)
+			),
+			move
+		);
+
 		if (this.input.isKeyHeld('w')) {
 			// Move forward
 			this.camera.position = vec.vectorAdd(this.camera.position, moveVector);
@@ -35,6 +48,14 @@ export class Game extends Engine {
 		if (this.input.isKeyHeld('s')) {
 			// Move backward
 			this.camera.position = vec.vectorSubtract(this.camera.position, moveVector);
+		}
+		if (this.input.isKeyHeld('ArrowLeft')) {
+			// Move left
+			this.camera.position = vec.vectorAdd(this.camera.position, moveSidesVector);
+		}
+		if (this.input.isKeyHeld('ArrowRight')) {
+			// Move right
+			this.camera.position = vec.vectorSubtract(this.camera.position, moveSidesVector);
 		}
 		if (this.input.isKeyHeld('a')) {
 			// Look left

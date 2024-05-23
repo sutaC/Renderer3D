@@ -5,16 +5,23 @@
 
 	let engine: Game | undefined = undefined;
 
+	let keyboard: boolean = true;
+
 	onMount(() => {
 		const canvas = document.querySelector('canvas') as HTMLCanvasElement;
 		engine = new Game(canvas);
 
-		engine.addAlternativeButton(document.querySelector('#left') as HTMLButtonElement, 'a');
+		engine.addAlternativeButton(document.querySelector('#lookleft') as HTMLButtonElement, 'a');
 		engine.addAlternativeButton(document.querySelector('#forward') as HTMLButtonElement, 'w');
-		engine.addAlternativeButton(document.querySelector('#right') as HTMLButtonElement, 'd');
+		engine.addAlternativeButton(document.querySelector('#lookright') as HTMLButtonElement, 'd');
 		engine.addAlternativeButton(document.querySelector('#backward') as HTMLButtonElement, 's');
 		engine.addAlternativeButton(document.querySelector('#up') as HTMLButtonElement, 'ArrowUp');
 		engine.addAlternativeButton(document.querySelector('#down') as HTMLButtonElement, 'ArrowDown');
+		engine.addAlternativeButton(document.querySelector('#left') as HTMLButtonElement, 'ArrowLeft');
+		engine.addAlternativeButton(
+			document.querySelector('#right') as HTMLButtonElement,
+			'ArrowRight'
+		);
 
 		engine.onready = (eng) => {
 			eng.run();
@@ -44,20 +51,30 @@
 
 <canvas width="500" height="500"></canvas>
 
-<div class="wrap">
-	<p class="controlls">
-		W-S : moving forward-backward <br /> A-D : looking left-right <br /> ArrowUp-ArrowDown : moving up-down
+<section class="controll">
+	<div class="keyboardSwitch">
+		<label for="inputKeyboardSwitch">Keyboard: </label>
+		<input type="checkbox" name="keyboardSwitch" id="inputKeyboardSwitch" bind:checked={keyboard} />
+	</div>
+
+	<p class="controlls" class:invisible={!keyboard}>
+		<span>W-S : moving forward-backward</span>
+		<span>A-D : looking left-right</span>
+		<span>ArrowUp-ArrowDown : moving up-down</span>
+		<span>ArrowLeft-ArrowRight : moving left-right</span>
 	</p>
 
-	<div class="controller">
-		<button id="left" aria-label="Left">&lArr;</button>
-		<button id="forward" aria-label="Forward">&uArr;</button>
-		<button id="right" aria-label="Right">&rArr;</button>
-		<button id="backward" aria-label="Backward">&dArr;</button>
-		<button id="up" aria-label="Up">&uarr;</button>
-		<button id="down" aria-label="Down">&darr;</button>
+	<div class="controller" class:invisible={keyboard}>
+		<button id="lookleft" aria-label="Look left">&lArr;</button>
+		<button id="forward" aria-label="Move forward">&uArr;</button>
+		<button id="lookright" aria-label="Look right">&rArr;</button>
+		<button id="backward" aria-label="Move backward">&dArr;</button>
+		<button id="left" aria-label="Move left">&larr;</button>
+		<button id="up" aria-label="Move up">&uarr;</button>
+		<button id="right" aria-label="Move right">&rarr;</button>
+		<button id="down" aria-label="Move down">&darr;</button>
 	</div>
-</div>
+</section>
 
 <style>
 	.return {
@@ -71,13 +88,13 @@
 		margin: 0 0 1rem;
 	}
 
-	.wrap {
-		margin: 0.5rem 0;
+	.controll {
 		display: flex;
 		justify-content: center;
-		align-items: start;
-		gap: 1rem;
-		padding-inline: 2rem;
+		align-items: center;
+		flex-direction: column;
+		gap: 0.5rem;
+		margin: 0.5rem;
 	}
 
 	.controller {
@@ -85,7 +102,7 @@
 		text-align: center;
 		justify-content: center;
 		gap: 0.125rem;
-		grid-template-areas: '. forward . up' 'left backward right down';
+		grid-template-areas: '. forward . . up .' 'lookleft backward lookright left down right';
 	}
 
 	.controller button {
@@ -112,9 +129,23 @@
 	#down {
 		grid-area: down;
 	}
+	#lookleft {
+		grid-area: lookleft;
+	}
+	#lookright {
+		grid-area: lookright;
+	}
 
 	.controlls {
 		text-align: center;
 		margin: 0;
+	}
+
+	.controlls > * {
+		display: block;
+	}
+
+	.invisible {
+		display: none;
 	}
 </style>
