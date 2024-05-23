@@ -267,6 +267,26 @@ export function triangleClippingAgainstPlane(
 	throw new Error('Error ocurred while clipping triangles, no valid points ammount was found');
 }
 
+/**
+ * Clipps array of triangles using given clipping function
+ * @param triangles Triangle array to clip
+ * @param clipFn Clipping function to clip triangles
+ * @returns Clipped array of triangles
+ */
+export function clipTriangleArray(
+	triangles: Triangle[],
+	clipFn: (tr: Triangle) => Triangle[]
+): Triangle[] {
+	const result: Triangle[] = [];
+	for (const tr of triangles) {
+		const clippedTr: Triangle[] = clipFn(tr);
+		for (const tr of clippedTr) {
+			result.push(tr);
+		}
+	}
+	return result;
+}
+
 // Matrices
 /**
  * Creates new basic matrix

@@ -1,5 +1,3 @@
-import type { Vector } from './Vector';
-
 /**
  * Engine module for handling input
  */

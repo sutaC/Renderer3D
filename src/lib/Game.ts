@@ -1,6 +1,6 @@
 import { Engine } from './Engine/Engine';
-import * as vec from '$lib/Engine/Vector';
 import { Shape } from './Engine/Shape';
+import { vector, vectorAdd, vectorSubtract, vectorMultiply, vectorNormal } from './Engine/Vector';
 
 export class Game extends Engine {
 	constructor(canvas: HTMLCanvasElement) {
@@ -30,32 +30,32 @@ export class Game extends Engine {
 		const move = 8 * deltaTime;
 		const rotation = 64 * deltaTime;
 
-		const moveVector = vec.vectorMultiply(this.camera.lookDirection, move);
+		const moveVector = vectorMultiply(this.camera.lookDirection, move);
 
-		const moveSidesVector = vec.vectorMultiply(
-			vec.vectorNormal(
+		const moveSidesVector = vectorMultiply(
+			vectorNormal(
 				this.camera.position,
-				vec.vectorAdd(this.camera.position, vec.vector({ x: 0, y: 1, z: 0 })),
-				vec.vectorAdd(this.camera.position, this.camera.lookDirection)
+				vectorAdd(this.camera.position, vector({ x: 0, y: 1, z: 0 })),
+				vectorAdd(this.camera.position, this.camera.lookDirection)
 			),
 			move
 		);
 
 		if (this.input.isKeyHeld('w')) {
 			// Move forward
-			this.camera.position = vec.vectorAdd(this.camera.position, moveVector);
+			this.camera.position = vectorAdd(this.camera.position, moveVector);
 		}
 		if (this.input.isKeyHeld('s')) {
 			// Move backward
-			this.camera.position = vec.vectorSubtract(this.camera.position, moveVector);
+			this.camera.position = vectorSubtract(this.camera.position, moveVector);
 		}
 		if (this.input.isKeyHeld('ArrowLeft')) {
 			// Move left
-			this.camera.position = vec.vectorAdd(this.camera.position, moveSidesVector);
+			this.camera.position = vectorAdd(this.camera.position, moveSidesVector);
 		}
 		if (this.input.isKeyHeld('ArrowRight')) {
 			// Move right
-			this.camera.position = vec.vectorSubtract(this.camera.position, moveSidesVector);
+			this.camera.position = vectorSubtract(this.camera.position, moveSidesVector);
 		}
 		if (this.input.isKeyHeld('a')) {
 			// Look left
