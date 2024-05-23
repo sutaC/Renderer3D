@@ -298,7 +298,7 @@ export abstract class Engine {
 	}
 
 	/**
-	 * Engine frames per sectond
+	 * Engine frames per second (value is updated once per seckond)
 	 * @returns FPS
 	 */
 	public getFPS() {

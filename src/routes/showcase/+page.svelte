@@ -26,12 +26,20 @@
 		const canvas = document.querySelector('canvas') as HTMLCanvasElement;
 
 		engine = new Showcase(canvas);
-		engine.onready = (shcs) => {
-			shcs.run();
+
+		let fpsIntervalId: number = 0;
+
+		engine.onready = (eng) => {
+			eng.run();
+			// FPS page update
+			fpsIntervalId = setInterval(() => (fps = eng.getFPS()), 1000);
 		};
 		engine.onfail = (error) => {
 			console.error('Error ocurred in engine workflow: ', error);
+			// Turn off FPS page update
+			clearInterval(fpsIntervalId);
 		};
+
 		engine.addUpdateListener(() => {
 			if (engine) {
 				rotation = engine.shapeController.getRotation();
