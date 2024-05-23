@@ -25,6 +25,27 @@
 
 <main>
 	<div class="field">
+		<p class="highlight">Engine</p>
+
+		<ul>
+			<li>
+				<label for="inputFpsLimit">FPS limit: </label>
+				<select
+					name="fpsLimit"
+					id="inputFpsLimit"
+					bind:value={options.engine.fpsLimit}
+					on:change={() => Engine.saveOptions(options)}
+				>
+					<option value="30">30</option>
+					<option value="60">60</option>
+					<option value="120">120</option>
+					<option value="0">None</option>
+				</select>
+			</li>
+		</ul>
+	</div>
+
+	<div class="field">
 		<p class="highlight">Graphics</p>
 
 		<ul>

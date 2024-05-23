@@ -16,16 +16,20 @@ export enum EngineState {
 }
 
 /**
- * Engine debug options
+ * Engine options
  * @prop {boolean} logging - Loggs engine state
+ * @prop {number} fpsLimit - Engine FPS limit (if set to 0 limit is not taken into account)
  */
-export type EngineDebugOptions = { logging: boolean };
+export type EngineOptions = {
+	logging: boolean;
+	fpsLimit: number;
+};
 
 /**
  * Engine options
  */
 export type Options = {
-	engine: EngineDebugOptions;
+	engine: EngineOptions;
 	renderer: RendererDebugOptions;
 	graphics: GraphicsOptions;
 };
@@ -53,10 +57,6 @@ export abstract class Engine {
 
 	// Private
 	/**
-	 * Time treshold for rendering one frame (ms) [readonly]
-	 */
-	private readonly timeTresholdInMs: number = 60 / 1000;
-	/**
 	 * Last time the update was performed (ms)
 	 */
 	private previousTime: number = 0;
@@ -68,17 +68,14 @@ export abstract class Engine {
 	 * Current animationframe id for canceling the animation
 	 */
 	private animationframeId: number | null = null;
-
 	/**
 	 * Time since last fps update (ms)
 	 */
 	private fpsTime: number = 0;
-
 	/**
 	 * Engines frames count
 	 */
 	private fpsCount: number = 0;
-
 	/**
 	 * Engines frames per second
 	 */
@@ -112,8 +109,9 @@ export abstract class Engine {
 	/**
 	 * Engine debug options
 	 */
-	private readonly debugOptions: EngineDebugOptions = {
-		logging: false
+	private readonly engineOptions: EngineOptions = {
+		logging: false,
+		fpsLimit: 0
 	};
 
 	/**
@@ -127,19 +125,19 @@ export abstract class Engine {
 		this.updateOptions();
 
 		// Debug
-		if (this.debugOptions.logging)
+		if (this.engineOptions.logging)
 			console.log('%cEngine is loading...', 'color: yellow; font-weight: bold;');
 
 		this.start()
 			.catch((error) => {
 				this.state = EngineState.failed;
-				if (this.debugOptions.logging)
+				if (this.engineOptions.logging)
 					console.log('%cEngine encountered an error', 'color: red; font-weight: bold;');
 				this.onfail(error);
 			})
 			.then(() => {
 				this.state = EngineState.ready;
-				if (this.debugOptions.logging)
+				if (this.engineOptions.logging)
 					console.log('%cEngine is ready!', 'color: greenyellow; font-weight: bold;');
 				this.onready(this);
 			});
@@ -170,7 +168,8 @@ export abstract class Engine {
 	public static defaultOptions(): Options {
 		return {
 			engine: {
-				logging: false
+				logging: false,
+				fpsLimit: 0
 			},
 			renderer: {
 				clipping: false,
@@ -202,10 +201,11 @@ export abstract class Engine {
 	private gameLoop(currentTime: number): void {
 		// Time elapsed
 		const deltaTimeInMs = currentTime - this.previousTime;
-		if (deltaTimeInMs < this.timeTresholdInMs) {
-			this.animationframeId = requestAnimationFrame(this.gameLoop.bind(this));
-			return;
-		}
+		if (this.engineOptions.fpsLimit > 0)
+			if (deltaTimeInMs < Math.round(1000 / this.engineOptions.fpsLimit)) {
+				this.animationframeId = requestAnimationFrame(this.gameLoop.bind(this));
+				return;
+			}
 		this.previousTime = currentTime;
 		const deltaTimeInS = deltaTimeInMs / 1000;
 
@@ -229,7 +229,7 @@ export abstract class Engine {
 		} catch (error) {
 			this.stop();
 			this.state = EngineState.failed;
-			if (this.debugOptions.logging)
+			if (this.engineOptions.logging)
 				console.log('%cEngine encountered an error', 'color: red; font-weight: bold;');
 			this.onfail(error);
 			return;
@@ -248,7 +248,7 @@ export abstract class Engine {
 			throw new Error('Cannot run engine when it is not in "ready" or "stopped" state');
 		}
 		this.state = EngineState.running;
-		if (this.debugOptions.logging)
+		if (this.engineOptions.logging)
 			console.log('%cEngine is running!', 'color: green; font-weight: bold;');
 		this.animationframeId = requestAnimationFrame(this.gameLoop.bind(this));
 	}
@@ -261,7 +261,7 @@ export abstract class Engine {
 			throw new Error('Cannot stop engine when it is not in "running" state');
 		}
 		if (this.animationframeId === null) return;
-		if (this.debugOptions.logging)
+		if (this.engineOptions.logging)
 			console.log('%cEngine is stopped!', 'color: orange; font-weight: bold;');
 		cancelAnimationFrame(this.animationframeId);
 	}
@@ -290,7 +290,8 @@ export abstract class Engine {
 		const opt = Engine.loadOptions();
 		const def = Engine.defaultOptions();
 		// Loads options
-		this.debugOptions.logging = opt?.engine?.logging || def.engine.logging;
+		this.engineOptions.logging = opt?.engine?.logging || def.engine.logging;
+		this.engineOptions.fpsLimit = opt?.engine?.fpsLimit || def.engine.fpsLimit;
 		this.renderer.debugOptions.clipping = opt?.renderer?.clipping || def.renderer.clipping;
 		this.renderer.debugOptions.points = opt?.renderer?.points || def.renderer.points;
 		this.renderer.debugOptions.wireframe = opt?.renderer?.wireframe || def.renderer.wireframe;
