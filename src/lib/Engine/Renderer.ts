@@ -106,7 +106,7 @@ export class Renderer {
 	public drawPoint(point: Vector, color = '#FFFFFF'): void {
 		this.ctx.fillStyle = color;
 		this.ctx.beginPath();
-		this.ctx.arc(point.x, point.y, 3, 0, Math.PI * 2);
+		this.ctx.arc(point.x, point.y, 1, 0, Math.PI * 2);
 		this.ctx.fill();
 		this.ctx.closePath();
 	}
@@ -119,7 +119,7 @@ export class Renderer {
 	 */
 	public drawLine(a: Vector, b: Vector, color: string = '#FFFFFF'): void {
 		this.ctx.strokeStyle = color;
-		this.ctx.lineWidth = 1.5;
+		this.ctx.lineWidth = 1.25;
 		this.ctx.beginPath();
 		this.ctx.moveTo(a.x, a.y);
 		this.ctx.lineTo(b.x, b.y);
@@ -146,8 +146,15 @@ export class Renderer {
 	 * @param b Point b
 	 * @param c Point c
 	 * @param color Triangle color
+	 * @param wireframe If false hides wireframe of triangle
 	 */
-	private fillTriangle(a: Vector, b: Vector, c: Vector, color: string = '#FFFFFF'): void {
+	private fillTriangle(
+		a: Vector,
+		b: Vector,
+		c: Vector,
+		color: string = '#FFFFFF',
+		wireframe: boolean = false
+	): void {
 		this.ctx.fillStyle = color;
 		this.ctx.beginPath();
 		this.ctx.moveTo(a.x, a.y);
@@ -157,7 +164,8 @@ export class Renderer {
 		this.ctx.lineTo(c.x, c.y);
 		this.ctx.fill();
 		this.ctx.closePath();
-		this.drawTriangle(a, b, c, color);
+		// Hides wireframe
+		if (!wireframe) this.drawTriangle(a, b, c, color);
 	}
 
 	/**
@@ -168,7 +176,6 @@ export class Renderer {
 		// Setup
 		const triangles: Triangle[] = shape.triangles.map((tr) => tr.map((p) => p)) as Triangle[]; // Copies triangles
 		const transformed: Triangle[] = [];
-		const drawable: Triangle[] = [];
 
 		const triangleColors = new Map<Triangle, string>();
 
@@ -183,19 +190,25 @@ export class Renderer {
 		const cameraMatrix: Matrix = vec.matrixPointAt(this.camera.position, vTarget, vUp);
 		const viewMatrix: Matrix = vec.matrixInverse(cameraMatrix);
 
-		// Shape rotation
-		const rotationXMatrix: Matrix = vec.matrixRotation(shape.rotation.x, 'x');
-		const rotationYMatrix: Matrix = vec.matrixRotation(shape.rotation.y, 'y');
-		const rotationZMatrix: Matrix = vec.matrixRotation(shape.rotation.z, 'z');
-
-		// Shape translation
-		const translationMatrix: Matrix = vec.matrixTranslaton(
-			vec.vector({
-				x: shape.origin.x / shape.size,
-				y: shape.origin.y / shape.size,
-				z: shape.origin.z / shape.size
-			})
+		// World matrix
+		let worldMatrix = vec.matrix();
+		// Rotation
+		worldMatrix = vec.matrixMatrixMultiply(worldMatrix, vec.matrixRotation(shape.rotation.x, 'x'));
+		worldMatrix = vec.matrixMatrixMultiply(worldMatrix, vec.matrixRotation(shape.rotation.y, 'y'));
+		worldMatrix = vec.matrixMatrixMultiply(worldMatrix, vec.matrixRotation(shape.rotation.z, 'z'));
+		// Translation
+		worldMatrix = vec.matrixMatrixMultiply(
+			worldMatrix,
+			vec.matrixTranslaton(
+				vec.vector({
+					x: shape.origin.x / shape.size,
+					y: shape.origin.y / shape.size,
+					z: shape.origin.z / shape.size
+				})
+			)
 		);
+
+		// Centering corection
 		const centeringMatrix: Matrix = vec.matrixTranslaton(
 			vec.vector({
 				x: this.canvas.width / 2,
@@ -216,17 +229,9 @@ export class Renderer {
 		);
 
 		for (const triangle of triangles) {
-			// Transforming
+			// Transforming to world space
 			for (let i = 0; i < triangle.length; i++) {
-				let point = triangle[i];
-				// Rotating
-				point = vec.vectorMatrixMultiply(rotationXMatrix, point);
-				point = vec.vectorMatrixMultiply(rotationYMatrix, point);
-				point = vec.vectorMatrixMultiply(rotationZMatrix, point);
-				// Translating
-				point = vec.vectorMatrixMultiply(translationMatrix, point);
-				// Transformed points
-				triangle[i] = point;
+				triangle[i] = vec.vectorMatrixMultiply(worldMatrix, triangle[i]);
 			}
 
 			// Selecting triangle
@@ -239,12 +244,9 @@ export class Renderer {
 			const color = this.calculateColor(normal, shape.colorObj);
 			triangleColors.set(triangle, color);
 
-			// Views points
+			// Transforming to view space
 			for (let i = 0; i < triangle.length; i++) {
-				let point = triangle[i];
-				// Moving by view
-				point = vec.vectorMatrixMultiply(viewMatrix, point);
-				triangle[i] = point;
+				triangle[i] = vec.vectorMatrixMultiply(viewMatrix, triangle[i]);
 			}
 
 			transformed.push(triangle);
@@ -273,62 +275,43 @@ export class Renderer {
 			// Skips if no clipped triangles
 			if (clipped.length === 0) continue;
 
-			// Projecting points to 2d
+			// Transforming to 2D space
 			for (const tri of clipped) {
 				for (let i = 0; i < tri.length; i++) {
-					let point = tri[i];
 					// Projection
-					point = vec.vectorMatrixMultiply(projectionMatrix, point);
-
+					tri[i] = vec.vectorMatrixMultiply(projectionMatrix, tri[i]);
 					// Perspectivic devision
-					point = vec.vectorDevide(point, point.w);
-
+					tri[i] = vec.vectorDevide(tri[i], tri[i].w);
 					// Scaling
-					point = vec.vectorMultiply(point, shape.size);
+					tri[i] = vec.vectorMultiply(tri[i], shape.size);
 					// Centering
-					point = vec.vectorMatrixMultiply(centeringMatrix, point);
-					tri[i] = point;
+					tri[i] = vec.vectorMatrixMultiply(centeringMatrix, tri[i]);
 				}
 			}
 
-			// Clips array of triangles
-			const clipArray = (
-				triangles: Triangle[],
-				clipFn: (tr: Triangle) => Triangle[]
-			): Triangle[] => {
-				const result: Triangle[] = [];
-				for (const tr of triangles) {
-					const clippedTr: Triangle[] = clipFn(tr);
-					for (const tr of clippedTr) {
-						result.push(tr);
-					}
-				}
-				return result;
-			};
-
 			// Clips against screan edges
-			clipped = clipArray(clipped, (tr) =>
+			clipped = vec.clipTriangleArray(clipped, (tr) =>
 				vec.triangleClippingAgainstPlane(
 					vec.vector({ x: 0, y: 0, z: 0 }),
 					vec.vector({ x: 0, y: 1, z: 0 }),
 					tr
 				)
 			);
-			clipped = clipArray(clipped, (tr) =>
+			clipped = vec.clipTriangleArray(clipped, (tr) =>
 				vec.triangleClippingAgainstPlane(
 					vec.vector({ x: 0, y: this.canvas.height - 1, z: 0 }),
 					vec.vector({ x: 0, y: -1, z: 0 }),
 					tr
 				)
 			);
-			clipped = clipArray(clipped, (tr) =>
+			clipped = vec.clipTriangleArray(clipped, (tr) =>
 				vec.triangleClippingAgainstPlane(
 					vec.vector({ x: 0, y: 0, z: 0 }),
 					vec.vector({ x: 1, y: 0, z: 0 }),
 					tr
 				)
 			);
-			clipped = clipArray(clipped, (tr) =>
+			clipped = vec.clipTriangleArray(clipped, (tr) =>
 				vec.triangleClippingAgainstPlane(
 					vec.vector({ x: this.canvas.width - 1, y: 0, z: 0 }),
 					vec.vector({ x: -1, y: 0, z: 0 }),
@@ -336,28 +319,22 @@ export class Renderer {
 				)
 			);
 
-			// Adds clipped triangles
-			for (const ctr of clipped) {
-				triangleColors.set(ctr, color);
-				// Debug clipping
-				if (this.debugOptions.clipping && ctr !== triangle) {
-					triangleColors.set(ctr, 'green');
+			// Draws triangles
+			for (const tr of clipped) {
+				let trColor: string = color;
+				// Debug clipping color
+				if (this.debugOptions.clipping && tr !== triangle) {
+					trColor = 'green';
 				}
-				drawable.push(ctr);
-			}
-		}
 
-		// Drawing traingles
-		for (const triangle of drawable) {
-			const color = triangleColors.get(triangle) || 'red';
-			this.fillTriangle(triangle[0], triangle[1], triangle[2], color);
-			// Debug wireframe
-			if (this.debugOptions.wireframe) {
-				this.drawTriangle(triangle[0], triangle[1], triangle[2], 'black');
-			}
-			if (this.debugOptions.points) {
-				for (const point of triangle) {
-					this.drawPoint(point, 'blue');
+				// Draws
+				this.fillTriangle(tr[0], tr[1], tr[2], trColor, this.debugOptions.wireframe);
+
+				// Debug points
+				if (this.debugOptions.points) {
+					for (const point of tr) {
+						this.drawPoint(point, 'blue');
+					}
 				}
 			}
 		}

@@ -267,7 +267,40 @@ export function triangleClippingAgainstPlane(
 	throw new Error('Error ocurred while clipping triangles, no valid points ammount was found');
 }
 
+/**
+ * Clipps array of triangles using given clipping function
+ * @param triangles Triangle array to clip
+ * @param clipFn Clipping function to clip triangles
+ * @returns Clipped array of triangles
+ */
+export function clipTriangleArray(
+	triangles: Triangle[],
+	clipFn: (tr: Triangle) => Triangle[]
+): Triangle[] {
+	const result: Triangle[] = [];
+	for (const tr of triangles) {
+		const clippedTr: Triangle[] = clipFn(tr);
+		for (const tr of clippedTr) {
+			result.push(tr);
+		}
+	}
+	return result;
+}
+
 // Matrices
+/**
+ * Creates new basic matrix
+ * @returns Basic matrix
+ */
+export function matrix(): Matrix {
+	return [
+		[1, 0, 0, 0],
+		[0, 1, 0, 0],
+		[0, 0, 1, 0],
+		[0, 0, 0, 1]
+	];
+}
+
 /**
  * Multiplies vector by given matrix
  * @param matrix Matrix multiplier (must have the same ammount of rows as vectors ammount of collumns)
@@ -284,6 +317,24 @@ export function vectorMatrixMultiply(matrix: Matrix, vec: Vector): Vector {
 		vec.x * matrix[0][2] + vec.y * matrix[1][2] + vec.z * matrix[2][2] + vec.w * matrix[3][2];
 	result.w =
 		vec.x * matrix[0][3] + vec.y * matrix[1][3] + vec.z * matrix[2][3] + vec.w * matrix[3][3];
+	return result;
+}
+
+/**
+ * Multiplies two matrices
+ * @param matrix1 Matrix to multiply
+ * @param matrix2  Matrix to multiply
+ * @returns Multiplied matrix
+ */
+export function matrixMatrixMultiply(matrix1: Matrix, matrix2: Matrix): Matrix {
+	const result: Matrix = matrix();
+	for (let c = 0; c < 4; c++)
+		for (let r = 0; r < 4; r++)
+			result[r][c] =
+				matrix1[r][0] * matrix2[0][c] +
+				matrix1[r][1] * matrix2[1][c] +
+				matrix1[r][2] * matrix2[2][c] +
+				matrix1[r][3] * matrix2[3][c];
 	return result;
 }
 

@@ -17,11 +17,34 @@
 	});
 </script>
 
-<a href="/" class="return">Return</a>
-
-<h1>Options</h1>
+<header>
+	<a href="/" class="return">Return</a>
+	<h1>Options</h1>
+	<div></div>
+</header>
 
 <main>
+	<div class="field">
+		<p class="highlight">Engine</p>
+
+		<ul>
+			<li>
+				<label for="inputFpsLimit">FPS limit: </label>
+				<select
+					name="fpsLimit"
+					id="inputFpsLimit"
+					bind:value={options.engine.fpsLimit}
+					on:change={() => Engine.saveOptions(options)}
+				>
+					<option value="30">30</option>
+					<option value="60">60</option>
+					<option value="120">120</option>
+					<option value="0">None</option>
+				</select>
+			</li>
+		</ul>
+	</div>
+
 	<div class="field">
 		<p class="highlight">Graphics</p>
 
@@ -66,7 +89,7 @@
 				/>
 			</li>
 			<li>
-				<label for="inputClipping">Cipping: </label>
+				<label for="inputClipping">Clipping: </label>
 				<input
 					type="checkbox"
 					name="clipping"
@@ -89,20 +112,37 @@
 	</div>
 
 	<div class="field">
-		<button type="reset" on:click={reset}>Reset to default</button>
+		<button type="reset" on:click={reset}>Reset</button>
 	</div>
 </main>
 
 <style>
-	.return {
-		position: absolute;
-		right: 1rem;
-		top: 1rem;
+	header {
+		width: 100%;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 1rem;
+	}
+
+	header > * {
+		width: 20ch;
+		font-size: 0.9rem;
 		color: black;
 	}
 
+	header > *:nth-child(1) {
+		text-align: left;
+	}
+	header > *:nth-child(2) {
+		text-align: center;
+	}
+	header > *:nth-child(3) {
+		text-align: right;
+	}
+
 	h1 {
-		margin: 0 0 1rem;
+		margin: 0;
 	}
 
 	.highlight {
@@ -111,6 +151,7 @@
 	}
 
 	main {
+		margin: auto;
 		width: 80%;
 	}
 
@@ -123,6 +164,7 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: stretch;
+		flex-wrap: wrap;
 		gap: 1rem;
 	}
 

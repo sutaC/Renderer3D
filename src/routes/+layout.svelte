@@ -11,10 +11,6 @@
 
 	:global(body) {
 		margin: 0;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		flex-direction: column;
 		min-height: 100vh;
 	}
 

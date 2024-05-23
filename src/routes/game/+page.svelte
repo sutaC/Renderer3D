@@ -5,22 +5,36 @@
 
 	let engine: Game | undefined = undefined;
 
+	let keyboard: boolean = true;
+	let fps: number = 0;
+
 	onMount(() => {
 		const canvas = document.querySelector('canvas') as HTMLCanvasElement;
 		engine = new Game(canvas);
 
-		engine.addAlternativeButton(document.querySelector('#left') as HTMLButtonElement, 'a');
+		engine.addAlternativeButton(document.querySelector('#lookleft') as HTMLButtonElement, 'a');
 		engine.addAlternativeButton(document.querySelector('#forward') as HTMLButtonElement, 'w');
-		engine.addAlternativeButton(document.querySelector('#right') as HTMLButtonElement, 'd');
+		engine.addAlternativeButton(document.querySelector('#lookright') as HTMLButtonElement, 'd');
 		engine.addAlternativeButton(document.querySelector('#backward') as HTMLButtonElement, 's');
 		engine.addAlternativeButton(document.querySelector('#up') as HTMLButtonElement, 'ArrowUp');
 		engine.addAlternativeButton(document.querySelector('#down') as HTMLButtonElement, 'ArrowDown');
+		engine.addAlternativeButton(document.querySelector('#left') as HTMLButtonElement, 'ArrowLeft');
+		engine.addAlternativeButton(
+			document.querySelector('#right') as HTMLButtonElement,
+			'ArrowRight'
+		);
+
+		let fpsIntervalId: number = 0;
 
 		engine.onready = (eng) => {
 			eng.run();
+			// FPS page update
+			fpsIntervalId = setInterval(() => (fps = eng.getFPS()), 1000);
 		};
 		engine.onfail = (error) => {
 			console.error('Error ocurred in engine workflow: ', error);
+			// Turn off FPS page update
+			clearInterval(fpsIntervalId);
 		};
 	});
 
@@ -38,46 +52,82 @@
 	<title>Game 3D</title>
 </svelte:head>
 
-<a href="/" class="return">Return</a>
+<header>
+	<a href="/">Return</a>
+	<h1>Game 3D</h1>
+	<small>FPS: {fps}</small>
+</header>
 
-<h1>Game 3D</h1>
+<main>
+	<canvas width="500" height="500"></canvas>
+</main>
 
-<canvas width="500" height="500"></canvas>
+<section class="controll">
+	<div class="keyboardSwitch">
+		<label for="inputKeyboardSwitch">Keyboard: </label>
+		<input type="checkbox" name="keyboardSwitch" id="inputKeyboardSwitch" bind:checked={keyboard} />
+	</div>
 
-<div class="wrap">
-	<p class="controlls">
-		W-S : moving forward-backward <br /> A-D : looking left-right <br /> ArrowUp-ArrowDown : moving up-down
+	<p class="controlls" class:invisible={!keyboard}>
+		<span>W-S : moving forward-backward</span>
+		<span>A-D : looking left-right</span>
+		<span>ArrowUp-ArrowDown : moving up-down</span>
+		<span>ArrowLeft-ArrowRight : moving left-right</span>
 	</p>
 
-	<div class="controller">
-		<button id="left" aria-label="Left">&lArr;</button>
-		<button id="forward" aria-label="Forward">&uArr;</button>
-		<button id="right" aria-label="Right">&rArr;</button>
-		<button id="backward" aria-label="Backward">&dArr;</button>
-		<button id="up" aria-label="Up">&uarr;</button>
-		<button id="down" aria-label="Down">&darr;</button>
+	<div class="controller" class:invisible={keyboard}>
+		<button id="lookleft" aria-label="Look left">&lArr;</button>
+		<button id="forward" aria-label="Move forward">&uArr;</button>
+		<button id="lookright" aria-label="Look right">&rArr;</button>
+		<button id="backward" aria-label="Move backward">&dArr;</button>
+		<button id="left" aria-label="Move left">&larr;</button>
+		<button id="up" aria-label="Move up">&uarr;</button>
+		<button id="right" aria-label="Move right">&rarr;</button>
+		<button id="down" aria-label="Move down">&darr;</button>
 	</div>
-</div>
+</section>
 
 <style>
-	.return {
-		position: absolute;
-		right: 1rem;
-		top: 1rem;
+	header {
+		width: 100%;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 1rem;
+	}
+
+	header > * {
+		width: 20ch;
+		font-size: 0.9rem;
 		color: black;
 	}
 
-	h1 {
-		margin: 0 0 1rem;
+	header > *:nth-child(1) {
+		text-align: left;
+	}
+	header > *:nth-child(2) {
+		text-align: center;
+	}
+	header > *:nth-child(3) {
+		text-align: right;
 	}
 
-	.wrap {
-		margin: 0.5rem 0;
+	h1 {
+		margin: 0;
+	}
+
+	main {
+		text-align: center;
+		margin: auto;
+	}
+
+	.controll {
 		display: flex;
 		justify-content: center;
-		align-items: start;
-		gap: 1rem;
-		padding-inline: 2rem;
+		align-items: center;
+		flex-direction: column;
+		gap: 0.5rem;
+		margin: 0.5rem;
 	}
 
 	.controller {
@@ -85,7 +135,7 @@
 		text-align: center;
 		justify-content: center;
 		gap: 0.125rem;
-		grid-template-areas: '. forward . up' 'left backward right down';
+		grid-template-areas: '. forward . . up .' 'lookleft backward lookright left down right';
 	}
 
 	.controller button {
@@ -112,9 +162,23 @@
 	#down {
 		grid-area: down;
 	}
+	#lookleft {
+		grid-area: lookleft;
+	}
+	#lookright {
+		grid-area: lookright;
+	}
 
 	.controlls {
 		text-align: center;
 		margin: 0;
+	}
+
+	.controlls > * {
+		display: block;
+	}
+
+	.invisible {
+		display: none;
 	}
 </style>
