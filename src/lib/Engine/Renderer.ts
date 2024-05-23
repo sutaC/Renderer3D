@@ -196,6 +196,15 @@ export class Renderer {
 				z: shape.origin.z / shape.size
 			})
 		);
+
+		// World matrix
+		let worldMatrix = vec.matrix();
+		worldMatrix = vec.matrixMatrixMultiply(worldMatrix, rotationXMatrix);
+		worldMatrix = vec.matrixMatrixMultiply(worldMatrix, rotationYMatrix);
+		worldMatrix = vec.matrixMatrixMultiply(worldMatrix, rotationZMatrix);
+		worldMatrix = vec.matrixMatrixMultiply(worldMatrix, translationMatrix);
+
+		// Centering corection
 		const centeringMatrix: Matrix = vec.matrixTranslaton(
 			vec.vector({
 				x: this.canvas.width / 2,
@@ -216,15 +225,10 @@ export class Renderer {
 		);
 
 		for (const triangle of triangles) {
-			// Transforming
+			// Transforming to world space
 			for (let i = 0; i < triangle.length; i++) {
 				let point = triangle[i];
-				// Rotating
-				point = vec.vectorMatrixMultiply(rotationXMatrix, point);
-				point = vec.vectorMatrixMultiply(rotationYMatrix, point);
-				point = vec.vectorMatrixMultiply(rotationZMatrix, point);
-				// Translating
-				point = vec.vectorMatrixMultiply(translationMatrix, point);
+				point = vec.vectorMatrixMultiply(worldMatrix, point);
 				// Transformed points
 				triangle[i] = point;
 			}
