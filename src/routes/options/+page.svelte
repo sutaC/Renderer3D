@@ -68,7 +68,7 @@
 				/>
 			</li>
 			<li>
-				<label for="inputClipping">Cipping: </label>
+				<label for="inputClipping">Clipping: </label>
 				<input
 					type="checkbox"
 					name="clipping"
@@ -91,7 +91,7 @@
 	</div>
 
 	<div class="field">
-		<button type="reset" on:click={reset}>Reset to default</button>
+		<button type="reset" on:click={reset}>Reset</button>
 	</div>
 </main>
 
