@@ -11,7 +11,7 @@
 </header>
 
 <main>
-	<a href="/showcase">Render 3D Showcase</a>
+	<a href="/showcase">Showcase 3D</a>
 	<a href="/game">Game 3D</a>
 	<a href="/options">Options</a>
 </main>
@@ -31,6 +31,7 @@
 	main a {
 		display: block;
 		text-align: center;
+		color: black;
 		margin: 1rem;
 	}
 </style>
