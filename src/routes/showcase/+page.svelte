@@ -20,6 +20,8 @@
 
 	let engine: Showcase | undefined = undefined;
 
+	let fps = 0;
+
 	onMount(() => {
 		const canvas = document.querySelector('canvas') as HTMLCanvasElement;
 
@@ -77,12 +79,14 @@
 </script>
 
 <svelte:head>
-	<title>Renderer 3D engine</title>
+	<title>Showcase 3D</title>
 </svelte:head>
 
-<a href="/" class="return">Return</a>
-
-<h1>Renderer 3D engine</h1>
+<header>
+	<a href="/">Return</a>
+	<h1>Showcase 3D</h1>
+	<small>FPS: {fps}</small>
+</header>
 
 <main>
 	<section class="canvasContainer">
@@ -223,15 +227,32 @@
 </main>
 
 <style>
-	.return {
-		position: absolute;
-		right: 1rem;
-		top: 1rem;
+	header {
+		width: 100%;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 1rem;
+	}
+
+	header > * {
+		width: 20ch;
+		font-size: 0.9rem;
 		color: black;
 	}
 
+	header > *:nth-child(1) {
+		text-align: left;
+	}
+	header > *:nth-child(2) {
+		text-align: center;
+	}
+	header > *:nth-child(3) {
+		text-align: right;
+	}
+
 	h1 {
-		margin: 0 0 1rem;
+		margin: 0;
 	}
 
 	.highlight {
@@ -246,6 +267,7 @@
 		gap: 1rem;
 		width: 80%;
 		flex-wrap: wrap;
+		margin: auto;
 	}
 
 	main > * {

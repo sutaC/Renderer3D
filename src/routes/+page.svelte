@@ -6,7 +6,9 @@
 	<title>Renderer 3D</title>
 </svelte:head>
 
-<h1>Renderer 3D</h1>
+<header>
+	<h1>Renderer 3D</h1>
+</header>
 
 <main>
 	<a href="/showcase">Render 3D Showcase</a>
@@ -15,6 +17,17 @@
 </main>
 
 <style>
+	:global(body) {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		flex-direction: column;
+	}
+
+	h1 {
+		text-align: center;
+	}
+
 	main a {
 		display: block;
 		text-align: center;

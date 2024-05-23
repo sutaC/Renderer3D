@@ -6,6 +6,7 @@
 	let engine: Game | undefined = undefined;
 
 	let keyboard: boolean = true;
+	let fps: number = 0;
 
 	onMount(() => {
 		const canvas = document.querySelector('canvas') as HTMLCanvasElement;
@@ -23,11 +24,17 @@
 			'ArrowRight'
 		);
 
+		let fpsIntervalId: number = 0;
+
 		engine.onready = (eng) => {
 			eng.run();
+			// FPS page update
+			fpsIntervalId = setInterval(() => (fps = eng.getFPS()), 1000);
 		};
 		engine.onfail = (error) => {
 			console.error('Error ocurred in engine workflow: ', error);
+			// Turn off FPS page update
+			clearInterval(fpsIntervalId);
 		};
 	});
 
@@ -45,11 +52,15 @@
 	<title>Game 3D</title>
 </svelte:head>
 
-<a href="/" class="return">Return</a>
+<header>
+	<a href="/">Return</a>
+	<h1>Game 3D</h1>
+	<small>FPS: {fps}</small>
+</header>
 
-<h1>Game 3D</h1>
-
-<canvas width="500" height="500"></canvas>
+<main>
+	<canvas width="500" height="500"></canvas>
+</main>
 
 <section class="controll">
 	<div class="keyboardSwitch">
@@ -77,15 +88,37 @@
 </section>
 
 <style>
-	.return {
-		position: absolute;
-		right: 1rem;
-		top: 1rem;
+	header {
+		width: 100%;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 1rem;
+	}
+
+	header > * {
+		width: 20ch;
+		font-size: 0.9rem;
 		color: black;
 	}
 
+	header > *:nth-child(1) {
+		text-align: left;
+	}
+	header > *:nth-child(2) {
+		text-align: center;
+	}
+	header > *:nth-child(3) {
+		text-align: right;
+	}
+
 	h1 {
-		margin: 0 0 1rem;
+		margin: 0;
+	}
+
+	main {
+		text-align: center;
+		margin: auto;
 	}
 
 	.controll {
