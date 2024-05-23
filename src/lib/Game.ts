@@ -9,9 +9,10 @@ export class Game extends Engine {
 
 	protected async start(): Promise<void> {
 		// Graphics
-		const shp = await Shape.loadShape('/sample-objects/teapot.obj');
-		shp.setColor('#fc0ad8');
-		shp.origin.z = 2000;
+		const shp = await Shape.loadShape('/objects/mountains.obj');
+		shp.setColor('#79e07b');
+		shp.origin.z = -1000;
+		shp.origin.y = -1000;
 		this.shapes.push(shp);
 		// Input
 		this.input.addPreventKey('w');
