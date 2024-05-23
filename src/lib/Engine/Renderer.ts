@@ -106,7 +106,7 @@ export class Renderer {
 	public drawPoint(point: Vector, color = '#FFFFFF'): void {
 		this.ctx.fillStyle = color;
 		this.ctx.beginPath();
-		this.ctx.arc(point.x, point.y, 3, 0, Math.PI * 2);
+		this.ctx.arc(point.x, point.y, 1, 0, Math.PI * 2);
 		this.ctx.fill();
 		this.ctx.closePath();
 	}
@@ -119,7 +119,7 @@ export class Renderer {
 	 */
 	public drawLine(a: Vector, b: Vector, color: string = '#FFFFFF'): void {
 		this.ctx.strokeStyle = color;
-		this.ctx.lineWidth = 1.5;
+		this.ctx.lineWidth = 1.25;
 		this.ctx.beginPath();
 		this.ctx.moveTo(a.x, a.y);
 		this.ctx.lineTo(b.x, b.y);
@@ -146,8 +146,15 @@ export class Renderer {
 	 * @param b Point b
 	 * @param c Point c
 	 * @param color Triangle color
+	 * @param wireframe If false hides wireframe of triangle
 	 */
-	private fillTriangle(a: Vector, b: Vector, c: Vector, color: string = '#FFFFFF'): void {
+	private fillTriangle(
+		a: Vector,
+		b: Vector,
+		c: Vector,
+		color: string = '#FFFFFF',
+		wireframe: boolean = false
+	): void {
 		this.ctx.fillStyle = color;
 		this.ctx.beginPath();
 		this.ctx.moveTo(a.x, a.y);
@@ -157,7 +164,8 @@ export class Renderer {
 		this.ctx.lineTo(c.x, c.y);
 		this.ctx.fill();
 		this.ctx.closePath();
-		this.drawTriangle(a, b, c, color);
+		// Hides wireframe
+		if (!wireframe) this.drawTriangle(a, b, c, color);
 	}
 
 	/**
@@ -320,12 +328,8 @@ export class Renderer {
 				}
 
 				// Draws
-				this.fillTriangle(tr[0], tr[1], tr[2], trColor);
+				this.fillTriangle(tr[0], tr[1], tr[2], trColor, this.debugOptions.wireframe);
 
-				// Debug wireframe
-				if (this.debugOptions.wireframe) {
-					this.drawTriangle(tr[0], tr[1], tr[2], 'black');
-				}
 				// Debug points
 				if (this.debugOptions.points) {
 					for (const point of tr) {
