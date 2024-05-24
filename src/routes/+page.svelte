@@ -6,22 +6,25 @@
 	<title>Renderer 3D</title>
 </svelte:head>
 
-<header>
-	<h1>Renderer 3D</h1>
-</header>
+<div class="app">
+	<header>
+		<h1>Renderer 3D</h1>
+	</header>
 
-<main>
-	<a href="/showcase">Showcase 3D</a>
-	<a href="/game">Game 3D</a>
-	<a href="/options">Options</a>
-</main>
+	<main>
+		<a href="/showcase">Showcase 3D</a>
+		<a href="/game">Game 3D</a>
+		<a href="/options">Options</a>
+	</main>
+</div>
 
 <style>
-	:global(body) {
+	.app {
 		display: flex;
 		justify-content: center;
 		align-items: center;
 		flex-direction: column;
+		min-height: 100vh;
 	}
 
 	h1 {
