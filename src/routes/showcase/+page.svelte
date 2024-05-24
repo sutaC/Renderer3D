@@ -25,6 +25,11 @@
 	onMount(() => {
 		const canvas = document.querySelector('canvas') as HTMLCanvasElement;
 
+		// Sets canvas size
+		const aspect = 16 / 9;
+		canvas.height = window.innerHeight * 0.7;
+		canvas.width = canvas.height * aspect;
+
 		engine = new Showcase(canvas);
 
 		let fpsIntervalId: number = 0;
@@ -98,7 +103,7 @@
 
 <main>
 	<section class="canvasContainer">
-		<canvas width="500" height="500"></canvas>
+		<canvas></canvas>
 	</section>
 
 	<section class="controller">
