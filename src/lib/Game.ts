@@ -11,8 +11,8 @@ export class Game extends Engine {
 		// Graphics
 		const shp = await Shape.loadShape('/objects/mountains.obj');
 		shp.setColor('#79e07b');
-		shp.origin.z = -1000;
-		shp.origin.y = -1000;
+		shp.origin.z = -10;
+		shp.origin.y = -10;
 		this.shapes.push(shp);
 		// Input
 		this.input.addPreventKey('w');

@@ -16,7 +16,7 @@
 
 	let customObj = false;
 	let rotation: { x: number; y: number; z: number } = { x: 0, y: 0, z: 0 };
-	let position: { x: number; y: number; z: number } = { x: 0, y: 0, z: 300 };
+	let position: { x: number; y: number; z: number } = { x: 0, y: 0, z: 10 };
 
 	let engine: Showcase | undefined = undefined;
 

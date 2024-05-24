@@ -201,9 +201,9 @@ export class Renderer {
 			worldMatrix,
 			vec.matrixTranslaton(
 				vec.vector({
-					x: shape.origin.x / shape.size,
-					y: shape.origin.y / shape.size,
-					z: shape.origin.z / shape.size
+					x: shape.origin.x,
+					y: shape.origin.y,
+					z: shape.origin.z
 				})
 			)
 		);
