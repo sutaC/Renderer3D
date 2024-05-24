@@ -4,9 +4,30 @@
 
 	let options: Options = Engine.defaultOptions();
 
+	interface Resolution {
+		width: number;
+		height: number;
+	}
+
+	let resolutionSign = '1280x720';
+
+	const updateResolution = () => {
+		if (resolutionSign.length === 0) return;
+		const res = resolutionSign.split('x');
+		const width = Number(res[0]);
+		const height = Number(res[1]);
+		const resolution: Resolution = { width, height };
+		const json = JSON.stringify(resolution);
+		localStorage.setItem('resolution', json);
+	};
+
 	const reset = () => {
+		// Values
 		options = Engine.defaultOptions();
+		resolutionSign = '1280x720';
+		// Update
 		Engine.saveOptions(options);
+		updateResolution();
 	};
 
 	onMount(() => {
@@ -14,6 +35,15 @@
 		const svd = Engine.loadOptions();
 		if (svd) options = svd;
 		Engine.saveOptions(options);
+
+		// Load resolution
+		const json = localStorage.getItem('resolution');
+		if (json) {
+			const sres: Resolution = JSON.parse(json);
+			resolutionSign = `${sres.width}x${sres.height}`;
+		} else {
+			updateResolution();
+		}
 	});
 </script>
 
@@ -36,10 +66,10 @@
 					bind:value={options.engine.fpsLimit}
 					on:change={() => Engine.saveOptions(options)}
 				>
-					<option value="30">30</option>
-					<option value="60">60</option>
-					<option value="120">120</option>
-					<option value="0">None</option>
+					<option value={30}>30</option>
+					<option value={60}>60</option>
+					<option value={120}>120</option>
+					<option value={0}>None</option>
 				</select>
 			</li>
 		</ul>
@@ -61,6 +91,24 @@
 					on:change={() => Engine.saveOptions(options)}
 				/>
 			</li>
+
+			<li>
+				<label for="inputResolution">Resolution: </label>
+				<select
+					name="resolution"
+					id="inputResolution"
+					bind:value={resolutionSign}
+					on:change={updateResolution}
+				>
+					<option value="640x480">640x480</option>
+					<option value="800x600">800x600</option>
+					<option value="1024x768">1024x768</option>
+					<option value="1280x720">1280x720</option>
+					<option value="1366x768">1366x768</option>
+					<option value="1920x1080">1920x1080</option>
+					<option value="2560x1440">2560x1440</option>
+				</select>
+			</li>
 		</ul>
 	</div>
 
@@ -73,8 +121,8 @@
 					type="checkbox"
 					name="logging"
 					id="inputLogging"
-					bind:checked={options.engine.logging}
-					on:change={() => Engine.saveOptions(options)}
+					bind:value={resolutionSign}
+					on:change={updateResolution}
 				/>
 			</li>
 			<li>

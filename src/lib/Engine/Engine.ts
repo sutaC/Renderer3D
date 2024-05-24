@@ -35,13 +35,6 @@ export type Options = {
 };
 
 /**
- * Keys for storing data in local storage
- */
-enum StorageKeys {
-	'options' = 'opt'
-}
-
-/**
  * Engine abstract class to build more specialized engines
  */
 export abstract class Engine {
@@ -148,7 +141,7 @@ export abstract class Engine {
 	 * Loads engine options from local storage
 	 */
 	public static loadOptions(): Options | null {
-		const json = localStorage.getItem(StorageKeys.options) || 'null';
+		const json = localStorage.getItem('options') || 'null';
 		return JSON.parse(json) as Options | null;
 	}
 
@@ -158,7 +151,7 @@ export abstract class Engine {
 	 */
 	public static saveOptions(options: Options): void {
 		const json = JSON.stringify(options);
-		localStorage.setItem(StorageKeys.options, json);
+		localStorage.setItem('options', json);
 	}
 
 	/**

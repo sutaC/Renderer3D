@@ -15,7 +15,8 @@
 	}
 
 	:global(canvas) {
-		max-width: calc(100vw - 1rem);
+		max-width: 70vw;
+		max-height: 70vh;
 		background: black;
 	}
 </style>

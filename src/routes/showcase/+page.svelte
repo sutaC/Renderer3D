@@ -26,9 +26,11 @@
 		const canvas = document.querySelector('canvas') as HTMLCanvasElement;
 
 		// Sets canvas size
-		const aspect = 16 / 9;
-		canvas.height = window.innerHeight * 0.7;
-		canvas.width = canvas.height * aspect;
+		const resolution: { width: number; height: number } = JSON.parse(
+			localStorage.getItem('resolution') || '{"width":1280,"height":720}'
+		);
+		canvas.width = resolution.width;
+		canvas.height = resolution.height;
 
 		engine = new Showcase(canvas);
 
