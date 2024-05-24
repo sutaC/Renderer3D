@@ -177,7 +177,7 @@ export abstract class Engine {
 				wireframe: false
 			},
 			graphics: {
-				fov: 45
+				fov: 10
 			}
 		};
 	}
