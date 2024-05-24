@@ -44,7 +44,7 @@ export class Shape {
 	/**
 	 * Position of shapes origin
 	 */
-	public origin: { x: number; y: number; z: number } = { x: 0, y: 0, z: 300 };
+	public origin: { x: number; y: number; z: number } = { x: 0, y: 0, z: 0 };
 	/**
 	 * Rotation of shape
 	 */

@@ -67,7 +67,7 @@ export class Renderer {
 	};
 
 	public readonly graphicsOptions: GraphicsOptions = {
-		fov: 45
+		fov: 10
 	};
 
 	/**
@@ -119,7 +119,7 @@ export class Renderer {
 	 */
 	public drawLine(a: Vector, b: Vector, color: string = '#FFFFFF'): void {
 		this.ctx.strokeStyle = color;
-		this.ctx.lineWidth = 1.25;
+		this.ctx.lineWidth = 1.5;
 		this.ctx.beginPath();
 		this.ctx.moveTo(a.x, a.y);
 		this.ctx.lineTo(b.x, b.y);
@@ -201,9 +201,9 @@ export class Renderer {
 			worldMatrix,
 			vec.matrixTranslaton(
 				vec.vector({
-					x: shape.origin.x / shape.size,
-					y: shape.origin.y / shape.size,
-					z: shape.origin.z / shape.size
+					x: shape.origin.x,
+					y: shape.origin.y,
+					z: shape.origin.z
 				})
 			)
 		);

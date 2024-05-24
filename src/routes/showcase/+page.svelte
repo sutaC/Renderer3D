@@ -16,7 +16,7 @@
 
 	let customObj = false;
 	let rotation: { x: number; y: number; z: number } = { x: 0, y: 0, z: 0 };
-	let position: { x: number; y: number; z: number } = { x: 0, y: 0, z: 300 };
+	let position: { x: number; y: number; z: number } = { x: 0, y: 0, z: 10 };
 
 	let engine: Showcase | undefined = undefined;
 
@@ -24,6 +24,13 @@
 
 	onMount(() => {
 		const canvas = document.querySelector('canvas') as HTMLCanvasElement;
+
+		// Sets canvas size
+		const resolution: { width: number; height: number } = JSON.parse(
+			localStorage.getItem('resolution') || '{"width":1280,"height":720}'
+		);
+		canvas.width = resolution.width;
+		canvas.height = resolution.height;
 
 		engine = new Showcase(canvas);
 
@@ -98,7 +105,7 @@
 
 <main>
 	<section class="canvasContainer">
-		<canvas width="500" height="500"></canvas>
+		<canvas></canvas>
 	</section>
 
 	<section class="controller">

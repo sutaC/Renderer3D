@@ -23,6 +23,7 @@ export class Showcase extends Engine {
 
 	protected async start(): Promise<void> {
 		this.shp = await Shape.loadShape('/sample-objects/cube.obj');
+		this.shp.origin.z = 10;
 		this.shapes = [this.shp];
 	}
 

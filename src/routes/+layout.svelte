@@ -15,8 +15,8 @@
 	}
 
 	:global(canvas) {
-		max-width: calc(100vw - 1rem);
-		aspect-ratio: 1;
+		max-width: 70vw;
+		max-height: 70vh;
 		background: black;
 	}
 </style>

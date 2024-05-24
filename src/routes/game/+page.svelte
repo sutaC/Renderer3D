@@ -10,6 +10,14 @@
 
 	onMount(() => {
 		const canvas = document.querySelector('canvas') as HTMLCanvasElement;
+
+		// Sets canvas size
+		const resolution: { width: number; height: number } = JSON.parse(
+			localStorage.getItem('resolution') || '{"width":1280,"height":720}'
+		);
+		canvas.width = resolution.width;
+		canvas.height = resolution.height;
+
 		engine = new Game(canvas);
 
 		engine.addAlternativeButton(document.querySelector('#lookleft') as HTMLButtonElement, 'a');
@@ -59,7 +67,7 @@
 </header>
 
 <main>
-	<canvas width="500" height="500"></canvas>
+	<canvas></canvas>
 </main>
 
 <section class="controll">
