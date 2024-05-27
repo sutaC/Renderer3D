@@ -123,7 +123,6 @@ export class Shape {
 					.split(' ')
 					.map((v) => v.replaceAll(/[^0-9.-]/gm, '')) // Removes all non-digits
 					.filter((v) => v.length > 0);
-				console.log(data, vertices);
 
 				if (vertices.length !== 3) {
 					console.error(vertices);
