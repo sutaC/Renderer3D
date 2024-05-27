@@ -121,8 +121,10 @@ export class Shape {
 			if (type === 'v') {
 				const vertices = data
 					.split(' ')
-					.filter((v) => v.length > 0)
-					.map((v) => (v.includes('\r') ? v.substring(0, v.indexOf('\r')) : v));
+					.map((v) => v.replaceAll(/[^0-9.-]/gm, '')) // Removes all non-digits
+					.filter((v) => v.length > 0);
+				console.log(data, vertices);
+
 				if (vertices.length !== 3) {
 					console.error(vertices);
 					throw new Error(`Not suported vertices was provided at line ${i}: "${data}"`);
