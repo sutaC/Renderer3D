@@ -1,7 +1,3 @@
-<script lang="ts">
-	// TODO
-</script>
-
 <svelte:head>
 	<title>Renderer 3D</title>
 </svelte:head>
