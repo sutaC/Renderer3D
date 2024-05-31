@@ -54,6 +54,7 @@
 		min-height: 100vh;
 		font-family: 'Roboto Mono';
 		font-weight: 400;
+		background-color: var(--clr-background);
 	}
 
 	/* --- */
@@ -64,27 +65,27 @@
 	}
 
 	:global(h1) {
-		font-size: 4.21rem; /* 67.36px */
+		font-size: 2.489rem; /* 39.84px */
 	}
 
 	:global(h2) {
-		font-size: 3.158rem; /* 50.56px */
+		font-size: 2.074rem; /* 33.12px */
 	}
 
 	:global(h3) {
-		font-size: 2.369rem; /* 37.92px */
+		font-size: 1.728rem; /* 27.68px */
 	}
 
 	:global(h4) {
-		font-size: 1.777rem; /* 28.48px */
+		font-size: 1.44rem; /* 23.04px */
 	}
 
 	:global(h5) {
-		font-size: 1.333rem; /* 21.28px */
+		font-size: 1.2rem; /* 19.2px */
 	}
 
 	:global(small) {
-		font-size: 0.75rem; /* 12px */
+		font-size: 0.833rem; /* 13.28px */
 	}
 
 	/* --- */

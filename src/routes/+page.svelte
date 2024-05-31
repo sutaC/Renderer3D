@@ -1,3 +1,7 @@
+<script lang="ts">
+	import Footer from '$lib/comonents/Footer.svelte';
+</script>
+
 <svelte:head>
 	<title>Renderer 3D</title>
 </svelte:head>
@@ -12,6 +16,8 @@
 		<a href="/game">Game 3D</a>
 		<a href="/options">Options</a>
 	</main>
+
+	<Footer />
 </div>
 
 <style>
