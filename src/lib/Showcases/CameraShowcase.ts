@@ -1,8 +1,14 @@
-import { Engine } from './Engine/Engine';
-import { Shape } from './Engine/Shape';
-import { vector, vectorAdd, vectorSubtract, vectorMultiply, vectorNormal } from './Engine/Vector';
+import { Engine } from '$lib/EngineUtils/Engine';
+import { Shape } from '$lib/EngineUtils/Shape';
+import {
+	vector,
+	vectorAdd,
+	vectorSubtract,
+	vectorMultiply,
+	vectorNormal
+} from '$lib/EngineUtils/Vector';
 
-export class Game extends Engine {
+export class CameraShowcase extends Engine {
 	constructor(canvas: HTMLCanvasElement) {
 		super(canvas);
 	}

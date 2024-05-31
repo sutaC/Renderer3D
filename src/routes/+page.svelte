@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Button from '$lib/comonents/Button.svelte';
-	import Footer from '$lib/comonents/Footer.svelte';
+	import Button from '$lib/Comonents/Button.svelte';
+	import Footer from '$lib/Comonents/Footer.svelte';
 </script>
 
 <svelte:head>
@@ -17,8 +17,8 @@
 	</header>
 
 	<main>
-		<a href="/showcase"><Button style="primary">Showcase 3D</Button></a>
-		<a href="/game"><Button style="secondary">Game 3D</Button></a>
+		<a href="/object"><Button style="primary">Objects Showcase</Button></a>
+		<a href="/camera"><Button style="secondary">Camera Showcase</Button></a>
 		<a href="/options"><Button style="accent">Options</Button></a>
 	</main>
 

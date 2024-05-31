@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { EngineState } from '$lib/Engine/Engine';
-	import type { ShapeNames } from '$lib/Engine/Shape';
-	import { Showcase } from '$lib/Showcase';
+	import { EngineState } from '$lib/EngineUtils/Engine';
+	import type { ShapeNames } from '$lib/EngineUtils/Shape';
+	import { ObjectsShowcase } from '$lib/Showcases/ObjectsShowcase';
 	import { onMount, onDestroy } from 'svelte';
 
 	let selected: string = 'cube';
@@ -18,7 +18,7 @@
 	let rotation: { x: number; y: number; z: number } = { x: 0, y: 0, z: 0 };
 	let position: { x: number; y: number; z: number } = { x: 0, y: 0, z: 10 };
 
-	let engine: Showcase | undefined = undefined;
+	let engine: ObjectsShowcase | undefined = undefined;
 
 	let fps = 0;
 
@@ -32,7 +32,7 @@
 		canvas.width = resolution.width;
 		canvas.height = resolution.height;
 
-		engine = new Showcase(canvas);
+		engine = new ObjectsShowcase(canvas);
 
 		let fpsIntervalId: number = 0;
 

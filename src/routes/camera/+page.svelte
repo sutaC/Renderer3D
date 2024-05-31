@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
-	import { Game } from '$lib/Game';
-	import { EngineState } from '$lib/Engine/Engine';
+	import { CameraShowcase } from '$lib/Showcases/CameraShowcase';
+	import { EngineState } from '$lib/EngineUtils/Engine';
 
-	let engine: Game | undefined = undefined;
+	let engine: CameraShowcase | undefined = undefined;
 
 	let keyboard: boolean = true;
 	let fps: number = 0;
@@ -18,7 +18,7 @@
 		canvas.width = resolution.width;
 		canvas.height = resolution.height;
 
-		engine = new Game(canvas);
+		engine = new CameraShowcase(canvas);
 
 		engine.addAlternativeButton(document.querySelector('#lookleft') as HTMLButtonElement, 'a');
 		engine.addAlternativeButton(document.querySelector('#forward') as HTMLButtonElement, 'w');
