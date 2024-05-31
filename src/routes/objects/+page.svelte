@@ -272,7 +272,7 @@
 
 	.info {
 		max-width: 30rem;
-		margin: 0 auto 1rem;
+		margin: 0 auto 2rem;
 	}
 
 	.subfield {
