@@ -111,168 +111,161 @@
 	</main>
 
 	<section class="info">
-		<div class="category">
-			<p class="caption">Object:</p>
-			<Card style="primary">
+		<Card style="primary">
+			<span>Object:</span>
+			<div>
+				<label for="selectShape">Shape: </label>
+				<select
+					name="shape"
+					id="selectShape"
+					bind:value={selected}
+					on:input={() => (customObj = false)}
+				>
+					<option value="cube">Cube</option>
+					<option value="prism">Prism</option>
+					<option value="piramid">Piramid</option>
+					<option value="cup">Cup</option>
+					<option value="diamond">Diamond</option>
+					<option value="teapot">Teapot</option>
+					<option value="custom">Custom</option>
+				</select>
+			</div>
+			{#if selected === 'custom'}
 				<div>
-					<label for="selectShape">Shape: </label>
-					<select
-						name="shape"
-						id="selectShape"
-						bind:value={selected}
-						on:input={() => (customObj = false)}
-					>
-						<option value="cube">Cube</option>
-						<option value="prism">Prism</option>
-						<option value="piramid">Piramid</option>
-						<option value="cup">Cup</option>
-						<option value="diamond">Diamond</option>
-						<option value="teapot">Teapot</option>
-						<option value="custom">Custom</option>
-					</select>
+					<label for="inputObjFile">Custom obj:</label>
+					<input
+						type="file"
+						name="objFile"
+						id="inputObjFile"
+						accept=".obj"
+						on:input={(e) => handleAddFile(e)}
+					/>
 				</div>
-				{#if selected === 'custom'}
-					<div>
-						<label for="inputObjFile">Custom obj:</label>
-						<input
-							type="file"
-							name="objFile"
-							id="inputObjFile"
-							accept=".obj"
-							on:input={(e) => handleAddFile(e)}
-						/>
-					</div>
-				{/if}
-				<div>
-					<label for="inputSize">Size: </label>
-					<input type="number" name="size" id="inputSize" bind:value={size} min="0" />
-				</div>
-				<div>
-					<label for="inputColor">Color: </label>
-					<input type="color" name="color" id="inputColor" bind:value={color} />
-				</div>
-			</Card>
-		</div>
+			{/if}
+			<div>
+				<label for="inputSize">Size: </label>
+				<input type="number" name="size" id="inputSize" bind:value={size} min="0" />
+			</div>
+			<div>
+				<label for="inputColor">Color: </label>
+				<input type="color" name="color" id="inputColor" bind:value={color} />
+			</div>
+		</Card>
 
-		<div class="category">
-			<p class="caption">Position:</p>
-			<Card style="primary">
-				<div>
-					<label for="inputPositionX">X: </label>
-					<input type="number" id="inputPositionX" name="positionX" bind:value={position.x} />
-				</div>
-				<div>
-					<label for="inputPositionY">Y: </label>
-					<input type="number" id="inputPositionY" name="positionY" bind:value={position.y} />
-				</div>
-				<div>
-					<label for="inputPositionZ">Z: </label>
-					<input type="number" id="inputPositionZ" name="positionZ" bind:value={position.z} />
-				</div>
-			</Card>
-		</div>
+		<Card style="primary">
+			<span>Position:</span>
+			<div>
+				<label for="inputPositionX">X: </label>
+				<input type="number" id="inputPositionX" name="positionX" bind:value={position.x} />
+			</div>
+			<div>
+				<label for="inputPositionY">Y: </label>
+				<input type="number" id="inputPositionY" name="positionY" bind:value={position.y} />
+			</div>
+			<div>
+				<label for="inputPositionZ">Z: </label>
+				<input type="number" id="inputPositionZ" name="positionZ" bind:value={position.z} />
+			</div>
+		</Card>
 
-		<div class="category">
-			<p class="caption">Rotation</p>
+		<Card style="primary">
+			<span>Rotation:</span>
 
-			<Card style="primary">
-				<div>
-					<label for="inputRotate">Auto all: </label>
-					<input type="checkbox" name="rotate" id="inputRotate" bind:checked={rotateAll} />
-				</div>
+			<div>
+				<label for="inputRotate">Auto all: </label>
+				<input type="checkbox" name="rotate" id="inputRotate" bind:checked={rotateAll} />
+			</div>
 
-				<div>
-					<div class="subfield">
-						<label for="inputRotationX">X: </label>
-						<input
-							type="number"
-							id="inputRotationX"
-							name="rotationX"
-							min="-360"
-							max="360"
-							bind:value={rotation.x}
-							disabled={rotate.x}
-						/>
-					</div>
-					<div class="subfield">
-						<label for="inputRotateX">Auto X:</label>
-						<input
-							type="checkbox"
-							name="rotateX"
-							id="inputRotateX"
-							bind:checked={rotate.x}
-							disabled={rotateAll}
-						/>
-					</div>
+			<div>
+				<div class="subfield">
+					<label for="inputRotationX">X: </label>
+					<input
+						type="number"
+						id="inputRotationX"
+						name="rotationX"
+						min="-360"
+						max="360"
+						bind:value={rotation.x}
+						disabled={rotate.x}
+					/>
 				</div>
-				<div>
-					<div class="subfield">
-						<label for="inputRotationY">Y: </label>
-						<input
-							type="number"
-							id="inputRotationY"
-							name="rotationY"
-							min="-360"
-							max="360"
-							bind:value={rotation.y}
-							disabled={rotate.y}
-						/>
-					</div>
-					<div class="subfield">
-						<label for="inputRotateY">Auto Y: </label>
-						<input
-							type="checkbox"
-							name="rotateY"
-							id="inputRotateY"
-							bind:checked={rotate.y}
-							disabled={rotateAll}
-						/>
-					</div>
+				<div class="subfield">
+					<label for="inputRotateX">Auto X:</label>
+					<input
+						type="checkbox"
+						name="rotateX"
+						id="inputRotateX"
+						bind:checked={rotate.x}
+						disabled={rotateAll}
+					/>
 				</div>
-				<div>
-					<div class="subfield">
-						<label for="inputRotationZ">Z: </label>
-						<input
-							type="number"
-							id="inputRotationZ"
-							name="rotationZ"
-							min="-360"
-							max="360"
-							bind:value={rotation.z}
-							disabled={rotate.z}
-						/>
-					</div>
-					<div class="subfield">
-						<label for="inputRotateZ">Auto Z:</label>
-						<input
-							type="checkbox"
-							name="rotateZ"
-							id="inputRotateZ"
-							bind:checked={rotate.z}
-							disabled={rotateAll}
-						/>
-					</div>
+			</div>
+			<div>
+				<div class="subfield">
+					<label for="inputRotationY">Y: </label>
+					<input
+						type="number"
+						id="inputRotationY"
+						name="rotationY"
+						min="-360"
+						max="360"
+						bind:value={rotation.y}
+						disabled={rotate.y}
+					/>
 				</div>
-			</Card>
-		</div>
+				<div class="subfield">
+					<label for="inputRotateY">Auto Y: </label>
+					<input
+						type="checkbox"
+						name="rotateY"
+						id="inputRotateY"
+						bind:checked={rotate.y}
+						disabled={rotateAll}
+					/>
+				</div>
+			</div>
+			<div>
+				<div class="subfield">
+					<label for="inputRotationZ">Z: </label>
+					<input
+						type="number"
+						id="inputRotationZ"
+						name="rotationZ"
+						min="-360"
+						max="360"
+						bind:value={rotation.z}
+						disabled={rotate.z}
+					/>
+				</div>
+				<div class="subfield">
+					<label for="inputRotateZ">Auto Z:</label>
+					<input
+						type="checkbox"
+						name="rotateZ"
+						id="inputRotateZ"
+						bind:checked={rotate.z}
+						disabled={rotateAll}
+					/>
+				</div>
+			</div>
+		</Card>
 	</section>
 
 	<Footer />
 </Gamepad>
 
 <style>
-	.caption {
-		margin: 0.5rem 0;
-		text-shadow: 0 4px 4px hsla(0, 0%, 0%, 0.2);
-	}
-
 	main {
 		text-align: center;
 	}
 
 	.info {
-		max-width: 30rem;
-		margin: 0 auto 2rem;
+		max-width: 40rem;
+		margin: 1rem auto 2rem;
+	}
+
+	.info :global(> *) {
+		margin-bottom: 1rem;
 	}
 
 	.subfield {
