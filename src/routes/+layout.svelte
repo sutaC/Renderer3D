@@ -18,9 +18,9 @@
 
 		--grd-lin-triad: linear-gradient(
 			to right bottom,
-			var(--clr-primary) 15%,
-			var(--clr-secondary) 50%,
-			var(--clr-accent) 85%
+			var(--clr-primary),
+			var(--clr-secondary),
+			var(--clr-accent)
 		);
 		--grd-lin-prsc: linear-gradient(to right bottom, var(--clr-primary), var(--clr-secondary));
 		--grd-lin-prac: linear-gradient(to right bottom, var(--clr-primary), var(--clr-accent));
