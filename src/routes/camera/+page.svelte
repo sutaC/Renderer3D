@@ -14,14 +14,17 @@
 	// To read
 	let joistick: boolean = true;
 
-	let loading: boolean = true;
+	let loading: boolean = false;
 
 	let fps: number = 0;
 
 	onMount(() => {
 		const canvas = document.querySelector('#cnv') as HTMLCanvasElement;
 
-		// Sets canvas size
+		// Loads saved settings
+		joistick = JSON.parse(localStorage.getItem('joistick') || 'false');
+
+		// Canvas size
 		const resolution: { width: number; height: number } = JSON.parse(
 			localStorage.getItem('resolution') || '{"width":1280,"height":720}'
 		);

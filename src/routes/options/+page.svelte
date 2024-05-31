@@ -13,7 +13,8 @@
 		height: number;
 	}
 
-	let resolutionSign = '1280x720';
+	let resolutionSign: string = '1280x720';
+	let joistick: boolean = false;
 
 	const updateResolution = () => {
 		if (resolutionSign.length === 0) return;
@@ -25,13 +26,19 @@
 		localStorage.setItem('resolution', json);
 	};
 
+	const updateJoistick = () => {
+		localStorage.setItem('joistick', JSON.stringify(joistick));
+	};
+
 	const reset = () => {
 		// Values
 		options = Engine.defaultOptions();
 		resolutionSign = '1280x720';
+		joistick = false;
 		// Update
 		Engine.saveOptions(options);
 		updateResolution();
+		updateJoistick();
 	};
 
 	onMount(() => {
@@ -41,12 +48,20 @@
 		Engine.saveOptions(options);
 
 		// Load resolution
-		const json = localStorage.getItem('resolution');
-		if (json) {
-			const sres: Resolution = JSON.parse(json);
+		const resolutionJson = localStorage.getItem('resolution');
+		if (resolutionJson) {
+			const sres: Resolution = JSON.parse(resolutionJson);
 			resolutionSign = `${sres.width}x${sres.height}`;
 		} else {
 			updateResolution();
+		}
+
+		// Load joistick
+		const joistickJson = localStorage.getItem('joistick');
+		if (joistickJson) {
+			joistick = JSON.parse(joistickJson);
+		} else {
+			updateJoistick();
 		}
 	});
 </script>
@@ -62,9 +77,14 @@
 		<h2>Input</h2>
 		<Card style="accent">
 			<div>
-				<!-- TODO: add functionality -->
 				<label for="inputJoistick">Joistcik: </label>
-				<input type="checkbox" name="joistick" id="inputJoistick" />
+				<input
+					type="checkbox"
+					name="joistick"
+					id="inputJoistick"
+					bind:checked={joistick}
+					on:change={updateJoistick}
+				/>
 			</div>
 		</Card>
 	</section>
