@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { Engine, type Options } from '$lib/EngineUtils/Engine';
-	import Header from '$lib/Comonents/Header.svelte';
-	import Footer from '$lib/Comonents/Footer.svelte';
-	import Button from '$lib/Comonents/Button.svelte';
-	import Card from '$lib/Comonents/Card.svelte';
+	import Header from '$lib/comonents/Header.svelte';
+	import Footer from '$lib/comonents/Footer.svelte';
+	import Button from '$lib/comonents/Button.svelte';
+	import Card from '$lib/comonents/Card.svelte';
 
 	let options: Options = Engine.defaultOptions();
 

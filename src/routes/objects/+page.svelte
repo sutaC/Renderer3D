@@ -1,9 +1,9 @@
 <script lang="ts">
-	import Header from '$lib/Comonents/Header.svelte';
-	import Footer from '$lib/Comonents/Footer.svelte';
-	import Card from '$lib/Comonents/Card.svelte';
-	import Canvas from '$lib/Comonents/Canvas.svelte';
-	import Gamepad from '$lib/Comonents/Gamepad.svelte';
+	import Header from '$lib/comonents/Header.svelte';
+	import Footer from '$lib/comonents/Footer.svelte';
+	import Card from '$lib/comonents/Card.svelte';
+	import Canvas from '$lib/comonents/Canvas.svelte';
+	import Gamepad from '$lib/comonents/Gamepad.svelte';
 	import { EngineState } from '$lib/EngineUtils/Engine';
 	import type { ShapeNames } from '$lib/EngineUtils/Shape';
 	import { ObjectsShowcase } from '$lib/Showcases/ObjectsShowcase';

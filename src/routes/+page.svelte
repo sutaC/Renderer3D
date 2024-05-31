@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Button from '$lib/Comonents/Button.svelte';
-	import Footer from '$lib/Comonents/Footer.svelte';
+	import Button from '$lib/comonents/Button.svelte';
+	import Footer from '$lib/comonents/Footer.svelte';
 </script>
 
 <svelte:head>
