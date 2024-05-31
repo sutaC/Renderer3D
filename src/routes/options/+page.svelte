@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { Engine, type Options } from '$lib/Engine/Engine';
+	import { Engine, type Options } from '$lib/EngineUtils/Engine';
+	import Header from '$lib/Comonents/Header.svelte';
 
 	let options: Options = Engine.defaultOptions();
 
@@ -47,11 +48,11 @@
 	});
 </script>
 
-<header>
-	<a href="/" class="return">Return</a>
-	<h1>Options</h1>
-	<div></div>
-</header>
+<svelte:head>
+	<title>Renderer3D | Options</title>
+</svelte:head>
+
+<Header style="accent">Options</Header>
 
 <main>
 	<div class="field">
@@ -165,34 +166,6 @@
 </main>
 
 <style>
-	header {
-		width: 100%;
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		padding: 1rem;
-	}
-
-	header > * {
-		width: 20ch;
-		font-size: 0.9rem;
-		color: black;
-	}
-
-	header > *:nth-child(1) {
-		text-align: left;
-	}
-	header > *:nth-child(2) {
-		text-align: center;
-	}
-	header > *:nth-child(3) {
-		text-align: right;
-	}
-
-	h1 {
-		margin: 0;
-	}
-
 	.highlight {
 		font-weight: bold;
 		font-size: 1.1em;

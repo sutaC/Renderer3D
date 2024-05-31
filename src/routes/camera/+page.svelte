@@ -2,6 +2,7 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { CameraShowcase } from '$lib/Showcases/CameraShowcase';
 	import { EngineState } from '$lib/EngineUtils/Engine';
+	import Header from '$lib/Comonents/Header.svelte';
 
 	let engine: CameraShowcase | undefined = undefined;
 
@@ -57,14 +58,10 @@
 </script>
 
 <svelte:head>
-	<title>Game 3D</title>
+	<title>Renderer3D | CameraShowcase</title>
 </svelte:head>
 
-<header>
-	<a href="/">Return</a>
-	<h1>Game 3D</h1>
-	<small>FPS: {fps}</small>
-</header>
+<Header style="secondary" {fps}>Camera Showcase</Header>
 
 <main>
 	<canvas></canvas>
@@ -96,34 +93,6 @@
 </section>
 
 <style>
-	header {
-		width: 100%;
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		padding: 1rem;
-	}
-
-	header > * {
-		width: 20ch;
-		font-size: 0.9rem;
-		color: black;
-	}
-
-	header > *:nth-child(1) {
-		text-align: left;
-	}
-	header > *:nth-child(2) {
-		text-align: center;
-	}
-	header > *:nth-child(3) {
-		text-align: right;
-	}
-
-	h1 {
-		margin: 0;
-	}
-
 	main {
 		text-align: center;
 		margin: auto;

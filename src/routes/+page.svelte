@@ -17,7 +17,7 @@
 	</header>
 
 	<main>
-		<a href="/object"><Button style="primary">Objects Showcase</Button></a>
+		<a href="/objects"><Button style="primary">Objects Showcase</Button></a>
 		<a href="/camera"><Button style="secondary">Camera Showcase</Button></a>
 		<a href="/options"><Button style="accent">Options</Button></a>
 	</main>

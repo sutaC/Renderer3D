@@ -1,8 +1,9 @@
 <script lang="ts">
 	export let style: 'primary' | 'secondary' | 'accent' = 'primary';
+	export let icon: boolean = false;
 </script>
 
-<button class={style} on:click><slot /></button>
+<button class={style} class:icon on:click><slot /></button>
 
 <style>
 	button {
@@ -52,5 +53,14 @@
 	.accent {
 		--_bg: var(--grd-tint-accent);
 		--_highlight: var(--clr-accent);
+	}
+
+	.icon {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		padding: 0.5rem;
+		aspect-ratio: 1;
+		border-radius: 100%;
 	}
 </style>

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Header from '$lib/Comonents/Header.svelte';
 	import { EngineState } from '$lib/EngineUtils/Engine';
 	import type { ShapeNames } from '$lib/EngineUtils/Shape';
 	import { ObjectsShowcase } from '$lib/Showcases/ObjectsShowcase';
@@ -94,14 +95,10 @@
 </script>
 
 <svelte:head>
-	<title>Showcase 3D</title>
+	<title>Renderer3D | Objects Showcase</title>
 </svelte:head>
 
-<header>
-	<a href="/">Return</a>
-	<h1>Showcase 3D</h1>
-	<small>FPS: {fps}</small>
-</header>
+<Header style="primary" {fps}>Objects Showcase</Header>
 
 <main>
 	<section class="canvasContainer">
@@ -242,34 +239,6 @@
 </main>
 
 <style>
-	header {
-		width: 100%;
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		padding: 1rem;
-	}
-
-	header > * {
-		width: 20ch;
-		font-size: 0.9rem;
-		color: black;
-	}
-
-	header > *:nth-child(1) {
-		text-align: left;
-	}
-	header > *:nth-child(2) {
-		text-align: center;
-	}
-	header > *:nth-child(3) {
-		text-align: right;
-	}
-
-	h1 {
-		margin: 0;
-	}
-
 	.highlight {
 		font-weight: bold;
 		font-size: 1.1em;
