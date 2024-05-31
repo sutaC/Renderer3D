@@ -1,6 +1,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { Engine, type Options } from '$lib/Engine/Engine';
+	import { Engine, type Options } from '$lib/EngineUtils/Engine';
+	import Header from '$lib/Comonents/Header.svelte';
+	import Footer from '$lib/Comonents/Footer.svelte';
+	import Button from '$lib/Comonents/Button.svelte';
+	import Card from '$lib/Comonents/Card.svelte';
 
 	let options: Options = Engine.defaultOptions();
 
@@ -9,7 +13,9 @@
 		height: number;
 	}
 
-	let resolutionSign = '1280x720';
+	let resolutionSign: string = '1280x720';
+	let joistick: boolean = false;
+	let showFPS: boolean = false;
 
 	const updateResolution = () => {
 		if (resolutionSign.length === 0) return;
@@ -21,13 +27,25 @@
 		localStorage.setItem('resolution', json);
 	};
 
+	const updateJoistick = () => {
+		localStorage.setItem('joistick', JSON.stringify(joistick));
+	};
+
+	const updateShowFPS = () => {
+		localStorage.setItem('showFPS', JSON.stringify(showFPS));
+	};
+
 	const reset = () => {
 		// Values
 		options = Engine.defaultOptions();
 		resolutionSign = '1280x720';
+		joistick = false;
+		showFPS = false;
 		// Update
 		Engine.saveOptions(options);
 		updateResolution();
+		updateJoistick();
+		updateShowFPS();
 	};
 
 	onMount(() => {
@@ -37,28 +55,69 @@
 		Engine.saveOptions(options);
 
 		// Load resolution
-		const json = localStorage.getItem('resolution');
-		if (json) {
-			const sres: Resolution = JSON.parse(json);
+		const resolutionJson = localStorage.getItem('resolution');
+		if (resolutionJson) {
+			const sres: Resolution = JSON.parse(resolutionJson);
 			resolutionSign = `${sres.width}x${sres.height}`;
 		} else {
 			updateResolution();
 		}
+
+		// Load joistick
+		const joistickJson = localStorage.getItem('joistick');
+		if (joistickJson) {
+			joistick = JSON.parse(joistickJson);
+		} else {
+			updateJoistick();
+		}
+
+		// Load showFPS
+		const showFPSJson = localStorage.getItem('showFPS');
+		if (showFPSJson) {
+			showFPS = JSON.parse(showFPSJson);
+		} else {
+			updateShowFPS();
+		}
 	});
 </script>
 
-<header>
-	<a href="/" class="return">Return</a>
-	<h1>Options</h1>
-	<div></div>
-</header>
+<svelte:head>
+	<title>Renderer3D | Options</title>
+</svelte:head>
+
+<Header style="accent">Options</Header>
 
 <main>
-	<div class="field">
-		<p class="highlight">Engine</p>
+	<section>
+		<h2>Input</h2>
+		<Card style="accent">
+			<div>
+				<label for="inputJoistick">Joistcik: </label>
+				<input
+					type="checkbox"
+					name="joistick"
+					id="inputJoistick"
+					bind:checked={joistick}
+					on:change={updateJoistick}
+				/>
+			</div>
+		</Card>
+	</section>
 
-		<ul>
-			<li>
+	<section>
+		<h2>Engine</h2>
+		<Card style="accent">
+			<div>
+				<label for="inputShowFps">Show FPS: </label>
+				<input
+					type="checkbox"
+					name="showFps"
+					id="inputShowFps"
+					bind:checked={showFPS}
+					on:change={updateShowFPS}
+				/>
+			</div>
+			<div>
 				<label for="inputFpsLimit">FPS limit: </label>
 				<select
 					name="fpsLimit"
@@ -71,15 +130,14 @@
 					<option value={120}>120</option>
 					<option value={0}>None</option>
 				</select>
-			</li>
-		</ul>
-	</div>
+			</div>
+		</Card>
+	</section>
 
-	<div class="field">
-		<p class="highlight">Graphics</p>
-
-		<ul>
-			<li>
+	<section>
+		<h2>Graphics</h2>
+		<Card style="accent">
+			<div>
 				<label for="inputFov">FoV: </label>
 				<input
 					type="number"
@@ -90,9 +148,8 @@
 					bind:value={options.graphics.fov}
 					on:change={() => Engine.saveOptions(options)}
 				/>
-			</li>
-
-			<li>
+			</div>
+			<div>
 				<label for="inputResolution">Resolution: </label>
 				<select
 					name="resolution"
@@ -108,14 +165,14 @@
 					<option value="1920x1080">1920x1080</option>
 					<option value="2560x1440">2560x1440</option>
 				</select>
-			</li>
-		</ul>
-	</div>
+			</div>
+		</Card>
+	</section>
 
-	<div class="field">
-		<p class="highlight">Debug</p>
-		<ul class="wrap">
-			<li>
+	<section>
+		<h2>Debug</h2>
+		<Card style="accent">
+			<div>
 				<label for="inputLogging">Logging: </label>
 				<input
 					type="checkbox"
@@ -124,10 +181,9 @@
 					bind:value={resolutionSign}
 					on:change={updateResolution}
 				/>
-			</li>
-			<li>
+			</div>
+			<div>
 				<label for="inputPoints">Points: </label>
-
 				<input
 					type="checkbox"
 					name="points"
@@ -135,8 +191,8 @@
 					bind:checked={options.renderer.points}
 					on:change={() => Engine.saveOptions(options)}
 				/>
-			</li>
-			<li>
+			</div>
+			<div>
 				<label for="inputClipping">Clipping: </label>
 				<input
 					type="checkbox"
@@ -145,8 +201,8 @@
 					bind:checked={options.renderer.clipping}
 					on:change={() => Engine.saveOptions(options)}
 				/>
-			</li>
-			<li>
+			</div>
+			<div>
 				<label for="inputWirefarme">Wireframe: </label>
 				<input
 					type="checkbox"
@@ -155,83 +211,32 @@
 					bind:checked={options.renderer.wireframe}
 					on:change={() => Engine.saveOptions(options)}
 				/>
-			</li>
-		</ul>
-	</div>
+			</div>
+		</Card>
+	</section>
 
-	<div class="field">
-		<button type="reset" on:click={reset}>Reset</button>
-	</div>
+	<section>
+		<Button style="accent" on:click={reset}>Reset</Button>
+	</section>
 </main>
 
+<Footer />
+
 <style>
-	header {
-		width: 100%;
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		padding: 1rem;
-	}
-
-	header > * {
-		width: 20ch;
-		font-size: 0.9rem;
-		color: black;
-	}
-
-	header > *:nth-child(1) {
-		text-align: left;
-	}
-	header > *:nth-child(2) {
-		text-align: center;
-	}
-	header > *:nth-child(3) {
-		text-align: right;
-	}
-
-	h1 {
-		margin: 0;
-	}
-
-	.highlight {
-		font-weight: bold;
-		font-size: 1.1em;
-	}
-
 	main {
-		margin: auto;
 		width: 80%;
+		margin: auto;
 	}
 
-	main > * {
-		flex: 1;
-		min-width: fit-content;
-	}
-
-	.wrap {
-		display: flex;
-		justify-content: space-between;
-		align-items: stretch;
-		flex-wrap: wrap;
-		gap: 1rem;
-	}
-
-	.wrap > * {
-		flex: 1;
-	}
-
-	.field {
+	section {
 		text-align: center;
-		margin: 0.25rem 0;
-		padding: 0.25rem;
-		border: 1px solid #000;
+		margin: 2rem auto;
+		max-width: 30rem;
 	}
 
-	.field ul {
-		padding: 0;
-	}
-
-	.field li {
-		list-style: none;
+	h2 {
+		font-size: 1.728rem;
+		margin: 0 0 1rem;
+		text-shadow: 0 4px 4px hsla(0, 0%, 0%, 0.2);
 	}
 </style>
