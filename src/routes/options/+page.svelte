@@ -59,8 +59,24 @@
 
 <main>
 	<section>
+		<h2>Input</h2>
+		<Card style="accent">
+			<div>
+				<!-- TODO: add functionality -->
+				<label for="inputJoistick">Show FPS: </label>
+				<input type="checkbox" name="joistick" id="inputJoistick" />
+			</div>
+		</Card>
+	</section>
+
+	<section>
 		<h2>Engine</h2>
 		<Card style="accent">
+			<div>
+				<!-- TODO: add functionality -->
+				<label for="inputShowFps">Show FPS: </label>
+				<input type="checkbox" name="showFps" id="inputShowFps" />
+			</div>
 			<div>
 				<label for="inputFpsLimit">FPS limit: </label>
 				<select
@@ -128,7 +144,6 @@
 			</div>
 			<div>
 				<label for="inputPoints">Points: </label>
-
 				<input
 					type="checkbox"
 					name="points"
@@ -176,6 +191,7 @@
 	section {
 		text-align: center;
 		margin: 2rem auto;
+		max-width: 30rem;
 	}
 
 	h2 {
