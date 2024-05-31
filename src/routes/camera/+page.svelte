@@ -12,6 +12,7 @@
 	let engine: CameraShowcase | undefined = undefined;
 	let joistick: boolean = true;
 	let loading: boolean = false;
+	let showFPS: boolean = false;
 	let fps: number = 0;
 
 	onMount(() => {
@@ -19,6 +20,7 @@
 
 		// Loads saved settings
 		joistick = JSON.parse(localStorage.getItem('joistick') || 'false');
+		showFPS = JSON.parse(localStorage.getItem('showFPS') || 'false');
 
 		// Canvas size
 		const resolution: { width: number; height: number } = JSON.parse(
@@ -70,7 +72,7 @@
 	<title>Renderer3D | CameraShowcase</title>
 </svelte:head>
 
-<Header style="secondary" {fps}>Camera Showcase</Header>
+<Header style="secondary" fps={showFPS ? fps : null}>Camera Showcase</Header>
 
 <Gamepad style="secondary">
 	<main>

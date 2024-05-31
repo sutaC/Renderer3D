@@ -25,12 +25,16 @@
 
 	let engine: ObjectsShowcase | undefined = undefined;
 	let loading: boolean = true;
-	let fps: number | null = 0;
+	let showFPS: boolean = false;
+	let fps: number = 0;
 
 	onMount(() => {
 		const canvas = document.getElementById('cvs') as HTMLCanvasElement;
 
-		// Sets canvas size
+		// Loads saved settings
+		showFPS = JSON.parse(localStorage.getItem('showFPS') || 'false');
+
+		// Canvas size
 		const resolution: { width: number; height: number } = JSON.parse(
 			localStorage.getItem('resolution') || '{"width":1280,"height":720}'
 		);
@@ -103,7 +107,7 @@
 	<title>Renderer3D | Objects Showcase</title>
 </svelte:head>
 
-<Header style="primary" {fps}>Objects Showcase</Header>
+<Header style="primary" fps={showFPS ? fps : null}>Objects Showcase</Header>
 
 <Gamepad style="primary">
 	<main>

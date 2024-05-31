@@ -15,6 +15,7 @@
 
 	let resolutionSign: string = '1280x720';
 	let joistick: boolean = false;
+	let showFPS: boolean = false;
 
 	const updateResolution = () => {
 		if (resolutionSign.length === 0) return;
@@ -30,15 +31,21 @@
 		localStorage.setItem('joistick', JSON.stringify(joistick));
 	};
 
+	const updateShowFPS = () => {
+		localStorage.setItem('showFPS', JSON.stringify(showFPS));
+	};
+
 	const reset = () => {
 		// Values
 		options = Engine.defaultOptions();
 		resolutionSign = '1280x720';
 		joistick = false;
+		showFPS = false;
 		// Update
 		Engine.saveOptions(options);
 		updateResolution();
 		updateJoistick();
+		updateShowFPS();
 	};
 
 	onMount(() => {
@@ -62,6 +69,14 @@
 			joistick = JSON.parse(joistickJson);
 		} else {
 			updateJoistick();
+		}
+
+		// Load showFPS
+		const showFPSJson = localStorage.getItem('showFPS');
+		if (showFPSJson) {
+			showFPS = JSON.parse(showFPSJson);
+		} else {
+			updateShowFPS();
 		}
 	});
 </script>
@@ -93,9 +108,14 @@
 		<h2>Engine</h2>
 		<Card style="accent">
 			<div>
-				<!-- TODO: add functionality -->
 				<label for="inputShowFps">Show FPS: </label>
-				<input type="checkbox" name="showFps" id="inputShowFps" />
+				<input
+					type="checkbox"
+					name="showFps"
+					id="inputShowFps"
+					bind:checked={showFPS}
+					on:change={updateShowFPS}
+				/>
 			</div>
 			<div>
 				<label for="inputFpsLimit">FPS limit: </label>
