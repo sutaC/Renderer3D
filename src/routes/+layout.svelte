@@ -87,4 +87,14 @@
 	:global(small) {
 		font-size: 0.833rem; /* 13.28px */
 	}
+
+	/* --- */
+
+	:global(:where(input, select, option)) {
+		accent-color: var(--clr-background);
+		font-size: 0.9rem;
+		border: 1px solid var(--clr-text);
+		border-radius: 0.25rem;
+		background-color: var(--clr-background);
+	}
 </style>

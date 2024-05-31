@@ -1,9 +1,5 @@
-<script lang="ts">
-	export let subtext = '';
-</script>
-
 <footer>
-	<small class="subtext">{subtext}</small>
+	<small class="subtext"><slot /></small>
 	<small
 		>Made by <a href="http://github.com/sutaC" target="_blank" rel="noopener noreferrer">sutaC</a
 		></small

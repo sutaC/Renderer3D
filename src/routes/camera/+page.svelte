@@ -10,16 +10,12 @@
 	import Joistick from '$lib/Comonents/Joistick.svelte';
 
 	let engine: CameraShowcase | undefined = undefined;
-
-	// To read
 	let joistick: boolean = true;
-
 	let loading: boolean = false;
-
 	let fps: number = 0;
 
 	onMount(() => {
-		const canvas = document.querySelector('#cnv') as HTMLCanvasElement;
+		const canvas = document.getElementById('cnv') as HTMLCanvasElement;
 
 		// Loads saved settings
 		joistick = JSON.parse(localStorage.getItem('joistick') || 'false');
@@ -33,15 +29,15 @@
 
 		engine = new CameraShowcase(canvas);
 
-		engine.addAlternativeButton(document.querySelector('#lookleft') as HTMLButtonElement, 'a');
-		engine.addAlternativeButton(document.querySelector('#forward') as HTMLButtonElement, 'w');
-		engine.addAlternativeButton(document.querySelector('#lookright') as HTMLButtonElement, 'd');
-		engine.addAlternativeButton(document.querySelector('#backward') as HTMLButtonElement, 's');
-		engine.addAlternativeButton(document.querySelector('#up') as HTMLButtonElement, 'ArrowUp');
-		engine.addAlternativeButton(document.querySelector('#down') as HTMLButtonElement, 'ArrowDown');
-		engine.addAlternativeButton(document.querySelector('#left') as HTMLButtonElement, 'ArrowLeft');
+		engine.addAlternativeButton(document.getElementById('lookleft') as HTMLButtonElement, 'a');
+		engine.addAlternativeButton(document.getElementById('forward') as HTMLButtonElement, 'w');
+		engine.addAlternativeButton(document.getElementById('lookright') as HTMLButtonElement, 'd');
+		engine.addAlternativeButton(document.getElementById('backward') as HTMLButtonElement, 's');
+		engine.addAlternativeButton(document.getElementById('up') as HTMLButtonElement, 'ArrowUp');
+		engine.addAlternativeButton(document.getElementById('down') as HTMLButtonElement, 'ArrowDown');
+		engine.addAlternativeButton(document.getElementById('left') as HTMLButtonElement, 'ArrowLeft');
 		engine.addAlternativeButton(
-			document.querySelector('#right') as HTMLButtonElement,
+			document.getElementById('right') as HTMLButtonElement,
 			'ArrowRight'
 		);
 
@@ -116,10 +112,10 @@
 	</main>
 
 	<Footer
-		subtext={joistick
+		>{joistick
 			? 'If you want to disable joistik, go to options'
-			: 'If you want to use joistik, go to options'}
-	/>
+			: 'If you want to use joistik, go to options'}</Footer
+	>
 </Gamepad>
 
 <style>
