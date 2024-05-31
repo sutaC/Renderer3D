@@ -7,11 +7,12 @@
 	import Card from '$lib/Comonents/Card.svelte';
 	import Canvas from '$lib/Comonents/Canvas.svelte';
 	import Gamepad from '$lib/Comonents/Gamepad.svelte';
+	import Joistick from '$lib/Comonents/Joistick.svelte';
 
 	let engine: CameraShowcase | undefined = undefined;
 
 	// To read
-	let joistick: boolean = false;
+	let joistick: boolean = true;
 
 	let loading: boolean = true;
 
@@ -77,7 +78,7 @@
 		<Canvas id="cnv" {loading} />
 
 		<section class="controll">
-			<div class="keyboardCtrl" class:invisible={joistick}>
+			<div class:invisible={joistick}>
 				<Card style="secondary">
 					<div>
 						<span>W/S: </span>
@@ -98,15 +99,15 @@
 				</Card>
 			</div>
 
-			<div class="controller" class:invisible={!joistick}>
-				<button id="lookleft" aria-label="Look left">&lArr;</button>
-				<button id="forward" aria-label="Move forward">&uArr;</button>
-				<button id="lookright" aria-label="Look right">&rArr;</button>
-				<button id="backward" aria-label="Move backward">&dArr;</button>
-				<button id="left" aria-label="Move left">&larr;</button>
-				<button id="up" aria-label="Move up">&uarr;</button>
-				<button id="right" aria-label="Move right">&rarr;</button>
-				<button id="down" aria-label="Move down">&darr;</button>
+			<div class="joisticks" class:invisible={!joistick}>
+				<Joistick
+					style="secondary"
+					ids={{ up: 'forward', right: 'lookright', down: 'backward', left: 'lookleft' }}
+				/>
+				<Joistick
+					style="secondary"
+					ids={{ up: 'up', right: 'right', down: 'down', left: 'left' }}
+				/>
 			</div>
 		</section>
 	</main>
@@ -132,48 +133,16 @@
 		margin: 1rem 0.5rem;
 	}
 
-	.keyboardCtrl {
+	.controll > * {
 		width: 100%;
 		max-width: 30rem;
 	}
 
-	.controller {
-		display: grid;
-		text-align: center;
-		justify-content: center;
-		gap: 0.125rem;
-		grid-template-areas: '. forward . . up .' 'lookleft backward lookright left down right';
-	}
-
-	.controller button {
-		aspect-ratio: 1;
-		width: 2.5rem;
-		user-select: none;
-	}
-
-	#left {
-		grid-area: left;
-	}
-	#forward {
-		grid-area: forward;
-	}
-	#right {
-		grid-area: right;
-	}
-	#backward {
-		grid-area: backward;
-	}
-	#up {
-		grid-area: up;
-	}
-	#down {
-		grid-area: down;
-	}
-	#lookleft {
-		grid-area: lookleft;
-	}
-	#lookright {
-		grid-area: lookright;
+	.joisticks {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 0 1rem;
 	}
 
 	.invisible {

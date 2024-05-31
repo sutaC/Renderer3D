@@ -19,7 +19,7 @@
 		position: relative;
 		width: fit-content;
 		max-width: 100vw;
-		min-height: 81vh;
+		min-height: 83.5vh;
 		margin: auto;
 		padding: 1rem 1rem 0;
 		background-color: var(--_backgorund);
@@ -43,7 +43,7 @@
 	.vents {
 		position: absolute;
 		left: 50%;
-		bottom: 4.5rem;
+		bottom: calc(10vh + 1rem);
 		translate: -50% 0;
 		display: flex;
 		justify-content: center;
