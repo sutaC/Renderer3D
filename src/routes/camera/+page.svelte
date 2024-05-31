@@ -3,10 +3,14 @@
 	import { CameraShowcase } from '$lib/Showcases/CameraShowcase';
 	import { EngineState } from '$lib/EngineUtils/Engine';
 	import Header from '$lib/Comonents/Header.svelte';
+	import Footer from '$lib/Comonents/Footer.svelte';
+	import Card from '$lib/Comonents/Card.svelte';
 
 	let engine: CameraShowcase | undefined = undefined;
 
-	let keyboard: boolean = true;
+	// To read
+	let joistick: boolean = false;
+
 	let fps: number = 0;
 
 	onMount(() => {
@@ -65,32 +69,43 @@
 
 <main>
 	<canvas></canvas>
+
+	<section class="controll">
+		<div class="keyboardCtrl" class:invisible={joistick}>
+			<Card style="secondary">
+				<div>
+					<span>W/S: </span>
+					<span>forward/backward</span>
+				</div>
+				<div>
+					<span>A/D:</span>
+					<span>looking left/right</span>
+				</div>
+				<div>
+					<span>ArrUp/ArrDown:</span>
+					<span>up/down</span>
+				</div>
+				<div>
+					<span>ArrLeft/ArrRight:</span>
+					<span>left/right</span>
+				</div>
+			</Card>
+		</div>
+
+		<div class="controller" class:invisible={!joistick}>
+			<button id="lookleft" aria-label="Look left">&lArr;</button>
+			<button id="forward" aria-label="Move forward">&uArr;</button>
+			<button id="lookright" aria-label="Look right">&rArr;</button>
+			<button id="backward" aria-label="Move backward">&dArr;</button>
+			<button id="left" aria-label="Move left">&larr;</button>
+			<button id="up" aria-label="Move up">&uarr;</button>
+			<button id="right" aria-label="Move right">&rarr;</button>
+			<button id="down" aria-label="Move down">&darr;</button>
+		</div>
+	</section>
 </main>
 
-<section class="controll">
-	<div class="keyboardSwitch">
-		<label for="inputKeyboardSwitch">Keyboard: </label>
-		<input type="checkbox" name="keyboardSwitch" id="inputKeyboardSwitch" bind:checked={keyboard} />
-	</div>
-
-	<p class="controlls" class:invisible={!keyboard}>
-		<span>W-S : moving forward-backward</span>
-		<span>A-D : looking left-right</span>
-		<span>ArrowUp-ArrowDown : moving up-down</span>
-		<span>ArrowLeft-ArrowRight : moving left-right</span>
-	</p>
-
-	<div class="controller" class:invisible={keyboard}>
-		<button id="lookleft" aria-label="Look left">&lArr;</button>
-		<button id="forward" aria-label="Move forward">&uArr;</button>
-		<button id="lookright" aria-label="Look right">&rArr;</button>
-		<button id="backward" aria-label="Move backward">&dArr;</button>
-		<button id="left" aria-label="Move left">&larr;</button>
-		<button id="up" aria-label="Move up">&uarr;</button>
-		<button id="right" aria-label="Move right">&rarr;</button>
-		<button id="down" aria-label="Move down">&darr;</button>
-	</div>
-</section>
+<Footer />
 
 <style>
 	main {
@@ -105,6 +120,11 @@
 		flex-direction: column;
 		gap: 0.5rem;
 		margin: 0.5rem;
+	}
+
+	.keyboardCtrl {
+		width: 100%;
+		max-width: 30rem;
 	}
 
 	.controller {
@@ -144,15 +164,6 @@
 	}
 	#lookright {
 		grid-area: lookright;
-	}
-
-	.controlls {
-		text-align: center;
-		margin: 0;
-	}
-
-	.controlls > * {
-		display: block;
 	}
 
 	.invisible {
