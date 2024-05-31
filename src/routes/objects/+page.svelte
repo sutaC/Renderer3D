@@ -263,6 +263,7 @@
 <style>
 	.caption {
 		margin: 0.5rem 0;
+		text-shadow: 0 4px 4px hsla(0, 0%, 0%, 0.2);
 	}
 
 	main {
