@@ -21,7 +21,7 @@
 	}
 
 	canvas {
-		max-width: calc(100vw - 1rem);
+		max-width: calc(100vw - 2rem);
 		max-height: 70vh;
 		border: 2px solid var(--clr-shade-300);
 		border-radius: 0.5rem;

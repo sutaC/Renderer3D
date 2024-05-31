@@ -18,6 +18,8 @@
 
 		position: relative;
 		width: fit-content;
+		max-width: 100vw;
+		min-height: 81vh;
 		margin: auto;
 		padding: 1rem 1rem 0;
 		background-color: var(--_backgorund);

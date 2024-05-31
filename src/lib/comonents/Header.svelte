@@ -35,7 +35,7 @@
 		--_border: black;
 		--_outline: black;
 
-		margin: 0 1rem 2rem;
+		margin: 0 1rem 1rem;
 		padding-bottom: 0.5rem;
 		border-bottom: 1px solid transparent;
 		border-image: var(--_border) 1;
