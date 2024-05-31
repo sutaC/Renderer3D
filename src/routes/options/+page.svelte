@@ -92,7 +92,7 @@
 		<h2>Input</h2>
 		<Card style="accent">
 			<div>
-				<label for="inputJoistick">Joistcik: </label>
+				<label for="inputJoistick">Joistick: </label>
 				<input
 					type="checkbox"
 					name="joistick"
