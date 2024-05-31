@@ -2,6 +2,9 @@
 	import { onMount } from 'svelte';
 	import { Engine, type Options } from '$lib/EngineUtils/Engine';
 	import Header from '$lib/Comonents/Header.svelte';
+	import Footer from '$lib/Comonents/Footer.svelte';
+	import Button from '$lib/Comonents/Button.svelte';
+	import Card from '$lib/Comonents/Card.svelte';
 
 	let options: Options = Engine.defaultOptions();
 
@@ -55,11 +58,10 @@
 <Header style="accent">Options</Header>
 
 <main>
-	<div class="field">
-		<p class="highlight">Engine</p>
-
-		<ul>
-			<li>
+	<section>
+		<h2>Engine</h2>
+		<Card style="accent">
+			<div>
 				<label for="inputFpsLimit">FPS limit: </label>
 				<select
 					name="fpsLimit"
@@ -72,15 +74,14 @@
 					<option value={120}>120</option>
 					<option value={0}>None</option>
 				</select>
-			</li>
-		</ul>
-	</div>
+			</div>
+		</Card>
+	</section>
 
-	<div class="field">
-		<p class="highlight">Graphics</p>
-
-		<ul>
-			<li>
+	<section>
+		<h2>Graphics</h2>
+		<Card style="accent">
+			<div>
 				<label for="inputFov">FoV: </label>
 				<input
 					type="number"
@@ -91,9 +92,8 @@
 					bind:value={options.graphics.fov}
 					on:change={() => Engine.saveOptions(options)}
 				/>
-			</li>
-
-			<li>
+			</div>
+			<div>
 				<label for="inputResolution">Resolution: </label>
 				<select
 					name="resolution"
@@ -109,14 +109,14 @@
 					<option value="1920x1080">1920x1080</option>
 					<option value="2560x1440">2560x1440</option>
 				</select>
-			</li>
-		</ul>
-	</div>
+			</div>
+		</Card>
+	</section>
 
-	<div class="field">
-		<p class="highlight">Debug</p>
-		<ul class="wrap">
-			<li>
+	<section>
+		<h2>Debug</h2>
+		<Card style="accent">
+			<div>
 				<label for="inputLogging">Logging: </label>
 				<input
 					type="checkbox"
@@ -125,8 +125,8 @@
 					bind:value={resolutionSign}
 					on:change={updateResolution}
 				/>
-			</li>
-			<li>
+			</div>
+			<div>
 				<label for="inputPoints">Points: </label>
 
 				<input
@@ -136,8 +136,8 @@
 					bind:checked={options.renderer.points}
 					on:change={() => Engine.saveOptions(options)}
 				/>
-			</li>
-			<li>
+			</div>
+			<div>
 				<label for="inputClipping">Clipping: </label>
 				<input
 					type="checkbox"
@@ -146,8 +146,8 @@
 					bind:checked={options.renderer.clipping}
 					on:change={() => Engine.saveOptions(options)}
 				/>
-			</li>
-			<li>
+			</div>
+			<div>
 				<label for="inputWirefarme">Wireframe: </label>
 				<input
 					type="checkbox"
@@ -156,55 +156,31 @@
 					bind:checked={options.renderer.wireframe}
 					on:change={() => Engine.saveOptions(options)}
 				/>
-			</li>
-		</ul>
-	</div>
+			</div>
+		</Card>
+	</section>
 
-	<div class="field">
-		<button type="reset" on:click={reset}>Reset</button>
-	</div>
+	<section>
+		<Button style="accent" on:click={reset}>Reset</Button>
+	</section>
 </main>
 
+<Footer />
+
 <style>
-	.highlight {
-		font-weight: bold;
-		font-size: 1.1em;
-	}
-
 	main {
-		margin: auto;
 		width: 80%;
+		margin: auto;
 	}
 
-	main > * {
-		flex: 1;
-		min-width: fit-content;
-	}
-
-	.wrap {
-		display: flex;
-		justify-content: space-between;
-		align-items: stretch;
-		flex-wrap: wrap;
-		gap: 1rem;
-	}
-
-	.wrap > * {
-		flex: 1;
-	}
-
-	.field {
+	section {
 		text-align: center;
-		margin: 0.25rem 0;
-		padding: 0.25rem;
-		border: 1px solid #000;
+		margin: 2rem auto;
 	}
 
-	.field ul {
-		padding: 0;
-	}
-
-	.field li {
-		list-style: none;
+	h2 {
+		font-size: 1.728rem;
+		margin: 0 0 1rem;
+		text-shadow: 0 4px 4px hsla(0, 0%, 0%, 0.2);
 	}
 </style>
