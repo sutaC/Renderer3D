@@ -36,5 +36,10 @@
 	a {
 		color: var(--clr-shade-300);
 		font-style: italic;
+		transition: all 200ms ease;
+	}
+
+	a:hover {
+		opacity: 0.8;
 	}
 </style>
