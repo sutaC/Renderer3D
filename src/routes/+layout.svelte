@@ -87,12 +87,4 @@
 	:global(small) {
 		font-size: 0.833rem; /* 13.28px */
 	}
-
-	/* --- */
-
-	:global(canvas) {
-		max-width: calc(100vw - 1rem);
-		max-height: 70vh;
-		background: black;
-	}
 </style>

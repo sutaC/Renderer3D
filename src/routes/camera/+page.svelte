@@ -5,16 +5,19 @@
 	import Header from '$lib/Comonents/Header.svelte';
 	import Footer from '$lib/Comonents/Footer.svelte';
 	import Card from '$lib/Comonents/Card.svelte';
+	import Canvas from '$lib/Comonents/Canvas.svelte';
 
 	let engine: CameraShowcase | undefined = undefined;
 
 	// To read
 	let joistick: boolean = false;
 
+	let loading: boolean = true;
+
 	let fps: number = 0;
 
 	onMount(() => {
-		const canvas = document.querySelector('canvas') as HTMLCanvasElement;
+		const canvas = document.querySelector('#cnv') as HTMLCanvasElement;
 
 		// Sets canvas size
 		const resolution: { width: number; height: number } = JSON.parse(
@@ -42,6 +45,7 @@
 		engine.onready = (eng) => {
 			eng.run();
 			// FPS page update
+			loading = false;
 			fpsIntervalId = setInterval(() => (fps = eng.getFPS()), 1000);
 		};
 		engine.onfail = (error) => {
@@ -68,7 +72,7 @@
 <Header style="secondary" {fps}>Camera Showcase</Header>
 
 <main>
-	<canvas></canvas>
+	<Canvas id="cnv" {loading} />
 
 	<section class="controll">
 		<div class="keyboardCtrl" class:invisible={joistick}>
