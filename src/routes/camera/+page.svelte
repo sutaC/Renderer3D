@@ -6,6 +6,7 @@
 	import Footer from '$lib/Comonents/Footer.svelte';
 	import Card from '$lib/Comonents/Card.svelte';
 	import Canvas from '$lib/Comonents/Canvas.svelte';
+	import Gamepad from '$lib/Comonents/Gamepad.svelte';
 
 	let engine: CameraShowcase | undefined = undefined;
 
@@ -71,50 +72,55 @@
 
 <Header style="secondary" {fps}>Camera Showcase</Header>
 
-<main>
-	<Canvas id="cnv" {loading} />
+<Gamepad style="secondary">
+	<main>
+		<Canvas id="cnv" {loading} />
 
-	<section class="controll">
-		<div class="keyboardCtrl" class:invisible={joistick}>
-			<Card style="secondary">
-				<div>
-					<span>W/S: </span>
-					<span>forward/backward</span>
-				</div>
-				<div>
-					<span>A/D:</span>
-					<span>looking left/right</span>
-				</div>
-				<div>
-					<span>ArrUp/ArrDown:</span>
-					<span>up/down</span>
-				</div>
-				<div>
-					<span>ArrLeft/ArrRight:</span>
-					<span>left/right</span>
-				</div>
-			</Card>
-		</div>
+		<section class="controll">
+			<div class="keyboardCtrl" class:invisible={joistick}>
+				<Card style="secondary">
+					<div>
+						<span>W/S: </span>
+						<span>forward/backward</span>
+					</div>
+					<div>
+						<span>A/D:</span>
+						<span>looking left/right</span>
+					</div>
+					<div>
+						<span>ArrUp/ArrDown:</span>
+						<span>up/down</span>
+					</div>
+					<div>
+						<span>ArrLeft/ArrRight:</span>
+						<span>left/right</span>
+					</div>
+				</Card>
+			</div>
 
-		<div class="controller" class:invisible={!joistick}>
-			<button id="lookleft" aria-label="Look left">&lArr;</button>
-			<button id="forward" aria-label="Move forward">&uArr;</button>
-			<button id="lookright" aria-label="Look right">&rArr;</button>
-			<button id="backward" aria-label="Move backward">&dArr;</button>
-			<button id="left" aria-label="Move left">&larr;</button>
-			<button id="up" aria-label="Move up">&uarr;</button>
-			<button id="right" aria-label="Move right">&rarr;</button>
-			<button id="down" aria-label="Move down">&darr;</button>
-		</div>
-	</section>
-</main>
+			<div class="controller" class:invisible={!joistick}>
+				<button id="lookleft" aria-label="Look left">&lArr;</button>
+				<button id="forward" aria-label="Move forward">&uArr;</button>
+				<button id="lookright" aria-label="Look right">&rArr;</button>
+				<button id="backward" aria-label="Move backward">&dArr;</button>
+				<button id="left" aria-label="Move left">&larr;</button>
+				<button id="up" aria-label="Move up">&uarr;</button>
+				<button id="right" aria-label="Move right">&rarr;</button>
+				<button id="down" aria-label="Move down">&darr;</button>
+			</div>
+		</section>
+	</main>
 
-<Footer />
+	<Footer
+		subtext={joistick
+			? 'If you want to disable joistik, go to options'
+			: 'If you want to use joistik, go to options'}
+	/>
+</Gamepad>
 
 <style>
 	main {
-		text-align: center;
-		margin: auto;
+		margin-bottom: 2rem;
 	}
 
 	.controll {
@@ -123,7 +129,7 @@
 		align-items: center;
 		flex-direction: column;
 		gap: 0.5rem;
-		margin: 0.5rem;
+		margin: 1rem 0.5rem;
 	}
 
 	.keyboardCtrl {
