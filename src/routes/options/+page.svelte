@@ -63,7 +63,7 @@
 		<Card style="accent">
 			<div>
 				<!-- TODO: add functionality -->
-				<label for="inputJoistick">Show FPS: </label>
+				<label for="inputJoistick">Joistcik: </label>
 				<input type="checkbox" name="joistick" id="inputJoistick" />
 			</div>
 		</Card>
@@ -184,6 +184,7 @@
 
 <style>
 	main {
+		accent-color: var(--clr-background);
 		width: 80%;
 		margin: auto;
 	}
@@ -198,5 +199,14 @@
 		font-size: 1.728rem;
 		margin: 0 0 1rem;
 		text-shadow: 0 4px 4px hsla(0, 0%, 0%, 0.2);
+	}
+
+	input,
+	select,
+	option {
+		font-size: 0.9rem;
+		border: 1px solid var(--clr-text);
+		border-radius: 0.25rem;
+		background-color: var(--clr-background);
 	}
 </style>
