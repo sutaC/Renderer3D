@@ -2,8 +2,6 @@
 
 This is a project that explores 3D rendering. It allows you to draw 3D objects loaded from `.obj` files and provides a simple engine for creating interactive experiences.
 
-> The project is still in the construction process and still differs from the final concept
-
 ## Where to find the official release?
 
 The github repository for this project is public and can be found [here](https://github.com/sutaC/Renderer3D)
