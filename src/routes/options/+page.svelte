@@ -178,8 +178,8 @@
 					type="checkbox"
 					name="logging"
 					id="inputLogging"
-					bind:value={resolutionSign}
-					on:change={updateResolution}
+					bind:checked={options.engine.logging}
+					on:change={() => Engine.saveOptions(options)}
 				/>
 			</div>
 			<div>
