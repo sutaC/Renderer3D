@@ -30,7 +30,7 @@ export type Triangle = [a: Vector, b: Vector, c: Vector];
 /**
  * Names of shapes stored in JSON files
  */
-export type ShapeNames = 'cube' | 'prism' | 'piramid' | 'cup' | 'diamond' | 'teapot';
+export type ShapeNames = 'cube' | 'prism' | 'piramid' | 'cup' | 'diamond' | 'teapot' | 'rat';
 
 /**
  * Shape class defining shapes understandable by the renderer

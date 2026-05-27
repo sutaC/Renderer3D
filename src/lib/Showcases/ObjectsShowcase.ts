@@ -17,6 +17,8 @@ export class ObjectsShowcase extends Engine {
 		z: true
 	};
 
+	public speed: number = 60;
+
 	constructor(canvas: HTMLCanvasElement) {
 		super(canvas);
 	}
@@ -30,7 +32,7 @@ export class ObjectsShowcase extends Engine {
 	protected update(deltaTime: number): void {
 		// Rotation
 		if (this.rotate.x || this.rotate.y || this.rotate.z) {
-			const rotation = 60 * deltaTime;
+			const rotation = this.speed * deltaTime;
 			if (this.rotate.x) {
 				this.shp.rotation.x += rotation;
 				this.shp.rotation.x %= 360;
