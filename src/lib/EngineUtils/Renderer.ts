@@ -88,7 +88,7 @@ export class Renderer {
 	 * @returns Color in rgb notation
 	 */
 	private calculateColor(normal: Vector, colorObj: ColorObject): string {
-		const lightDirection: Vector = vec.vector({ x: 0, y: 0.5, z: normal.z });
+		const lightDirection: Vector = vec.vector(0, 0.5, normal.z);
 		const luminationFactor = Math.max(0.1, vec.vectorDotProduct(normal, lightDirection));
 		const r = Math.floor(colorObj.r * luminationFactor);
 		const g = Math.floor(colorObj.g * luminationFactor);
@@ -181,8 +181,8 @@ export class Renderer {
 
 		// Matrices
 		// Shape view
-		const vUp: Vector = vec.vector({ x: 0, y: 1, z: 0 });
-		let vTarget: Vector = vec.vector({ x: 0, y: 0, z: 1 });
+		const vUp: Vector = vec.vector(0, 1, 0);
+		let vTarget: Vector = vec.vector(0, 0, 1);
 		const cameraRotationMatrix = vec.matrixRotation(this.camera.yaw, 'y');
 		this.camera.lookDirection = vec.vectorMatrixMultiply(cameraRotationMatrix, vTarget);
 		vTarget = vec.vectorAdd(this.camera.position, this.camera.lookDirection);
@@ -199,22 +199,12 @@ export class Renderer {
 		// Translation
 		worldMatrix = vec.matrixMatrixMultiply(
 			worldMatrix,
-			vec.matrixTranslaton(
-				vec.vector({
-					x: shape.origin.x,
-					y: shape.origin.y,
-					z: shape.origin.z
-				})
-			)
+			vec.matrixTranslaton(vec.vector(shape.origin.x, shape.origin.y, shape.origin.z))
 		);
 
 		// Centering corection
 		const centeringMatrix: Matrix = vec.matrixTranslaton(
-			vec.vector({
-				x: this.canvas.width / 2,
-				y: this.canvas.height / 2,
-				z: 0
-			})
+			vec.vector(this.canvas.width / 2, this.canvas.height / 2, 0)
 		);
 
 		// Shape projection
@@ -267,8 +257,8 @@ export class Renderer {
 
 			// Clipping against screen depth
 			clipped = vec.triangleClippingAgainstPlane(
-				vec.vector({ x: 0, y: 0, z: 1 }),
-				vec.vector({ x: 0, y: 0, z: 1 }),
+				vec.vector(0, 0, 1),
+				vec.vector(0, 0, 1),
 				triangle
 			);
 
@@ -291,30 +281,22 @@ export class Renderer {
 
 			// Clips against screan edges
 			clipped = vec.clipTriangleArray(clipped, (tr) =>
+				vec.triangleClippingAgainstPlane(vec.vector(0, 0, 0), vec.vector(0, 1, 0), tr)
+			);
+			clipped = vec.clipTriangleArray(clipped, (tr) =>
 				vec.triangleClippingAgainstPlane(
-					vec.vector({ x: 0, y: 0, z: 0 }),
-					vec.vector({ x: 0, y: 1, z: 0 }),
+					vec.vector(0, this.canvas.height - 1, 0),
+					vec.vector(0, -1, 0),
 					tr
 				)
 			);
 			clipped = vec.clipTriangleArray(clipped, (tr) =>
-				vec.triangleClippingAgainstPlane(
-					vec.vector({ x: 0, y: this.canvas.height - 1, z: 0 }),
-					vec.vector({ x: 0, y: -1, z: 0 }),
-					tr
-				)
+				vec.triangleClippingAgainstPlane(vec.vector(0, 0, 0), vec.vector(1, 0, 0), tr)
 			);
 			clipped = vec.clipTriangleArray(clipped, (tr) =>
 				vec.triangleClippingAgainstPlane(
-					vec.vector({ x: 0, y: 0, z: 0 }),
-					vec.vector({ x: 1, y: 0, z: 0 }),
-					tr
-				)
-			);
-			clipped = vec.clipTriangleArray(clipped, (tr) =>
-				vec.triangleClippingAgainstPlane(
-					vec.vector({ x: this.canvas.width - 1, y: 0, z: 0 }),
-					vec.vector({ x: -1, y: 0, z: 0 }),
+					vec.vector(this.canvas.width - 1, 0, 0),
+					vec.vector(-1, 0, 0),
 					tr
 				)
 			);

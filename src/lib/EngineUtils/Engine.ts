@@ -83,8 +83,8 @@ export abstract class Engine {
 	 * Camera object for player position
 	 */
 	protected camera: Camera = {
-		position: vector({ x: 0, y: 0, z: 0 }),
-		lookDirection: vector({ x: 0, y: 0, z: 1 }),
+		position: vector(0, 0, 0),
+		lookDirection: vector(0, 0, 1),
 		yaw: 0
 	};
 

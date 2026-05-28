@@ -19,13 +19,8 @@ export interface Vector {
  * Creates vector with default values
  * @param vec Vector initializer
  */
-export function vector(vec?: { x?: number; y?: number; z?: number; w?: number }): Vector {
-	return {
-		x: vec?.x || 0,
-		y: vec?.y || 0,
-		z: vec?.z || 0,
-		w: vec?.w || 1
-	};
+export function vector(x: number = 0, y: number = 0, z: number = 0, w: number = 1): Vector {
+	return { x, y, z, w };
 }
 
 /**
@@ -39,12 +34,7 @@ export function arrayToVector(array: number[]): Vector {
 			'Could not convert array to vector, becouse array length is not too big to convert into vector'
 		);
 	}
-	return vector({
-		x: array[0],
-		y: array[1],
-		z: array[2],
-		w: array[3]
-	});
+	return vector(array[0], array[1], array[2], array[3]);
 }
 
 /**
@@ -63,7 +53,7 @@ export function vectorToArray(vec: Vector): number[] {
  * @returns Vectors of sum
  */
 export function vectorAdd(a: Vector, b: Vector): Vector {
-	return vector({ x: a.x + b.x, y: a.y + b.y, z: a.z + b.z });
+	return vector(a.x + b.x, a.y + b.y, a.z + b.z);
 }
 
 // Operations
@@ -75,7 +65,7 @@ export function vectorAdd(a: Vector, b: Vector): Vector {
  * @returns Subtracted vector
  */
 export function vectorSubtract(a: Vector, b: Vector): Vector {
-	return vector({ x: a.x - b.x, y: a.y - b.y, z: a.z - b.z });
+	return vector(a.x - b.x, a.y - b.y, a.z - b.z);
 }
 
 /**
@@ -85,7 +75,7 @@ export function vectorSubtract(a: Vector, b: Vector): Vector {
  * @returns Multiplied vector
  */
 export function vectorMultiply(vec: Vector, multiplier: number): Vector {
-	return vector({ x: vec.x * multiplier, y: vec.y * multiplier, z: vec.z * multiplier });
+	return vector(vec.x * multiplier, vec.y * multiplier, vec.z * multiplier);
 }
 
 /**
@@ -95,7 +85,7 @@ export function vectorMultiply(vec: Vector, multiplier: number): Vector {
  * @returns Devided vector
  */
 export function vectorDevide(vec: Vector, divider: number): Vector {
-	return vector({ x: vec.x / divider, y: vec.y / divider, z: vec.z / divider });
+	return vector(vec.x / divider, vec.y / divider, vec.z / divider);
 }
 
 /**
@@ -114,7 +104,7 @@ export function vectorLength(vec: Vector): number {
  */
 export function vectorNormalise(vec: Vector): Vector {
 	const len = vectorLength(vec);
-	return vector({ x: vec.x / len, y: vec.y / len, z: vec.z / len });
+	return vector(vec.x / len, vec.y / len, vec.z / len);
 }
 
 // Calculations
@@ -126,11 +116,7 @@ export function vectorNormalise(vec: Vector): Vector {
  * @returns Vector cross product
  */
 export function vectorCrossProduct(a: Vector, b: Vector): Vector {
-	return vector({
-		x: a.y * b.z - a.z * b.y,
-		y: a.z * b.x - a.x * b.z,
-		z: a.x * b.y - a.y * b.x
-	});
+	return vector(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x);
 }
 
 /**
