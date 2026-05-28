@@ -104,7 +104,7 @@ export function vectorLength(vec: Vector): number {
  */
 export function vectorNormalize(vec: Vector): Vector {
 	const len = vectorLength(vec);
-	return { x: vec.x / len, y: vec.y / len, z: vec.z / len, w: 1 };
+	return len > 0 ? vectorDivide(vec, len) : vector();
 }
 
 // Calculations
@@ -162,9 +162,12 @@ export function vectorIntersectPlane(
 	const lineStartDotProduct = vectorDotProduct(lineStart, planeNormal);
 	const lineEndDotProduct = vectorDotProduct(lineEnd, planeNormal);
 	const t = (-planeDotProduct - lineStartDotProduct) / (lineEndDotProduct - lineStartDotProduct);
-	const lineStartToEnd = vectorSubtract(lineEnd, lineStart);
-	const lineToInntersect = vectorMultiply(lineStartToEnd, t);
-	return vectorAdd(lineStart, lineToInntersect);
+	return {
+		x: lineStart.x + (lineEnd.x - lineStart.x) * t,
+		y: lineStart.y + (lineEnd.y - lineStart.y) * t,
+		z: lineStart.z + (lineEnd.z - lineStart.z) * t,
+		w: 1
+	};
 }
 
 /**
@@ -263,14 +266,7 @@ export function clipTriangleArray(
 	triangles: Triangle[],
 	clipFn: (tr: Triangle) => Triangle[]
 ): Triangle[] {
-	const result: Triangle[] = [];
-	for (const tr of triangles) {
-		const clippedTr: Triangle[] = clipFn(tr);
-		for (const tr of clippedTr) {
-			result.push(tr);
-		}
-	}
-	return result;
+	return triangles.flatMap((tr) => clipFn(tr));
 }
 
 // Matrices
@@ -294,16 +290,12 @@ export function matrix(): Matrix {
  * @returns Multiplied vector
  */
 export function vectorMatrixMultiply(matrix: Matrix, vec: Vector): Vector {
-	const result: Vector = vector();
-	result.x =
-		vec.x * matrix[0][0] + vec.y * matrix[1][0] + vec.z * matrix[2][0] + vec.w * matrix[3][0];
-	result.y =
-		vec.x * matrix[0][1] + vec.y * matrix[1][1] + vec.z * matrix[2][1] + vec.w * matrix[3][1];
-	result.z =
-		vec.x * matrix[0][2] + vec.y * matrix[1][2] + vec.z * matrix[2][2] + vec.w * matrix[3][2];
-	result.w =
-		vec.x * matrix[0][3] + vec.y * matrix[1][3] + vec.z * matrix[2][3] + vec.w * matrix[3][3];
-	return result;
+	return {
+		x: vec.x * matrix[0][0] + vec.y * matrix[1][0] + vec.z * matrix[2][0] + vec.w * matrix[3][0],
+		y: vec.x * matrix[0][1] + vec.y * matrix[1][1] + vec.z * matrix[2][1] + vec.w * matrix[3][1],
+		z: vec.x * matrix[0][2] + vec.y * matrix[1][2] + vec.z * matrix[2][2] + vec.w * matrix[3][2],
+		w: vec.x * matrix[0][3] + vec.y * matrix[1][3] + vec.z * matrix[2][3] + vec.w * matrix[3][3]
+	};
 }
 
 /**
