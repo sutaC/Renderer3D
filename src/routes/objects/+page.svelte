@@ -43,7 +43,7 @@
 
 		engine = new ObjectsShowcase(canvas);
 
-		let fpsIntervalId: number = 0;
+		let fpsIntervalId: NodeJS.Timeout;
 
 		engine.onready = (eng) => {
 			eng.run();
