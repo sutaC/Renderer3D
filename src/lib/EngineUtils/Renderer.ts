@@ -271,7 +271,7 @@ export class Renderer {
 					// Projection
 					tri[i] = vec.vectorMatrixMultiply(projectionMatrix, tri[i]);
 					// Perspectivic devision
-					tri[i] = vec.vectorDevide(tri[i], tri[i].w);
+					tri[i] = vec.vectorDivide(tri[i], tri[i].w);
 					// Scaling
 					tri[i] = vec.vectorMultiply(tri[i], shape.size);
 					// Centering

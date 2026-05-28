@@ -34,7 +34,7 @@ export function arrayToVector(array: number[]): Vector {
 			'Could not convert array to vector, becouse array length is not too big to convert into vector'
 		);
 	}
-	return vector(array[0], array[1], array[2], array[3]);
+	return { x: array[0], y: array[1], z: array[2], w: array[3] };
 }
 
 /**
@@ -53,7 +53,7 @@ export function vectorToArray(vec: Vector): number[] {
  * @returns Vectors of sum
  */
 export function vectorAdd(a: Vector, b: Vector): Vector {
-	return vector(a.x + b.x, a.y + b.y, a.z + b.z);
+	return { x: a.x + b.x, y: a.y + b.y, z: a.z + b.z, w: 1 };
 }
 
 // Operations
@@ -65,7 +65,7 @@ export function vectorAdd(a: Vector, b: Vector): Vector {
  * @returns Subtracted vector
  */
 export function vectorSubtract(a: Vector, b: Vector): Vector {
-	return vector(a.x - b.x, a.y - b.y, a.z - b.z);
+	return { x: a.x - b.x, y: a.y - b.y, z: a.z - b.z, w: 1 };
 }
 
 /**
@@ -75,7 +75,7 @@ export function vectorSubtract(a: Vector, b: Vector): Vector {
  * @returns Multiplied vector
  */
 export function vectorMultiply(vec: Vector, multiplier: number): Vector {
-	return vector(vec.x * multiplier, vec.y * multiplier, vec.z * multiplier);
+	return { x: vec.x * multiplier, y: vec.y * multiplier, z: vec.z * multiplier, w: 1 };
 }
 
 /**
@@ -84,8 +84,8 @@ export function vectorMultiply(vec: Vector, multiplier: number): Vector {
  * @param divider Devider
  * @returns Devided vector
  */
-export function vectorDevide(vec: Vector, divider: number): Vector {
-	return vector(vec.x / divider, vec.y / divider, vec.z / divider);
+export function vectorDivide(vec: Vector, divider: number): Vector {
+	return { x: vec.x / divider, y: vec.y / divider, z: vec.z / divider, w: 1 };
 }
 
 /**
@@ -102,9 +102,9 @@ export function vectorLength(vec: Vector): number {
  * @param vec Vector to normalise
  * @returns Normalised vector
  */
-export function vectorNormalise(vec: Vector): Vector {
+export function vectorNormalize(vec: Vector): Vector {
 	const len = vectorLength(vec);
-	return vector(vec.x / len, vec.y / len, vec.z / len);
+	return { x: vec.x / len, y: vec.y / len, z: vec.z / len, w: 1 };
 }
 
 // Calculations
@@ -116,7 +116,7 @@ export function vectorNormalise(vec: Vector): Vector {
  * @returns Vector cross product
  */
 export function vectorCrossProduct(a: Vector, b: Vector): Vector {
-	return vector(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x);
+	return { x: a.y * b.z - a.z * b.y, y: a.z * b.x - a.x * b.z, z: a.x * b.y - a.y * b.x, w: 1 };
 }
 
 /**
@@ -130,7 +130,7 @@ export function vectorNormal(a: Vector, b: Vector, c: Vector): Vector {
 	const lineA: Vector = vectorSubtract(b, a);
 	const lineB: Vector = vectorSubtract(c, a);
 	const normal: Vector = vectorCrossProduct(lineA, lineB);
-	return vectorNormalise(normal);
+	return vectorNormalize(normal);
 }
 
 /**
@@ -157,7 +157,7 @@ export function vectorIntersectPlane(
 	lineStart: Vector,
 	lineEnd: Vector
 ): Vector {
-	planeNormal = vectorNormalise(planeNormal);
+	planeNormal = vectorNormalize(planeNormal);
 	const planeDotProduct = -vectorDotProduct(planePoint, planeNormal);
 	const lineStartDotProduct = vectorDotProduct(lineStart, planeNormal);
 	const lineEndDotProduct = vectorDotProduct(lineEnd, planeNormal);
@@ -179,7 +179,7 @@ export function triangleClippingAgainstPlane(
 	planeNormal: Vector,
 	triangle: Triangle
 ): Triangle[] {
-	planeNormal = vectorNormalise(planeNormal);
+	planeNormal = vectorNormalize(planeNormal);
 
 	// Return shortest distance from point to plane
 	const distance = (point: Vector): number =>
@@ -379,9 +379,9 @@ export function matrixRotation(angle: number, axis: 'x' | 'y' | 'z'): Matrix {
  * @returns Point at matrix - transformation for object rotation depending on given position
  */
 export function matrixPointAt(position: Vector, target: Vector, up: Vector): Matrix {
-	const newForward: Vector = vectorNormalise(vectorSubtract(target, position));
+	const newForward: Vector = vectorNormalize(vectorSubtract(target, position));
 	const a: Vector = vectorMultiply(newForward, vectorDotProduct(up, newForward));
-	const newUp = vectorNormalise(vectorSubtract(up, a));
+	const newUp = vectorNormalize(vectorSubtract(up, a));
 	const newRight: Vector = vectorCrossProduct(newUp, newForward);
 	const matrix: Matrix = [
 		[newRight.x, newRight.y, newRight.z, 0],
