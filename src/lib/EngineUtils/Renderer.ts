@@ -88,8 +88,10 @@ export class Renderer {
 	 * @returns Color in rgb notation
 	 */
 	private calculateColor(normal: Vector, colorObj: ColorObject): string {
-		const lightDirection: Vector = vec.vector(0, 0.5, normal.z);
-		const luminationFactor = Math.max(0.1, vec.vectorDotProduct(normal, lightDirection));
+		const luminationFactor = Math.max(
+			0.1,
+			vec.vectorDotProduct(normal, vec.vector(0, 0.5, normal.z))
+		);
 		const r = Math.floor(colorObj.r * luminationFactor);
 		const g = Math.floor(colorObj.g * luminationFactor);
 		const b = Math.floor(colorObj.b * luminationFactor);
@@ -106,7 +108,7 @@ export class Renderer {
 	public drawPoint(point: Vector, color = '#FFFFFF'): void {
 		this.ctx.fillStyle = color;
 		this.ctx.beginPath();
-		this.ctx.arc(point.x, point.y, 1, 0, Math.PI * 2);
+		this.ctx.arc(point.x, point.y, this.canvas.width / 250, 0, Math.PI * 2);
 		this.ctx.fill();
 		this.ctx.closePath();
 	}
@@ -174,20 +176,20 @@ export class Renderer {
 	 */
 	public drawShape(shape: Shape): void {
 		// Setup
-		const triangles: Triangle[] = shape.triangles.map((tr) => tr.map((p) => p)) as Triangle[]; // Copies triangles
 		const transformed: Triangle[] = [];
-
 		const triangleColors = new Map<Triangle, string>();
 
-		// Matrices
 		// Shape view
-		const vUp: Vector = vec.vector(0, 1, 0);
 		let vTarget: Vector = vec.vector(0, 0, 1);
 		const cameraRotationMatrix = vec.matrixRotation(this.camera.yaw, 'y');
 		this.camera.lookDirection = vec.vectorMatrixMultiply(cameraRotationMatrix, vTarget);
 		vTarget = vec.vectorAdd(this.camera.position, this.camera.lookDirection);
 
-		const cameraMatrix: Matrix = vec.matrixPointAt(this.camera.position, vTarget, vUp);
+		const cameraMatrix: Matrix = vec.matrixPointAt(
+			this.camera.position,
+			vTarget,
+			vec.vector(0, 1, 0)
+		);
 		const viewMatrix: Matrix = vec.matrixInverse(cameraMatrix);
 
 		// World matrix
@@ -218,7 +220,8 @@ export class Renderer {
 			near
 		);
 
-		for (const triangle of triangles) {
+		for (const shTriangle of shape.triangles) {
+			const triangle: Triangle = shTriangle.map((p) => p) as Triangle;
 			// Transforming to world space
 			for (let i = 0; i < triangle.length; i++) {
 				triangle[i] = vec.vectorMatrixMultiply(worldMatrix, triangle[i]);
@@ -227,8 +230,7 @@ export class Renderer {
 			// Selecting triangle
 			const normal = vec.vectorNormal(triangle[0], triangle[1], triangle[2]);
 			const cameraRay = vec.vectorSubtract(triangle[0], this.camera.position);
-			const dotProduct = vec.vectorDotProduct(cameraRay, normal);
-			if (dotProduct > 0) continue;
+			if (vec.vectorDotProduct(cameraRay, normal) > 0) continue;
 
 			// Iluminating triangle
 			const color = this.calculateColor(normal, shape.colorObj);
@@ -249,12 +251,9 @@ export class Renderer {
 			return zB - zA;
 		});
 
+		// Clipping
+		let clipped: Triangle[];
 		for (const triangle of transformed) {
-			// Clipping
-			const color = triangleColors.get(triangle) || 'red';
-			triangleColors.delete(triangle);
-			let clipped: Triangle[] = [];
-
 			// Clipping against screen depth
 			clipped = vec.triangleClippingAgainstPlane(
 				vec.vector(0, 0, 1),
@@ -267,7 +266,7 @@ export class Renderer {
 
 			// Transforming to 2D space
 			for (const tri of clipped) {
-				for (let i = 0; i < tri.length; i++) {
+				for (let i = 0; i < 3; i++) {
 					// Projection
 					tri[i] = vec.vectorMatrixMultiply(projectionMatrix, tri[i]);
 					// Perspectivic devision
@@ -302,22 +301,14 @@ export class Renderer {
 			);
 
 			// Draws triangles
+			let color = triangleColors.get(triangle) || 'red';
 			for (const tr of clipped) {
-				let trColor: string = color;
 				// Debug clipping color
-				if (this.debugOptions.clipping && tr !== triangle) {
-					trColor = 'green';
-				}
-
+				if (this.debugOptions.clipping && tr !== triangle) color = 'green';
 				// Draws
-				this.fillTriangle(tr[0], tr[1], tr[2], trColor, this.debugOptions.wireframe);
-
+				this.fillTriangle(tr[0], tr[1], tr[2], color, this.debugOptions.wireframe);
 				// Debug points
-				if (this.debugOptions.points) {
-					for (const point of tr) {
-						this.drawPoint(point, 'blue');
-					}
-				}
+				if (this.debugOptions.points) for (const point of tr) this.drawPoint(point, 'blue');
 			}
 		}
 	}
