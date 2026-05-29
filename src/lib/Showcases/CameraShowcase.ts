@@ -41,7 +41,7 @@ export class CameraShowcase extends Engine {
 		const moveSidesVector = vectorMultiply(
 			vectorNormal(
 				this.camera.position,
-				vectorAdd(this.camera.position, vector({ x: 0, y: 1, z: 0 })),
+				vectorAdd(this.camera.position, vector(0, 1, 0)),
 				vectorAdd(this.camera.position, this.camera.lookDirection)
 			),
 			move

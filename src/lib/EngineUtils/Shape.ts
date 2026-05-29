@@ -81,9 +81,9 @@ export class Shape {
 		}
 		this.colorObj = {
 			hex,
-			r: Number.parseInt(hex.substring(1, 3), 16),
-			g: Number.parseInt(hex.substring(3, 5), 16),
-			b: Number.parseInt(hex.substring(5, 7), 16)
+			r: parseInt(hex.substring(1, 3), 16),
+			g: parseInt(hex.substring(3, 5), 16),
+			b: parseInt(hex.substring(5, 7), 16)
 		};
 	}
 
@@ -108,51 +108,41 @@ export class Shape {
 	 */
 	public static parseToShape(text: string): Shape {
 		const points: Vector[] = [];
-		const trianglesIdx: number[][] = [];
-
-		const read = text.split('\n');
-		for (let i = 0; i < read.length; i++) {
-			const line = read[i];
-
-			if (line.length === 0) continue;
+		const triangles: Triangle[] = [];
+		for (let line of text.split(/\r?\n/)) {
+			line = line.trim();
+			if (!line || line.startsWith('#')) continue;
 			const pivot = line.indexOf(' ');
+			if (pivot === -1) continue;
 			const type = line.substring(0, pivot);
-			const data = line.substring(pivot + 1, line.length);
 			if (type === 'v') {
-				const vertices = data
-					.split(' ')
-					.map((v) => v.replaceAll(/[^0-9.-]/gm, '')) // Removes all non-digits
-					.filter((v) => v.length > 0);
-
-				if (vertices.length !== 3) {
-					console.error(vertices);
-					throw new Error(`Not suported vertices was provided at line ${i}: "${data}"`);
+				const data = line
+					.substring(pivot + 1, line.length)
+					.trim()
+					.split(/\s+/);
+				if (data.length !== 3) {
+					console.error(data);
+					throw new Error(`Not suported vertices was provided at line "${line}": "${data}"`);
 				}
-				const x = Number(vertices[0]);
-				const y = Number(vertices[1]);
-				const z = Number(vertices[2]);
-				const point: Vector = vector({ x, y, z });
-				points.push(point);
+				points.push(vector(parseFloat(data[0]), parseFloat(data[1]), parseFloat(data[2])));
 			} else if (type === 'f') {
-				const faces = data.split(' ');
-				if (faces.length !== 3) {
-					console.error(faces);
+				const data = line
+					.substring(pivot + 1, line.length)
+					.trim()
+					.split(/\s+/);
+				if (data.length !== 3) {
+					console.error(data);
 					throw new Error(
-						`Not suported face was provided at line ${i}, engine only supports faces of 3 vertices and got provided with ${faces.length}`
+						`Not suported face was provided at line "${line}", engine only supports faces of 3 vertices and got provided with ${data.length}`
 					);
 				}
-				const v1 = Number(faces[0].split('/')[0]) - 1;
-				const v2 = Number(faces[1].split('/')[0]) - 1;
-				const v3 = Number(faces[2].split('/')[0]) - 1;
-				const trIdx: number[] = [v1, v2, v3];
-				trianglesIdx.push(trIdx);
+				const v1 = parseInt(data[0]) - 1;
+				const v2 = parseInt(data[1]) - 1;
+				const v3 = parseInt(data[2]) - 1;
+				if (points[v1] && points[v2] && points[v3])
+					triangles.push([points[v1], points[v2], points[v3]]);
 			}
 		}
-
-		const triangles: Triangle[] = trianglesIdx.map(
-			(tri) => [points[tri[0]], points[tri[1]], points[tri[2]]] as Triangle
-		);
-
 		return new Shape(triangles);
 	}
 

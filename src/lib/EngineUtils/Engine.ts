@@ -83,8 +83,8 @@ export abstract class Engine {
 	 * Camera object for player position
 	 */
 	protected camera: Camera = {
-		position: vector({ x: 0, y: 0, z: 0 }),
-		lookDirection: vector({ x: 0, y: 0, z: 1 }),
+		position: vector(0, 0, 0),
+		lookDirection: vector(0, 0, 1),
 		yaw: 0
 	};
 
@@ -191,14 +191,17 @@ export abstract class Engine {
 	 * Game loop method which is running game
 	 * @param currentTime Time of this update (ms)
 	 */
-	private gameLoop(currentTime: number): void {
+	private gameLoop = (currentTime: number): void => {
 		// Time elapsed
 		const deltaTimeInMs = currentTime - this.previousTime;
-		if (this.engineOptions.fpsLimit > 0)
-			if (deltaTimeInMs < Math.round(1000 / this.engineOptions.fpsLimit)) {
-				this.animationframeId = requestAnimationFrame(this.gameLoop.bind(this));
+		if (this.engineOptions.fpsLimit > 0) {
+			const targetMs = 1000 / this.engineOptions.fpsLimit;
+			if (deltaTimeInMs < targetMs - 0.1) {
+				// 0.1ms marginesu
+				this.animationframeId = requestAnimationFrame(this.gameLoop);
 				return;
 			}
+		}
 		this.previousTime = currentTime;
 		const deltaTimeInS = deltaTimeInMs / 1000;
 
@@ -215,10 +218,9 @@ export abstract class Engine {
 		try {
 			// Update
 			this.update(deltaTimeInS);
-
 			// Rendering
 			this.renderer.clear();
-			for (const shape of this.shapes) this.renderer.drawShape(shape);
+			for (let i = 0; i < this.shapes.length; i++) this.renderer.drawShape(this.shapes[i]);
 		} catch (error) {
 			this.stop();
 			this.state = EngineState.failed;
@@ -229,8 +231,8 @@ export abstract class Engine {
 		}
 
 		// Recall
-		this.animationframeId = requestAnimationFrame(this.gameLoop.bind(this));
-	}
+		this.animationframeId = requestAnimationFrame(this.gameLoop);
+	};
 
 	// Public methods
 	/**
@@ -243,7 +245,8 @@ export abstract class Engine {
 		this.state = EngineState.running;
 		if (this.engineOptions.logging)
 			console.log('%cEngine is running!', 'color: green; font-weight: bold;');
-		this.animationframeId = requestAnimationFrame(this.gameLoop.bind(this));
+		this.previousTime = performance.now();
+		this.animationframeId = requestAnimationFrame(this.gameLoop);
 	}
 
 	/**
