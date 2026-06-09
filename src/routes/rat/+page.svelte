@@ -60,7 +60,13 @@
 			accOn = !accOn;
 			if (accOn)
 				accIntervalId = setInterval(() => {
-					if (engine) engine.speed++;
+					if (engine) {
+						if (engine.speed < 0) {
+							engine.speed--;
+						} else {
+							engine.speed++;
+						}
+					}
 				}, 1000);
 			else {
 				clearInterval(accIntervalId);
