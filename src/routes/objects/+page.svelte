@@ -1,12 +1,12 @@
 <script lang="ts">
-	import Header from '$lib/comonents/Header.svelte';
-	import Footer from '$lib/comonents/Footer.svelte';
-	import Card from '$lib/comonents/Card.svelte';
-	import Canvas from '$lib/comonents/Canvas.svelte';
-	import Gamepad from '$lib/comonents/Gamepad.svelte';
-	import { EngineState } from '$lib/EngineUtils/Engine';
-	import type { ShapeNames } from '$lib/EngineUtils/Shape';
-	import { ObjectsShowcase } from '$lib/Showcases/ObjectsShowcase';
+	import Header from '#lib/comonents/Header.svelte';
+	import Footer from '#lib/comonents/Footer.svelte';
+	import Card from '#lib/comonents/Card.svelte';
+	import Canvas from '#lib/comonents/Canvas.svelte';
+	import Gamepad from '#lib/comonents/Gamepad.svelte';
+	import { EngineState } from '#lib/EngineUtils/Engine';
+	import type { ShapeNames } from '#lib/EngineUtils/Shape';
+	import { ObjectsShowcase } from '#lib/Showcases/ObjectsShowcase';
 	import { onMount, onDestroy } from 'svelte';
 
 	let selected: string = 'cube';

@@ -1,7 +1,7 @@
 <script lang="ts">
-	import Canvas from '$lib/comonents/Canvas.svelte';
-	import { EngineState } from '$lib/EngineUtils/Engine';
-	import { ObjectsShowcase } from '$lib/Showcases/ObjectsShowcase';
+	import Canvas from '#lib/comonents/Canvas.svelte';
+	import { EngineState } from '#lib/EngineUtils/Engine';
+	import { ObjectsShowcase } from '#lib/Showcases/ObjectsShowcase';
 	import { onMount, onDestroy } from 'svelte';
 
 	let engine: ObjectsShowcase | undefined = undefined;

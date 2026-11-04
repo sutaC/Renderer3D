@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
-	import { CameraShowcase } from '$lib/Showcases/CameraShowcase';
-	import { EngineState } from '$lib/EngineUtils/Engine';
-	import Header from '$lib/comonents/Header.svelte';
-	import Footer from '$lib/comonents/Footer.svelte';
-	import Card from '$lib/comonents/Card.svelte';
-	import Canvas from '$lib/comonents/Canvas.svelte';
-	import Gamepad from '$lib/comonents/Gamepad.svelte';
-	import Joistick from '$lib/comonents/Joistick.svelte';
+	import { CameraShowcase } from '#lib/Showcases/CameraShowcase';
+	import { EngineState } from '#lib/EngineUtils/Engine';
+	import Header from '#lib/comonents/Header.svelte';
+	import Footer from '#lib/comonents/Footer.svelte';
+	import Card from '#lib/comonents/Card.svelte';
+	import Canvas from '#lib/comonents/Canvas.svelte';
+	import Gamepad from '#lib/comonents/Gamepad.svelte';
+	import Joistick from '#lib/comonents/Joistick.svelte';
 
 	let engine: CameraShowcase | undefined = undefined;
 	let joistick: boolean = true;

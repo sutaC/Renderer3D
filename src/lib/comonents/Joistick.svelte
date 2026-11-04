@@ -9,7 +9,7 @@
 </script>
 
 <div class="joistick {style}">
-	<button class="up" id={ids.up} on:click>
+	<button class="up" id={ids.up} on:click aria-label="up">
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
 			width="16"
@@ -24,7 +24,7 @@
 			/>
 		</svg>
 	</button>
-	<button class="right" id={ids.right} on:click>
+	<button class="right" id={ids.right} on:click aria-label="right">
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
 			width="16"
@@ -39,7 +39,7 @@
 			/>
 		</svg>
 	</button>
-	<button class="down" id={ids.down} on:click>
+	<button class="down" id={ids.down} on:click aria-label="down">
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
 			width="16"
@@ -54,7 +54,7 @@
 			/>
 		</svg>
 	</button>
-	<button class="left" id={ids.left} on:click>
+	<button class="left" id={ids.left} on:click aria-label="left">
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
 			width="16"

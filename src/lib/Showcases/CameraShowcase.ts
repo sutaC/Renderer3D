@@ -1,12 +1,12 @@
-import { Engine } from '$lib/EngineUtils/Engine';
-import { Shape } from '$lib/EngineUtils/Shape';
+import { Engine } from '#lib/EngineUtils/Engine';
+import { Shape } from '#lib/EngineUtils/Shape';
 import {
 	vector,
 	vectorAdd,
 	vectorSubtract,
 	vectorMultiply,
 	vectorNormal
-} from '$lib/EngineUtils/Vector';
+} from '#lib/EngineUtils/Vector';
 
 export class CameraShowcase extends Engine {
 	constructor(canvas: HTMLCanvasElement) {
