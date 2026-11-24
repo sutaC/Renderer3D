@@ -42,7 +42,7 @@
 
 		window.setAxis = (s: string) => {
 			if (!engine) return;
-			if (typeof s === 'undefined' || s.length != 2) {
+			if (typeof s !== 'string' || s.length !== 2) {
 				console.error('Wrong format. Please use argument of format (+|-)(x|y|z)');
 				return;
 			}
@@ -75,6 +75,15 @@
 			else ret += '-';
 
 			return ret;
+		};
+
+		window.setColor = (s: string) => {
+		if (!engine) return;
+			if(typeof s !== 'string' || s.length !==7 || !/#[0-9a-fA-F]{6}/.test(s)) {
+				console.error('Please input a valid hex color with # at the begining');
+				return;
+			}
+			engine.shapeController.setColor(s);
 		};
 	});
 
