@@ -76,6 +76,14 @@
 
 			return ret;
 		};
+
+		window.setColor = (s: string) => {
+			if(typeof s === 'undefined' || s.length !=7 || !/#[0-9a-fA-F]{6}/.test(s)) {
+				console.error('Please input a valid hex color with # at the begining');
+				return;
+			}
+			engine.shapeController.setColor(s);
+		};
 	});
 
 	onDestroy(() => {

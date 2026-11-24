@@ -3,4 +3,5 @@ declare interface Window {
 	getSpeed: () => number | undefined;
 	setAxis:  (s: string) => void;
 	getAxis:  () => string;
+	setColor: () => void;
 }
