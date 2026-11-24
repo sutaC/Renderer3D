@@ -39,6 +39,41 @@
 			if (engine) engine.speed = s;
 		};
 		window.getSpeed = () => engine?.speed;
+
+		window.setAxis = (s: string) => {
+			if(typeof s==='undefined'||s.length != 2){
+			     console.error('Wrong format. Please use argument of format (+|-)(x|y|z)');
+			     return;
+			}
+
+			let direction;
+			if(s[0]==='+') direction = true;
+			else if(s[0]==='-') direction = false;
+			else {
+			     console.error('Wrong format. Please use argument of format (+|-)(x|y|z)');
+			     return;
+			}
+
+			if(s[1]==='x') engine.rotate.x = direction;
+			else if(s[1]==='y') engine.rotate.y = direction;
+			else if(s[1]==='z') engine.rotate.z = direction;
+			else console.error('Wrong format. Please use argument of format (+|-)(x|y|z)');
+		};
+
+		window.getAxis = () => {
+			let ret="";
+
+			if (engine.rotate.x) ret += 'x';
+			else ret += '-';
+
+			if (engine.rotate.y) ret += 'y';
+			else ret += '-';
+
+			if (engine.rotate.z) ret += 'z';
+			else ret += '-';
+
+			return ret;
+		}
 	});
 
 	onDestroy(() => {
