@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Canvas from '#lib/comonents/Canvas.svelte';
-	import { EngineState } from '#lib/EngineUtils/Engine';
-	import { ObjectsShowcase } from '#lib/Showcases/ObjectsShowcase';
+	import { EngineState } from '#lib/EngineUtils/Engine.ts';
+	import { ObjectsShowcase } from '#lib/Showcases/ObjectsShowcase.ts';
 	import { onMount, onDestroy } from 'svelte';
 
 	let engine: ObjectsShowcase | undefined = undefined;
@@ -41,27 +41,29 @@
 		window.getSpeed = () => engine?.speed;
 
 		window.setAxis = (s: string) => {
-			if(typeof s==='undefined'||s.length != 2){
-			     console.error('Wrong format. Please use argument of format (+|-)(x|y|z)');
-			     return;
+			if (!engine) return;
+			if (typeof s === 'undefined' || s.length != 2) {
+				console.error('Wrong format. Please use argument of format (+|-)(x|y|z)');
+				return;
 			}
 
 			let direction;
-			if(s[0]==='+') direction = true;
-			else if(s[0]==='-') direction = false;
+			if (s[0] === '+') direction = true;
+			else if (s[0] === '-') direction = false;
 			else {
-			     console.error('Wrong format. Please use argument of format (+|-)(x|y|z)');
-			     return;
+				console.error('Wrong format. Please use argument of format (+|-)(x|y|z)');
+				return;
 			}
 
-			if(s[1]==='x') engine.rotate.x = direction;
-			else if(s[1]==='y') engine.rotate.y = direction;
-			else if(s[1]==='z') engine.rotate.z = direction;
+			if (s[1] === 'x') engine.rotate.x = direction;
+			else if (s[1] === 'y') engine.rotate.y = direction;
+			else if (s[1] === 'z') engine.rotate.z = direction;
 			else console.error('Wrong format. Please use argument of format (+|-)(x|y|z)');
 		};
 
 		window.getAxis = () => {
-			let ret="";
+			if (!engine) return '';
+			let ret = '';
 
 			if (engine.rotate.x) ret += 'x';
 			else ret += '-';
@@ -73,7 +75,7 @@
 			else ret += '-';
 
 			return ret;
-		}
+		};
 	});
 
 	onDestroy(() => {

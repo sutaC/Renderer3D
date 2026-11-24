@@ -4,9 +4,9 @@
 	import Card from '#lib/comonents/Card.svelte';
 	import Canvas from '#lib/comonents/Canvas.svelte';
 	import Gamepad from '#lib/comonents/Gamepad.svelte';
-	import { EngineState } from '#lib/EngineUtils/Engine';
-	import type { ShapeNames } from '#lib/EngineUtils/Shape';
-	import { ObjectsShowcase } from '#lib/Showcases/ObjectsShowcase';
+	import { EngineState } from '#lib/EngineUtils/Engine.ts';
+	import type { ShapeNames } from '#lib/EngineUtils/Shape.ts';
+	import { ObjectsShowcase } from '#lib/Showcases/ObjectsShowcase.ts';
 	import { onMount, onDestroy } from 'svelte';
 
 	let selected: string = 'cube';

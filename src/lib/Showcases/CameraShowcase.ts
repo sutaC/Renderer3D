@@ -1,12 +1,12 @@
-import { Engine } from '#lib/EngineUtils/Engine';
-import { Shape } from '#lib/EngineUtils/Shape';
+import { Engine } from '#lib/EngineUtils/Engine.ts';
+import { Shape } from '#lib/EngineUtils/Shape.ts';
 import {
 	vector,
 	vectorAdd,
 	vectorSubtract,
 	vectorMultiply,
 	vectorNormal
-} from '#lib/EngineUtils/Vector';
+} from '#lib/EngineUtils/Vector.ts';
 
 export class CameraShowcase extends Engine {
 	constructor(canvas: HTMLCanvasElement) {

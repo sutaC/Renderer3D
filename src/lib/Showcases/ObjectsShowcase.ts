@@ -1,5 +1,5 @@
-import { Engine } from '#lib/EngineUtils/Engine';
-import { Shape, type ShapeNames } from '#lib/EngineUtils/Shape';
+import { Engine } from '#lib/EngineUtils/Engine.ts';
+import { Shape, type ShapeNames } from '#lib/EngineUtils/Shape.ts';
 
 export class ObjectsShowcase extends Engine {
 	// Private

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
-	import { CameraShowcase } from '#lib/Showcases/CameraShowcase';
-	import { EngineState } from '#lib/EngineUtils/Engine';
+	import { CameraShowcase } from '#lib/Showcases/CameraShowcase.ts';
+	import { EngineState } from '#lib/EngineUtils/Engine.ts';
 	import Header from '#lib/comonents/Header.svelte';
 	import Footer from '#lib/comonents/Footer.svelte';
 	import Card from '#lib/comonents/Card.svelte';
@@ -49,7 +49,7 @@
 			eng.run();
 			// FPS page update
 			loading = false;
-			fpsIntervalId = setInterval(() => (fps = eng.getFPS()), 1000);
+			fpsIntervalId = setInterval(() => (fps = eng.getFPS()), 1000) as unknown as number;
 		};
 		engine.onfail = (error) => {
 			console.error('Error ocurred in engine workflow: ', error);
